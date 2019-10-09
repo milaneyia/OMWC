@@ -8,25 +8,24 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
+import applicationsRouter from './routes/applications/captains';
 
 const app = new Koa();
 app.keys = config.keys;
 
 createConnection();
 
-app
-    .use(session(app))
-    .use(serve(path.join(__dirname, '../public')))
-    .use(bodyparser())
-    .use(views(path.join(__dirname, 'templates'), {
-        map: {
-            html: 'ejs',
-        },
-    }));
+app.use(session(app));
+app.use(serve(path.join(__dirname, '../public')));
+app.use(bodyparser());
+app.use(views(path.join(__dirname, 'templates'), {
+    extension: 'pug',
+}));
 
-app
-    .use(indexRouter.routes())
-    .use(indexRouter.allowedMethods());
+app.use(indexRouter.routes());
+app.use(indexRouter.allowedMethods());
+app.use(applicationsRouter.routes());
+app.use(applicationsRouter.allowedMethods());
 
 app.use(async (ctx, next) => {
     try {

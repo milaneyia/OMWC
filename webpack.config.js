@@ -32,6 +32,10 @@ module.exports = {
                 appendTsSuffixTo: [/\.vue$/]
               }
             },
+            {
+                test: /\.pug$/,
+                loader: 'pug-plain-loader'
+            }
             // {
             //     test: /\.css$/,
             //     use: [

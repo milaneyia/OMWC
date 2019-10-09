@@ -1,17 +1,14 @@
 import Router from '@koa/router';
+import { authUser } from '../middlewares/authentication';
 import * as osuApi from '../middlewares/osuApi';
+import { Country } from '../models/Country';
+import { Role } from '../models/Role';
 import { User } from '../models/User';
 
 const indexRouter = new Router();
 
-indexRouter.get('/', async (ctx) => {
-    return await ctx.render('index');
-});
-
-indexRouter.get('/me', async (ctx) => {
-    const user = await User.findOne({ where: { osuId: ctx.session.id } });
-
-    return ctx.body = { user };
+indexRouter.get('/', authUser, async (ctx) => {
+    return await ctx.render('index', { user: ctx.state.user });
 });
 
 indexRouter.get('/login', async (ctx) => {
@@ -48,19 +45,37 @@ indexRouter.get('/callback', async (ctx) => {
             return ctx.render('error');
         }
 
-        ctx.session.id = response.id;
+        ctx.session.osuId = response.id;
         ctx.session.username = response.username;
 
-        if (!(await User.findOne(response.id))) {
-            let newUser = await User.create({
-                osuId: response.id,
-                username: response.username,
-            });
-            newUser = await newUser.save();
+        let country = await Country.findOne({ where: { name: response.country.name }});
 
-            if (newUser) {
-                return ctx.redirect('back');
+        if (!country) {
+            country = await Country.create({
+                code: response.country.code,
+                name: response.country.name,
+            }).save();
+        }
+
+        const user = await User.findOne({ where: { osuId: response.id } });
+
+        if (!user) {
+            const userRole = await Role.findUserRole();
+
+            if (userRole) {
+                const newUser = await User.create({
+                    country,
+                    osuId: response.id,
+                    roles: [userRole],
+                    username: response.username,
+                }).save();
+
+                if (newUser) {
+                    return ctx.redirect('back');
+                }
             }
+        } else {
+            return ctx.redirect('back');
         }
 
         return ctx.render('error');

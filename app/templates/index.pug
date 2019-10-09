@@ -1,0 +1,21 @@
+extends layout.pug
+
+block content
+    div(class="container")
+        div(class="row")
+            div(class="col s12 center-align")
+                h1 osu! Mapping World Cup
+
+                if user
+                    p #{user.username} #{user.country.name}
+                    img(src=`https://osu.ppy.sh/images/flags/${user.country.code}.png`, alt="flag")
+                else
+                    form(action="/login" method="GET")
+                        button(class="btn waves-effect waves-light" type="submit")
+                            | Verify your osu! account to continue
+
+        if user
+            div(class="row")
+                div(class="col s12 center-align")
+                    a(href="/applications/captains/edit" class="btn waves-effect waves-light")
+                        | Apply for team captain
