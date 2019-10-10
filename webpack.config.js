@@ -2,11 +2,13 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: {
+        index: './src/index.ts',
+    },
     output: {
-        path: path.resolve(__dirname, './dist/public/'),
-        filename: 'build.js',
-        publicPath: '/'
+        path: path.resolve(__dirname, './dist/public/js/'),
+        filename: '[name].js',
+        publicPath: '/js/'
     },
     mode: 'development',
     devtool: '#eval-source-map',

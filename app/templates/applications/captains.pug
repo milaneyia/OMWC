@@ -1,7 +1,23 @@
 extends ../layout.pug
 
 block content
-    #app
+    form.container(action="/applications/captains/store", method="post")
+        .row
+            .col.s12.center-align
+                h4 Hi #{user.username} you're applying for team captain for #{user.country.name}
+                
+        .row
+            .col.s12.center-align.input-field
+                textarea.materialize-textarea(data-length="3000" name="reason" required)
+                    if app
+                        | #{app.reason}
+                label Tell us why
 
-block scripts
-    script(src="/build.js")
+        .row
+            .col.s12.center-align
+                button.btn.waves-effect.waves-light(type="submit")
+                    if app 
+                        | Update
+                    else
+                        | Apply! 
+                    i.material-icons.right send

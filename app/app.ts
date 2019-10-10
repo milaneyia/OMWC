@@ -8,7 +8,8 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
-import applicationsRouter from './routes/applications/captains';
+import captainApplicationsRouter from './routes/applications/captains';
+import mapperApplicationsRouter from './routes/applications/mappers';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -24,15 +25,17 @@ app.use(views(path.join(__dirname, 'templates'), {
 
 app.use(indexRouter.routes());
 app.use(indexRouter.allowedMethods());
-app.use(applicationsRouter.routes());
-app.use(applicationsRouter.allowedMethods());
+app.use(captainApplicationsRouter.routes());
+app.use(captainApplicationsRouter.allowedMethods());
+app.use(mapperApplicationsRouter.routes());
+app.use(mapperApplicationsRouter.allowedMethods());
 
 app.use(async (ctx, next) => {
     try {
         await next();
     } catch (err) {
         ctx.status = err.status || 500;
-        ctx.body = err.message;
+        ctx.body = 'Something went wrong!';
         ctx.app.emit('error', err, ctx);
     }
 });

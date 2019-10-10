@@ -2,44 +2,36 @@ import Router from '@koa/router';
 import { authenticate } from '../../middlewares/authentication';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 
-const applicationsRouter = new Router();
+const captainApplicationsRouter = new Router();
 
-applicationsRouter.prefix('/applications/captains');
-applicationsRouter.use(authenticate);
+captainApplicationsRouter.prefix('/applications/captains');
+captainApplicationsRouter.use(authenticate);
 
-applicationsRouter.get('/me', async (ctx) => {
-    const app = await CaptainApplication.findOne({ where: { user: ctx.state.user.id } });
+captainApplicationsRouter.get('/edit', async (ctx) => {
+    const app = await CaptainApplication.findUserApplication(ctx.state.user);
 
-    return ctx.body = {
+    return ctx.render('applications/captains', {
         app,
         user: ctx.state.user,
-    };
+    });
 });
 
-applicationsRouter.get('/edit', async (ctx) => {
-    return ctx.render('applications/captains');
-});
-
-applicationsRouter.post('/store', async (ctx) => {
-    let app = await CaptainApplication.findOne({ where: { user: ctx.state.user } });
+captainApplicationsRouter.post('/store', async (ctx) => {
+    let app = await CaptainApplication.findUserApplication(ctx.state.user);
 
     if (!app) {
         app = new CaptainApplication();
     }
 
-    app.reason = ctx.request.body.reason;
+    app.reason = ctx.request.body.reason.trim();
     app.user = ctx.state.user;
-    app.save();
+    await app.save();
 
     if (app) {
-        return ctx.body = {
-            success: 'ok',
-        };
+        return ctx.redirect('/');
     }
 
-    return ctx.body = {
-        error: 'Something went wrong!',
-    };
+    return ctx.render('error');
 });
 
-export default applicationsRouter;
+export default captainApplicationsRouter;

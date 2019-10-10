@@ -1,9 +1,9 @@
 extends layout.pug
 
 block content
-    div(class="container")
-        div(class="row")
-            div(class="col s12 center-align")
+    #app.container
+        .row
+            .col.s12.center-align
                 h1 osu! Mapping World Cup
 
                 if user
@@ -15,7 +15,19 @@ block content
                             | Verify your osu! account to continue
 
         if user
-            div(class="row")
-                div(class="col s12 center-align")
+            .row
+                .col.s12.center-align
                     a(href="/applications/captains/edit" class="btn waves-effect waves-light")
-                        | Apply for team captain
+                        if captainApplication
+                            | Edit entry for team captain
+                        else
+                            | Apply for team captain
+
+            .row
+                .col.s12.center-align
+                    if mapperApplication
+                        a(href="#" class="btn waves-effect waves-light disabled")
+                            | You've applied as a mapper
+                    else
+                        a(href="/applications/mappers/edit" class="btn waves-effect waves-light")
+                            | Apply as a mapper
