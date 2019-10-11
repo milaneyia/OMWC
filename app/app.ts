@@ -11,6 +11,7 @@ import indexRouter from './routes';
 import captainApplicationsRouter from './routes/applications/captains';
 import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
+import captainVotingRouter from './routes/captainVoting';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -31,7 +32,9 @@ app.use(captainApplicationsRouter.allowedMethods());
 app.use(mapperApplicationsRouter.routes());
 app.use(mapperApplicationsRouter.allowedMethods());
 app.use(judgeApplicationsRouter.routes());
-app.use(mapperApplicationsRouter.allowedMethods());
+app.use(judgeApplicationsRouter.allowedMethods());
+app.use(captainVotingRouter.routes());
+app.use(captainVotingRouter.allowedMethods());
 
 app.use(async (ctx, next) => {
     try {
