@@ -2,9 +2,13 @@ import { ParameterizedContext } from 'koa';
 import { User } from '../models/User';
 
 export async function authenticate(ctx: ParameterizedContext, next: () => Promise<any>) {
-    const user = await User.findOne({ where: { osuId:  ctx.session.osuId }, cache: true });
+    const user = await User.findOne({
+        cache: true,
+        relations: ['roles'],
+        where: { osuId: ctx.session.osuId },
+    });
 
-    if (user) {
+    if (user && user.roles.length) {
         ctx.state.user = user;
         return await next();
     } else {
@@ -17,11 +21,19 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
 }
 
 export async function authUser(ctx: ParameterizedContext, next: () => Promise<any>) {
-    const user = await User.findOne({ where: { osuId:  ctx.session.osuId }});
+    const user = await User.findOne({ where: { osuId: ctx.session.osuId }});
 
     if (user) {
         ctx.state.user = user;
     }
 
     await next();
+}
+
+export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any>) {
+    if (User.isStaff(ctx.state.user)) {
+        return await next();
+    } else {
+        return ctx.redirect('back');
+    }
 }

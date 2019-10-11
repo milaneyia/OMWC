@@ -21,10 +21,26 @@ html(lang="en")
                 ul(class="right hide-on-med-and-down")
                     li
                         a(href="/") Home
-        
-        ul(class="sidenav" id="sidenav-list")
+                    li
+                        a.dropdown-trigger(href="#!" data-target="admin-dropdown")
+                            | Admin
+                            i.material-icons.right arrow_drop_down
+
+        ul#admin-dropdown.dropdown-content
+            li
+                a(href="/admin/schedule") Schedule
+
+        ul#admin-dropdown-sidenav.dropdown-content
+            li
+                a(href="/admin/schedule") Schedule
+
+        ul#sidenav-list.sidenav
             li
                 a(href="/") Home
+            li
+                a.dropdown-trigger(href="#!" data-target="admin-dropdown-sidenav")
+                    | Admin
+                    i.material-icons.right arrow_drop_down
         
         block content
         
@@ -32,8 +48,7 @@ html(lang="en")
         script(src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js")
         script.
             document.addEventListener('DOMContentLoaded', function() {
-                const elems = document.querySelectorAll('.sidenav');
-                const instances = M.Sidenav.init(elems);
+                M.AutoInit();
             });
 
         block scripts

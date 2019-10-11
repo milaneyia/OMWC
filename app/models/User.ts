@@ -2,11 +2,15 @@ import {
     BaseEntity, Column, CreateDateColumn, Entity, JoinTable,
     ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Country } from './Country';
-import { Role } from './Role';
+import { Role, ROLE } from './Role';
 import { Team } from './Team';
 
 @Entity()
 export class User extends BaseEntity {
+
+    static isStaff(user: User) {
+        return user.roles.find((r) => r.id === ROLE.Staff);
+    }
 
     @PrimaryGeneratedColumn()
     id!: number;

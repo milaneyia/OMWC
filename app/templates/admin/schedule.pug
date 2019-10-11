@@ -1,0 +1,49 @@
+extends ../layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                h4 Update schedule to follow
+
+        .row
+            .col.s12
+                form(action="/admin/schedule/save", method="post")
+                    .col.s6
+                        .input-field
+                            input.validate(type="date", name="applicationsStartedAt" required value=(schedule && schedule.applicationsStartedAt))
+                            label Applications Start Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="captainApplicationsEndedAt" value=(schedule && schedule.captainApplicationsEndedAt))
+                            label Captain Applications End Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="captainVotingStartedAt" value=(schedule && schedule.captainVotingStartedAt))
+                            label Captain Voting Start Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="captainVotingEndedAt" value=(schedule && schedule.captainVotingEndedAt))
+                            label Captain Voting End Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="mapperApplicationsEndedAt" value=(schedule && schedule.mapperApplicationsEndedAt))
+                            label Mapper Applications End Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="judgeApplicationsEndedAt" value=(schedule && schedule.judgeApplicationsEndedAt))
+                            label Judge Applications End Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="constestStartedAt" value=(schedule && schedule.constestStartedAt))
+                            label Contest Start Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="constestEndedAt" value=(schedule && schedule.constestEndedAt))
+                            label Contest End Date
+                    .col.s12
+                        button.btn.waves-effect.waves-light(type="submit")
+                            if schedule
+                                | Update Schedule
+                            else
+                                | Submit Schedule

@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block content
-    form.container(action="/applications/captains/store", method="post")
+    form.container(action="/applications/captains/save", method="post")
         .row
             .col.s12.center-align
                 h4 Hi #{user.username} you're applying for team captain for #{user.country.name}

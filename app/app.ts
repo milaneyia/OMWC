@@ -8,6 +8,7 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
+import scheduleAdminRouter from './routes/admin/schedule';
 import captainApplicationsRouter from './routes/applications/captains';
 import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
@@ -35,6 +36,8 @@ app.use(judgeApplicationsRouter.routes());
 app.use(judgeApplicationsRouter.allowedMethods());
 app.use(captainVotingRouter.routes());
 app.use(captainVotingRouter.allowedMethods());
+app.use(scheduleAdminRouter.routes());
+app.use(scheduleAdminRouter.allowedMethods());
 
 app.use(async (ctx, next) => {
     try {

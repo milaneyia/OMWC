@@ -9,7 +9,10 @@ export class CaptainApplication extends BaseEntity {
     }
 
     static findOneWithUser(captainApplicationId: number) {
-        return this.findOne(captainApplicationId, { relations: ['user'] });
+        return this.findOne({
+            relations: ['user'],
+            where: { id: captainApplicationId },
+        });
     }
 
     @PrimaryGeneratedColumn()

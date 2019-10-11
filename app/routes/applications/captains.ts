@@ -1,11 +1,17 @@
 import Router from '@koa/router';
 import { authenticate } from '../../middlewares/authentication';
+import { canApplicate } from '../../middlewares/scheduleCheck';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 
 const captainApplicationsRouter = new Router();
 
 captainApplicationsRouter.prefix('/applications/captains');
 captainApplicationsRouter.use(authenticate);
+captainApplicationsRouter.use(async (ctx, next) => {
+    ctx.state.applicationType = 'captain';
+    return await next();
+});
+captainApplicationsRouter.use(canApplicate);
 
 captainApplicationsRouter.get('/edit', async (ctx) => {
     const app = await CaptainApplication.findUserApplication(ctx.state.user);
@@ -16,7 +22,7 @@ captainApplicationsRouter.get('/edit', async (ctx) => {
     });
 });
 
-captainApplicationsRouter.post('/store', async (ctx) => {
+captainApplicationsRouter.post('/save', async (ctx) => {
     let app = await CaptainApplication.findUserApplication(ctx.state.user);
 
     if (!app) {

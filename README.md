@@ -1,2 +1,2 @@
-# OMWC
-the face of osu!mapping world cup
+# osu! Mapping World Cup
+send help aa
