@@ -2,7 +2,7 @@ import { ParameterizedContext } from 'koa';
 import { User } from '../models/User';
 
 export async function authenticate(ctx: ParameterizedContext, next: () => Promise<any>) {
-    const user = await User.findOne({ where: { osuId:  ctx.session.osuId }});
+    const user = await User.findOne({ where: { osuId:  ctx.session.osuId } });
 
     if (user) {
         ctx.state.user = user;

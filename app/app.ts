@@ -9,6 +9,7 @@ import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
 import captainApplicationsRouter from './routes/applications/captains';
+import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
 
 const app = new Koa();
@@ -28,6 +29,8 @@ app.use(indexRouter.allowedMethods());
 app.use(captainApplicationsRouter.routes());
 app.use(captainApplicationsRouter.allowedMethods());
 app.use(mapperApplicationsRouter.routes());
+app.use(mapperApplicationsRouter.allowedMethods());
+app.use(judgeApplicationsRouter.routes());
 app.use(mapperApplicationsRouter.allowedMethods());
 
 app.use(async (ctx, next) => {

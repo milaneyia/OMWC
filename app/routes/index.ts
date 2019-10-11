@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import { authUser } from '../middlewares/authentication';
 import * as osuApi from '../middlewares/osuApi';
 import { CaptainApplication } from '../models/applications/CaptainApplication';
+import { JudgeApplication } from '../models/applications/JudgeApplication';
 import { MapperApplication } from '../models/applications/MapperApplication';
 import { Country } from '../models/Country';
 import { Role } from '../models/Role';
@@ -12,9 +13,11 @@ const indexRouter = new Router();
 indexRouter.get('/', authUser, async (ctx) => {
     const captainApplication = await CaptainApplication.findUserApplication(ctx.state.user);
     const mapperApplication = await MapperApplication.findUserApplication(ctx.state.user);
+    const judgeApplication = await JudgeApplication.findUserApplication(ctx.state.user);
 
     return await ctx.render('index', {
         captainApplication,
+        judgeApplication,
         mapperApplication,
         user: ctx.state.user,
     });

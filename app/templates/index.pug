@@ -19,7 +19,7 @@ block content
                 .col.s12.center-align
                     a(href="/applications/captains/edit" class="btn waves-effect waves-light")
                         if captainApplication
-                            | Edit entry for team captain
+                            | Edit your team captain application
                         else
                             | Apply for team captain
 
@@ -31,3 +31,11 @@ block content
                     else
                         a(href="/applications/mappers/edit" class="btn waves-effect waves-light")
                             | Apply as a mapper
+
+            .row
+                .col.s12.center-align
+                    a(href="/applications/judges/edit" class="btn waves-effect waves-light")
+                        if captainApplication
+                            | Edit your judge application
+                        else
+                            | Apply as a judge
