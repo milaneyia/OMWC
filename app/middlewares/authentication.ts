@@ -37,3 +37,11 @@ export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any
         return ctx.redirect('back');
     }
 }
+
+export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<any>) {
+    if (User.isCaptain(ctx.state.user) && ctx.state.user.teamId) {
+        return await next();
+    } else {
+        return ctx.redirect('back');
+    }
+}

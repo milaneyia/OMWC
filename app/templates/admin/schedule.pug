@@ -27,6 +27,14 @@ block content
                             label Captain Voting End Date
                     .col.s6
                         .input-field
+                            input(type="date", name="mappersChoiceStartedAt" value=(schedule && schedule.mappersChoiceStartedAt))
+                            label Mappers Choice Start Date
+                    .col.s6
+                        .input-field
+                            input(type="date", name="mappersChoiceEndedAt" value=(schedule && schedule.mappersChoiceEndedAt))
+                            label Mappers Choice End Date
+                    .col.s6
+                        .input-field
                             input(type="date", name="mapperApplicationsEndedAt" value=(schedule && schedule.mapperApplicationsEndedAt))
                             label Mapper Applications End Date
                     .col.s6

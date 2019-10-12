@@ -9,11 +9,13 @@ import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
+import mappersChoiceAdminRouter from './routes/admin/mappersChoice';
 import scheduleAdminRouter from './routes/admin/schedule';
 import captainApplicationsRouter from './routes/applications/captains';
 import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/captainVoting';
+import mappersChoiceRouter from './routes/mappersChoice';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -35,7 +37,7 @@ app.use(async (ctx, next) => {
         await next();
     } catch (err) {
         ctx.status = err.status || 500;
-        ctx.body = 'Something went wrong!';
+        await ctx.render('error');
         ctx.app.emit('error', err, ctx);
     }
 });
@@ -44,7 +46,7 @@ app.use(async (ctx, next) => {
 app.use(indexRouter.routes());
 app.use(indexRouter.allowedMethods());
 
-// Applications routes
+// Applications & Choices routes
 app.use(captainApplicationsRouter.routes());
 app.use(captainApplicationsRouter.allowedMethods());
 app.use(mapperApplicationsRouter.routes());
@@ -53,12 +55,16 @@ app.use(judgeApplicationsRouter.routes());
 app.use(judgeApplicationsRouter.allowedMethods());
 app.use(captainVotingRouter.routes());
 app.use(captainVotingRouter.allowedMethods());
+app.use(mappersChoiceRouter.routes());
+app.use(mappersChoiceRouter.allowedMethods());
 
 // Admin routes
 app.use(scheduleAdminRouter.routes());
 app.use(scheduleAdminRouter.allowedMethods());
 app.use(captainChoiceAdminRouter.routes());
 app.use(captainChoiceAdminRouter.allowedMethods());
+app.use(mappersChoiceAdminRouter.routes());
+app.use(mappersChoiceAdminRouter.allowedMethods());
 
 app.on('error', (err, ctx) => {
     // tslint:disable-next-line

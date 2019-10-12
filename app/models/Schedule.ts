@@ -19,6 +19,12 @@ export class Schedule extends BaseEntity {
     captainVotingEndedAt?: Date;
 
     @Column('date', { nullable: true })
+    mappersChoiceStartedAt?: Date;
+
+    @Column('date', { nullable: true })
+    mappersChoiceEndedAt?: Date;
+
+    @Column('date', { nullable: true })
     mapperApplicationsEndedAt?: Date;
 
     @Column('date', { nullable: true })

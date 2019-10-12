@@ -1,0 +1,33 @@
+extends ../layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                each team in teams
+                    h4= team.country.name
+
+                    table.hover
+                        thead
+                            tr
+                                th :)
+                                th :(
+                                th
+                        tbody
+                            each application in applications
+                                tr
+                                    td
+                                        if (team.users && team.users.find(u => u.id === application.user.id) !== undefined)
+                                            span= application.user.username
+                                    td
+                                        if (!team.users || team.users.find(u => u.id === application.user.id) === undefined)
+                                            span= application.user.username
+                                    td
+                                        if team.isCompeting
+                                            form(action="/admin/mappersChoice/deny", method="post")
+                                                input(type="hidden", name="teamId" value=team.id)
+                                                button.btn-flat.waves-effect.waves-teal(type="submit") Deny team
+                                        else
+                                            form(action="/admin/mappersChoice/confirm", method="post")
+                                                input(type="hidden", name="teamId" value=team.id)
+                                                button.btn-flat.waves-effect.waves-teal(type="submit") Confirm team

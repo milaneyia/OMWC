@@ -1,5 +1,4 @@
 import Router from '@koa/router';
-import { getManager } from 'typeorm';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 import { Country } from '../../models/Country';

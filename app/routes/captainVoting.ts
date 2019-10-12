@@ -23,7 +23,7 @@ captainVotingRouter.get('/', async (ctx) => {
         applications,
         user: ctx.state.user,
         votesDone,
-     });
+    });
 });
 
 captainVotingRouter.post('/store', async (ctx) => {

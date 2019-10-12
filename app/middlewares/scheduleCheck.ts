@@ -77,3 +77,25 @@ export async function canVoteForCaptain(ctx: ParameterizedContext, next: () => P
         return ctx.render('error', { error: `It's not the time for captain voting` });
     }
 }
+
+export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () => Promise<any>) {
+    const schedule = await getSchedule();
+
+    if (!schedule) {
+        return ctx.render('error');
+    }
+
+    const hasStarted = (schedule.mappersChoiceStartedAt && new Date() >= new Date(schedule.mappersChoiceStartedAt));
+    const hasEnded = (schedule.mappersChoiceEndedAt && new Date() >= new Date(schedule.mappersChoiceEndedAt));
+
+    const onGoing = (
+        hasStarted &&
+        !hasEnded
+    );
+
+    if (onGoing) {
+        return await next();
+    } else {
+        return ctx.render('error', { error: `It's not the time for mappers choice` });
+    }
+}

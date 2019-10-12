@@ -17,6 +17,10 @@ export class User extends BaseEntity {
         return user.roles.find((r) => r.id === ROLE.Staff);
     }
 
+    static isCaptain(user: User) {
+        return user.roles.find((r) => r.id === ROLE.Captain);
+    }
+
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -29,7 +33,10 @@ export class User extends BaseEntity {
     @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
     country!: Country;
 
-    @ManyToOne((type) => Team)
+    @Column({ nullable: true })
+    teamId?: number | null;
+
+    @ManyToOne((type) => Team, (team) => team.users)
     team?: Team | null;
 
     @ManyToMany((type) => Role)
