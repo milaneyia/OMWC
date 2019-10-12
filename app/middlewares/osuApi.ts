@@ -10,9 +10,11 @@ export function generateState() {
 export function generateAuthorizeUrl(rawState: string) {
     const hashedState = Buffer.from(rawState).toString('base64');
 
-    return 'https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=' +
-        config.osuv2.id + '&redirect_uri=' + encodeURIComponent(config.osuv2.redirect) +
-        '&state=' + hashedState + '&scope=identify';
+    return 'https://osu.ppy.sh/oauth/authorize?response_type=code' +
+        '&client_id=' + config.osuv2.id +
+        '&redirect_uri=' + encodeURIComponent(config.osuv2.redirect) +
+        '&state=' + hashedState +
+        '&scope=identify';
 }
 
 export function decodeState(hashedState: string) {

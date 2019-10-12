@@ -16,8 +16,7 @@ export class Role extends BaseEntity {
 
 export enum ROLE {
     User = 1,
-    Mapper = 2,
-    Captain = 3,
-    Judge = 4,
-    Staff = 5,
+    Restricted = 2,
+    Judge = 3,
+    Staff = 4,
 }

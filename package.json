@@ -6,7 +6,8 @@
     "watch-src": "webpack-dev-server",
     "build-app": "tsc",
     "build-src": "webpack",
-    "prod": "node dist/app/app.js"
+    "prod": "node dist/app/app.js",
+    "seed": "ts-node database/seeder.ts"
   },
   "dependencies": {
     "@koa/router": "^8.0.1",

@@ -5,21 +5,22 @@ import { CaptainApplication } from '../models/applications/CaptainApplication';
 import { JudgeApplication } from '../models/applications/JudgeApplication';
 import { MapperApplication } from '../models/applications/MapperApplication';
 import { Country } from '../models/Country';
-import { Role } from '../models/Role';
+import { Role, ROLE } from '../models/Role';
 import { User } from '../models/User';
 
 const indexRouter = new Router();
 
-indexRouter.get('/', authUser, async (ctx) => {
+indexRouter.get('/', async (ctx) => {
     const captainApplication = await CaptainApplication.findUserApplication(ctx.state.user);
     const mapperApplication = await MapperApplication.findUserApplication(ctx.state.user);
     const judgeApplication = await JudgeApplication.findUserApplication(ctx.state.user);
+    const user = await User.findOne({ where: { osuId: ctx.session.osuId }});
 
     return await ctx.render('index', {
         captainApplication,
         judgeApplication,
         mapperApplication,
-        user: ctx.state.user,
+        user,
     });
 });
 
@@ -72,19 +73,15 @@ indexRouter.get('/callback', async (ctx) => {
         const user = await User.findOne({ where: { osuId: response.id } });
 
         if (!user) {
-            const userRole = await Role.findUserRole();
+            const newUser = await User.create({
+                country,
+                osuId: response.id,
+                roleId: ROLE.User,
+                username: response.username,
+            }).save();
 
-            if (userRole) {
-                const newUser = await User.create({
-                    country,
-                    osuId: response.id,
-                    roles: [userRole],
-                    username: response.username,
-                }).save();
-
-                if (newUser) {
-                    return ctx.redirect('back');
-                }
+            if (newUser) {
+                return ctx.redirect('back');
             }
         } else {
             return ctx.redirect('back');

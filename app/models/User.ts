@@ -1,6 +1,6 @@
 import {
-    BaseEntity, Column, CreateDateColumn, Entity, JoinTable,
-    ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+    BaseEntity, Column, CreateDateColumn, Entity, ManyToOne,
+    OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { CaptainApplication } from './applications/CaptainApplication';
 import { Country } from './Country';
 import { Role, ROLE } from './Role';
@@ -9,16 +9,16 @@ import { Team } from './Team';
 @Entity()
 export class User extends BaseEntity {
 
-    static findOneWithRoles(userId: number) {
-        return this.findOne({ where: { id: userId }, relations: ['roles'] });
+    static findOneOrFailWithTeam(userId: number) {
+        return this.findOneOrFail({ where: { id: userId }, relations: ['team'] });
     }
 
     static isStaff(user: User) {
-        return user.roles.find((r) => r.id === ROLE.Staff);
+        return user.roleId === ROLE.Staff;
     }
 
     static isCaptain(user: User) {
-        return user.roles.find((r) => r.id === ROLE.Captain);
+        return user.team && user.team.captainId;
     }
 
     @PrimaryGeneratedColumn()
@@ -39,9 +39,11 @@ export class User extends BaseEntity {
     @ManyToOne((type) => Team, (team) => team.users)
     team?: Team | null;
 
-    @ManyToMany((type) => Role)
-    @JoinTable()
-    roles!: Role[];
+    @Column()
+    roleId!: number;
+
+    @ManyToOne((type) => Role, { nullable: false })
+    role!: Role;
 
     @OneToMany((type) => CaptainApplication, (captainApplication) => captainApplication.user)
     captainApplication!: CaptainApplication[];

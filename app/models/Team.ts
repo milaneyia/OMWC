@@ -6,7 +6,7 @@ import { User } from './User';
 export class Team extends BaseEntity {
 
     static findOneWithUsers(countryId: number) {
-        return this.findOne({ where: { country: countryId }, relations: ['users'] });
+        return this.findOne({ where: { countryId }, relations: ['users'] });
     }
 
     @PrimaryGeneratedColumn()
@@ -15,8 +15,17 @@ export class Team extends BaseEntity {
     @Column({ default: false })
     isCompeting!: boolean;
 
+    @Column()
+    countryId!: number;
+
     @ManyToOne((type) => Country)
     country!: Country;
+
+    @Column({ nullable: true })
+    captainId?: number | null;
+
+    @ManyToOne((type) => User)
+    captain!: User;
 
     @OneToMany((type) => User, (user) => user.team)
     users!: User[];

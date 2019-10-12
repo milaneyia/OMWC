@@ -1,6 +1,6 @@
 import Router from '@koa/router';
 import { authenticate } from '../../middlewares/authentication';
-import { canApplicate } from '../../middlewares/scheduleCheck';
+import { onGoingApplications } from '../../middlewares/scheduleCheck';
 import { JudgeApplication } from '../../models/applications/JudgeApplication';
 
 const judgeApplicationsRouter = new Router();
@@ -11,7 +11,7 @@ judgeApplicationsRouter.use(async (ctx, next) => {
     ctx.state.applicationType = 'judge';
     return await next();
 });
-judgeApplicationsRouter.use(canApplicate);
+judgeApplicationsRouter.use(onGoingApplications);
 
 judgeApplicationsRouter.get('/edit', async (ctx) => {
     const app = await JudgeApplication.findUserApplication(ctx.state.user);

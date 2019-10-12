@@ -2,7 +2,6 @@ import Router from '@koa/router';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 import { Country } from '../../models/Country';
-import { ROLE, Role } from '../../models/Role';
 import { Schedule } from '../../models/Schedule';
 import { Team } from '../../models/Team';
 import { User } from '../../models/User';
@@ -19,16 +18,17 @@ captainChoiceAdminRouter.get('/', async (ctx) => {
         .createQueryBuilder('country')
         .innerJoin('country.users', 'user')
         .innerJoinAndMapMany('country.captainApplications', CaptainApplication, 'captainApplication', 'user.id = captainApplication.userId')
-        .innerJoin('captainApplication.user', 'captainApplicationUser')
-        .innerJoin('captainApplicationUser.roles', 'roles')
-        .innerJoin('captainApplication.captainVotes', 'captainVote')
-        .innerJoin('captainVote.user', 'captainVoteUser')
+        .leftJoin('captainApplication.user', 'captainApplicationUser')
+        .leftJoin('captainApplicationUser.team', 'team')
+        .leftJoin('captainApplication.captainVotes', 'captainVote')
+        .leftJoin('captainVote.user', 'captainVoteUser')
         .select([
             'country.name',
             'country.code',
             'captainApplication.id',
+            'captainApplicationUser.id',
             'captainApplicationUser.username',
-            'roles.name',
+            'team.captainId',
             'captainVote.id',
             'captainVoteUser.username',
         ]).getMany();
@@ -41,62 +41,30 @@ captainChoiceAdminRouter.get('/', async (ctx) => {
 });
 
 captainChoiceAdminRouter.post('/store', async (ctx) => {
-    const application = await CaptainApplication.findOneWithUser(ctx.request.body.applicationId);
+    const application = await CaptainApplication.findOneOrFailWithUser(ctx.request.body.applicationId);
+    const user = await User.findOneOrFail({ where: { id: application.user.id } });
+    let team = await Team.findOne({ countryId: user.country.id });
 
-    if (!application) {
-        return ctx.render('error');
+    if (!team) {
+        team = new Team();
+        team.countryId = user.country.id;
     }
 
-    const alreadyHasCaptain = await User
-        .createQueryBuilder('user')
-        .innerJoin('user.roles', 'role', `role.id = ${ROLE.Captain}`)
-        .innerJoin('user.captainApplication', 'captainApplication')
-        .where('user.countryId = :countryId', { countryId: application.user.country.id })
-        .getOne();
-
-    if (!alreadyHasCaptain) {
-        const user = await User.findOneWithRoles(application.user.id);
-        const role = await Role.findOne({ where: { id: ROLE.Captain } });
-        let team = await Team.findOne({ where: { country: application.user.country } });
-
-        if (!user || !role) {
-            return ctx.render('error');
-        }
-
-        if (!team) {
-            team = await Team.create({
-                country: application.user.country,
-            }).save();
-        }
-
-        user.team = team;
-        user.roles.push(role);
-        await user.save();
-    }
+    team.captainId = user.id;
+    team = await team.save();
+    user.team = team;
+    await user.save();
 
     return ctx.redirect('back');
 });
 
 captainChoiceAdminRouter.post('/destroy', async (ctx) => {
-    const application = await CaptainApplication.findOneWithUser(ctx.request.body.applicationId);
-
-    if (!application) {
-        return ctx.render('error');
-    }
-
-    const user = await User.findOneWithRoles(application.user.id);
-
-    if (!user) {
-        return ctx.render('error');
-    }
-
-    const i = user.roles.findIndex((r) => r.id === ROLE.Captain);
-
-    if (i !== -1) {
-        user.roles.splice(i, 1);
-    }
-
-    user.team = null;
+    const application = await CaptainApplication.findOneOrFailWithUser(ctx.request.body.applicationId);
+    const user = await User.findOneOrFail({ where: { id: application.user.id } });
+    const team = await Team.findOneOrFail({ where: { id: user.teamId } });
+    team.captainId = null;
+    user.teamId = null;
+    await team.save();
     await user.save();
 
     return ctx.redirect('back');

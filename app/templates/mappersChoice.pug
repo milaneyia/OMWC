@@ -4,7 +4,7 @@ block content
     form.container.center-align(action="/mappersChoice/save", method="post")
         .row
             .col.s12
-                h4 Choose between 3 and 5 mappers for your team
+                h4 Choose up to 5 mappers for your team
 
                 table.hover
                     thead
@@ -19,7 +19,7 @@ block content
                                             type="checkbox"
                                             name="applicationsIds"
                                             value=application.id
-                                            checked=(team.users && team.users.find(u => u.id === application.user.id) !== undefined)
+                                            checked=(team && team.users && team.users.find(u => u.id === application.user.id) !== undefined)
                                         )
                                         span= application.user.username
 

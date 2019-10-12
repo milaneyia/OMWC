@@ -11,8 +11,8 @@ export class CaptainApplication extends BaseEntity {
         return this.findOne({ where: { user } });
     }
 
-    static findOneWithUser(captainApplicationId: number) {
-        return this.findOne({
+    static findOneOrFailWithUser(captainApplicationId: number) {
+        return this.findOneOrFail({
             relations: ['user'],
             where: { id: captainApplicationId },
         });

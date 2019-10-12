@@ -21,7 +21,7 @@ function hasJudgeApplicationsEnded(schedule: Schedule) {
     return (schedule.judgeApplicationsEndedAt && new Date() >= new Date(schedule.judgeApplicationsEndedAt));
 }
 
-export async function canApplicate(ctx: ParameterizedContext, next: () => Promise<any>) {
+export async function onGoingApplications(ctx: ParameterizedContext, next: () => Promise<any>) {
     const schedule = await getSchedule();
 
     if (!schedule) {
@@ -56,7 +56,7 @@ export async function canApplicate(ctx: ParameterizedContext, next: () => Promis
     }
 }
 
-export async function canVoteForCaptain(ctx: ParameterizedContext, next: () => Promise<any>) {
+export async function onGoingCaptainVoting(ctx: ParameterizedContext, next: () => Promise<any>) {
     const schedule = await getSchedule();
 
     if (!schedule) {

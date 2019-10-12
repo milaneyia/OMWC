@@ -1,6 +1,6 @@
 import Router from '@koa/router';
 import { authenticate } from '../../middlewares/authentication';
-import { canApplicate } from '../../middlewares/scheduleCheck';
+import { onGoingApplications } from '../../middlewares/scheduleCheck';
 import { MapperApplication } from '../../models/applications/MapperApplication';
 
 const mapperApplicationsRouter = new Router();
@@ -11,7 +11,7 @@ mapperApplicationsRouter.use(async (ctx, next) => {
     ctx.state.applicationType = 'mapper';
     return await next();
 });
-mapperApplicationsRouter.use(canApplicate);
+mapperApplicationsRouter.use(onGoingApplications);
 
 mapperApplicationsRouter.get('/edit', async (ctx) => {
     const app = await MapperApplication.findUserApplication(ctx.state.user);

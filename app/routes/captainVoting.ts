@@ -1,6 +1,6 @@
 import Router from '@koa/router';
-import { authenticate } from '../middlewares/authentication';
-import { canVoteForCaptain } from '../middlewares/scheduleCheck';
+import { authenticate, canVoteForCaptain } from '../middlewares/authentication';
+import { onGoingCaptainVoting } from '../middlewares/scheduleCheck';
 import { CaptainApplication } from '../models/applications/CaptainApplication';
 import { CaptainVote } from '../models/CaptainVote';
 
@@ -8,6 +8,7 @@ const captainVotingRouter = new Router();
 
 captainVotingRouter.prefix('/captainVoting');
 captainVotingRouter.use(authenticate);
+captainVotingRouter.use(onGoingCaptainVoting);
 captainVotingRouter.use(canVoteForCaptain);
 
 captainVotingRouter.get('/', async (ctx) => {
@@ -27,18 +28,16 @@ captainVotingRouter.get('/', async (ctx) => {
 });
 
 captainVotingRouter.post('/store', async (ctx) => {
-    const application = await CaptainApplication.findOneWithUser(ctx.request.body.applicationId);
+    const application = await CaptainApplication.findOneOrFailWithUser(ctx.request.body.applicationId);
     const votesDone = await CaptainVote.findUserVotes(ctx.state.user);
-    const hasVotedForIt = votesDone.find((v) => v.captainApplication.id === ctx.request.body.applicationId);
 
-    if (application
-        && application.user.country.id === ctx.state.user.country.id
-        && !hasVotedForIt
-        && application.user.id !== ctx.state.user.id
-        ) {
+    const hasVotedForIt = votesDone.find((v) => v.captainApplication.id === application.id);
+    const isAnotherPerson = application.user.id !== ctx.state.user.id;
+    const isSameCountry = application.user.country.id === ctx.state.user.country.id;
 
+    if (isSameCountry && isAnotherPerson && !hasVotedForIt) {
         await CaptainVote.create({
-            captainApplication: ctx.request.body.applicationId,
+            captainApplication: application,
             user: ctx.state.user,
         }).save();
 
@@ -49,18 +48,16 @@ captainVotingRouter.post('/store', async (ctx) => {
 });
 
 captainVotingRouter.post('/destroy', async (ctx) => {
-    const application = await CaptainApplication.findOneWithUser(ctx.request.body.applicationId);
+    const vote = await CaptainVote.findOneOrFail({
+        where: {
+            captainApplicationId: ctx.request.body.applicationId,
+            userId: ctx.state.user.Id,
+        },
+    });
 
-    if (application && application.user.id === ctx.state.user.id) {
-        await CaptainVote.delete({
-            captainApplication: ctx.request.body.applicationId,
-            user: ctx.state.user,
-        });
+    await vote.remove();
 
-        return ctx.redirect('back');
-    }
-
-    return ctx.render('error');
+    return ctx.redirect('back');
 });
 
 export default captainVotingRouter;

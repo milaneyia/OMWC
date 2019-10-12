@@ -2,7 +2,6 @@ import Router from '@koa/router';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { onGoingMappersChoice } from '../middlewares/scheduleCheck';
 import { MapperApplication } from '../models/applications/MapperApplication';
-import { ROLE, Role } from '../models/Role';
 import { Team } from '../models/Team';
 import { User } from '../models/User';
 
@@ -37,29 +36,17 @@ mappersChoiceRouter.post('/save', async (ctx) => {
     }
 
     const captain: User = ctx.state.user;
-    const team = await Team.findOne({ where: { id: captain.country.id } });
+    const team = await Team.findOneOrFail({ where: { countryId: captain.country.id } });
     let applications = await MapperApplication.findByIds(applicationsIds, { relations: ['user'] });
-    applications = applications.filter((a) => a.user.country.id === captain.country.id);
 
-    if (!team) {
-        return ctx.render('error');
-    }
+    applications = applications.filter((a) => a.user.country.id === team.countryId);
 
     const mappers = applications.map((a) => a.user);
     mappers.push(captain);
 
-    // Just allow them to add people then staff decide ?
-    // if (mappers.length < 4 || mappers.length > 6) {
-    //     return ctx.render('error', { error: 'Wrong number of mappers' });
-    // }
-
-    mappers.forEach(async (m) => {
-        await User
-            .createQueryBuilder('user')
-            .relation(User, 'roles')
-            .of(m)
-            .add(ROLE.Mapper);
-    });
+    if (mappers.length > 6) {
+        return ctx.render('error', { error: 'Too many members in the team' });
+    }
 
     team.users = mappers;
     team.save();
