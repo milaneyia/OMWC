@@ -1,0 +1,34 @@
+extends ../layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                each country in applicationsByCountry
+                    h4= country.name
+
+                    table.hover
+                        thead
+                            tr
+                                th Applicant
+                                th Total Votes
+                                th Voted by
+                                th
+                        tbody
+                            each application in country.captainApplications
+                                tr
+                                    td= application.user.username
+                                    td= application.captainVotes.length
+                                    td
+                                        each vote in application.captainVotes
+                                            = vote.user.username + ' '
+                                    td
+                                        if application.user.roles.find(r => r.name === 'captain')
+                                            form(action="/admin/captainChoice/destroy", method="post")
+                                                input(type="hidden", name="applicationId" value=application.id)
+                                                button.btn-flat.waves-effect.waves-teal(type="submit") Remove
+                                        //- If there's NOT a captain in the country
+                                        else if !(country.captainApplications.find(a => a.user.roles.find(r => r.name === 'captain')))
+                                            form(action="/admin/captainChoice/store", method="post")
+                                                input(type="hidden", name="applicationId" value=application.id)
+                                                button.btn-flat.waves-effect.waves-teal(type="submit") Choose

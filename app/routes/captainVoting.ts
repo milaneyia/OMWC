@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import { authenticate } from '../middlewares/authentication';
+import { canVoteForCaptain } from '../middlewares/scheduleCheck';
 import { CaptainApplication } from '../models/applications/CaptainApplication';
 import { CaptainVote } from '../models/CaptainVote';
 
@@ -7,6 +8,7 @@ const captainVotingRouter = new Router();
 
 captainVotingRouter.prefix('/captainVoting');
 captainVotingRouter.use(authenticate);
+captainVotingRouter.use(canVoteForCaptain);
 
 captainVotingRouter.get('/', async (ctx) => {
     const applications = await CaptainApplication

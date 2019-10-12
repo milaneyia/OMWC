@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { CaptainApplication } from './applications/CaptainApplication';
 import { User } from './User';
 
@@ -15,6 +15,16 @@ export class CaptainVote extends BaseEntity {
     @ManyToOne((type) => User, { nullable: false })
     user!: User;
 
-    @ManyToOne((type) => CaptainApplication, { nullable: false })
+    @ManyToOne(
+        (type) => CaptainApplication,
+        (captainApplication) => captainApplication.captainVotes,
+        { nullable: false },
+    )
     captainApplication!: CaptainApplication;
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
 }

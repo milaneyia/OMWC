@@ -1,12 +1,17 @@
 import {
     BaseEntity, Column, CreateDateColumn, Entity, JoinTable,
-    ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+    ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CaptainApplication } from './applications/CaptainApplication';
 import { Country } from './Country';
 import { Role, ROLE } from './Role';
 import { Team } from './Team';
 
 @Entity()
 export class User extends BaseEntity {
+
+    static findOneWithRoles(userId: number) {
+        return this.findOne({ where: { id: userId }, relations: ['roles'] });
+    }
 
     static isStaff(user: User) {
         return user.roles.find((r) => r.id === ROLE.Staff);
@@ -21,19 +26,22 @@ export class User extends BaseEntity {
     @Column({ unique: true })
     username!: string;
 
+    @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
+    country!: Country;
+
+    @ManyToOne((type) => Team)
+    team?: Team | null;
+
+    @ManyToMany((type) => Role)
+    @JoinTable()
+    roles!: Role[];
+
+    @OneToMany((type) => CaptainApplication, (captainApplication) => captainApplication.user)
+    captainApplication!: CaptainApplication[];
+
     @CreateDateColumn()
     createdAt!: Date;
 
     @UpdateDateColumn()
     updatedAt!: Date;
-
-    @ManyToOne((type) => Country, { nullable: false, eager: true })
-    country!: Country;
-
-    @ManyToOne((type) => Team)
-    team!: Team;
-
-    @ManyToMany((type) => Role)
-    @JoinTable()
-    roles!: Role[];
 }

@@ -55,3 +55,25 @@ export async function canApplicate(ctx: ParameterizedContext, next: () => Promis
         return ctx.render('error', { error: 'Applications ended' });
     }
 }
+
+export async function canVoteForCaptain(ctx: ParameterizedContext, next: () => Promise<any>) {
+    const schedule = await getSchedule();
+
+    if (!schedule) {
+        return ctx.render('error');
+    }
+
+    const hasStarted = (schedule.captainVotingStartedAt && new Date() >= new Date(schedule.captainVotingStartedAt));
+    const hasEnded = (schedule.captainVotingEndedAt && new Date() >= new Date(schedule.captainVotingEndedAt));
+
+    const onGoing = (
+        hasStarted &&
+        !hasEnded
+    );
+
+    if (onGoing) {
+        return await next();
+    } else {
+        return ctx.render('error', { error: `It's not the time for captain voting` });
+    }
+}

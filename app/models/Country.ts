@@ -1,4 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { CaptainApplication } from './applications/CaptainApplication';
+import { User } from './User';
 
 @Entity()
 export class Country extends BaseEntity {
@@ -11,4 +13,10 @@ export class Country extends BaseEntity {
 
     @Column({ unique: true })
     code!: string;
+
+    @OneToMany((type) => User, (user) => user.country)
+    users!: User[];
+
+    // Used for mapping
+    captainApplications!: CaptainApplication[];
 }
