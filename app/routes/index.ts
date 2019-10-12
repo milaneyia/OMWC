@@ -1,5 +1,4 @@
 import Router from '@koa/router';
-import { authUser } from '../middlewares/authentication';
 import * as osuApi from '../middlewares/osuApi';
 import { CaptainApplication } from '../models/applications/CaptainApplication';
 import { JudgeApplication } from '../models/applications/JudgeApplication';

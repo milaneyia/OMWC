@@ -3,24 +3,24 @@ import { authenticate, isStaff } from '../../middlewares/authentication';
 import { MapperApplication } from '../../models/applications/MapperApplication';
 import { Team } from '../../models/Team';
 
-const mappersChoiceAdminRouter = new Router();
+const teamsChoiceAdminRouter = new Router();
 
-mappersChoiceAdminRouter.prefix('/admin/mappersChoice');
-mappersChoiceAdminRouter.use(authenticate);
-mappersChoiceAdminRouter.use(isStaff);
+teamsChoiceAdminRouter.prefix('/admin/teamsChoice');
+teamsChoiceAdminRouter.use(authenticate);
+teamsChoiceAdminRouter.use(isStaff);
 
-mappersChoiceAdminRouter.get('/', async (ctx) => {
+teamsChoiceAdminRouter.get('/', async (ctx) => {
     const applications = await MapperApplication.find({ relations: ['user'] });
     const teams = await Team.find({ relations: ['country', 'users'] });
 
-    return ctx.render('admin/mappersChoice', {
+    return ctx.render('admin/teamsChoice', {
         applications,
         teams,
         user: ctx.state.user,
     });
 });
 
-mappersChoiceAdminRouter.post('/confirm', async (ctx) => {
+teamsChoiceAdminRouter.post('/confirm', async (ctx) => {
     const team = await Team.findOneOrFail({ where: { id: ctx.request.body.teamId } });
     team.isCompeting = true;
     await team.save();
@@ -28,7 +28,7 @@ mappersChoiceAdminRouter.post('/confirm', async (ctx) => {
     return ctx.redirect('back');
 });
 
-mappersChoiceAdminRouter.post('/deny', async (ctx) => {
+teamsChoiceAdminRouter.post('/deny', async (ctx) => {
     const team = await Team.findOneOrFail({ where: { id: ctx.request.body.teamId } });
     team.isCompeting = false;
     await team.save();
@@ -36,4 +36,4 @@ mappersChoiceAdminRouter.post('/deny', async (ctx) => {
     return ctx.redirect('back');
 });
 
-export default mappersChoiceAdminRouter;
+export default teamsChoiceAdminRouter;

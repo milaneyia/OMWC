@@ -25,11 +25,11 @@ block content
                                                 span= application.user.username
                                         td
                                             if team.isCompeting
-                                                form(action="/admin/mappersChoice/deny", method="post")
+                                                form(action="/admin/teamsChoice/deny", method="post")
                                                     input(type="hidden", name="teamId" value=team.id)
                                                     button.btn-flat.waves-effect.waves-teal(type="submit") Deny team
                                             else
-                                                form(action="/admin/mappersChoice/confirm", method="post")
+                                                form(action="/admin/teamsChoice/confirm", method="post")
                                                     input(type="hidden", name="teamId" value=team.id)
                                                     button.btn-flat.waves-effect.waves-teal(type="submit") Confirm team
 
