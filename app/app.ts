@@ -10,6 +10,7 @@ import config from '../config.json';
 import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
 import judgesChoiceAdminRouter from './routes/admin/judgesChoice';
+import roundsAdminRouter from './routes/admin/rounds';
 import scheduleAdminRouter from './routes/admin/schedule';
 import teamsChoiceAdminRouter from './routes/admin/teamsChoice';
 import captainApplicationsRouter from './routes/applications/captains';
@@ -59,7 +60,7 @@ app.use(captainVotingRouter.allowedMethods());
 app.use(mappersChoiceRouter.routes());
 app.use(mappersChoiceRouter.allowedMethods());
 
-// Admin routes
+// Admin routes - pre start
 app.use(scheduleAdminRouter.routes());
 app.use(scheduleAdminRouter.allowedMethods());
 app.use(captainChoiceAdminRouter.routes());
@@ -68,6 +69,10 @@ app.use(teamsChoiceAdminRouter.routes());
 app.use(teamsChoiceAdminRouter.allowedMethods());
 app.use(judgesChoiceAdminRouter.routes());
 app.use(judgesChoiceAdminRouter.allowedMethods());
+
+// Admin Routes - after start
+app.use(roundsAdminRouter.routes());
+app.use(roundsAdminRouter.allowedMethods());
 
 app.on('error', (err, ctx) => {
     // tslint:disable-next-line

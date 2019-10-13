@@ -1,0 +1,40 @@
+extends ../../layout.pug
+
+block content
+    .container.center-align
+        form.row(action="/admin/rounds/save" method="post")
+            h4 Manage Round
+
+            .col.s12
+                .input-field
+                    textarea.materialize-textarea.validate(data-length="3000" name="information" required)
+                        = round && round.information
+                    label Information
+
+            .col.s6
+                .input-field
+                    input.validate(type="date", name="submissionsStartedAt" required value=(round && round.submissionsStartedAt))
+                    label Submissions Start Date
+
+            .col.s6
+                .input-field
+                    input.validate(type="date", name="submissionsEndedAt" required value=(round && round.submissionsEndedAt))
+                    label Submissions Start Date
+
+            .col.s6
+                .input-field
+                    input.validate(type="date", name="judgingStartedAt" required value=(round && round.judgingStartedAt))
+                    label Judging Start Date
+
+            .col.s6
+                .input-field
+                    input.validate(type="date", name="judgingEndedAt" required value=(round && round.judgingEndedAt))
+                    label Judging Start Date
+
+            .col.s12
+                button.btn.waves-effect.waves-light(type="submit")
+                    if round
+                        | Update Round
+                        input(type="hidden", name="roundId" value=round.id)
+                    else
+                        | Submit Round

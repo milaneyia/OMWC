@@ -1,0 +1,31 @@
+extends ../../layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                h4 Manage Rounds 
+                    a.btn.waves-effect.waves-light(href="/admin/rounds/create") Create
+
+        .row
+            .col.s12
+                table.highlight.responsive-table
+                    thead
+                        tr
+                            th Information
+                            th Submission Start
+                            th Submission End
+                            th Judging Start
+                            th Judging End
+                            th
+                    
+                    tbody
+                        each round in rounds
+                            tr
+                                td= round.information
+                                td= round.submissionsStartedAt
+                                td= round.submissionsEndedAt
+                                td= round.judgingStartedAt
+                                td= round.judgingEndedAt
+                                td
+                                    a.btn-flat.waves-effect.waves-teal(href="/admin/rounds/edit/" + round.id) Edit
