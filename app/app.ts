@@ -9,6 +9,7 @@ import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
+import judgesChoiceAdminRouter from './routes/admin/judgesChoice';
 import scheduleAdminRouter from './routes/admin/schedule';
 import teamsChoiceAdminRouter from './routes/admin/teamsChoice';
 import captainApplicationsRouter from './routes/applications/captains';
@@ -65,6 +66,8 @@ app.use(captainChoiceAdminRouter.routes());
 app.use(captainChoiceAdminRouter.allowedMethods());
 app.use(teamsChoiceAdminRouter.routes());
 app.use(teamsChoiceAdminRouter.allowedMethods());
+app.use(judgesChoiceAdminRouter.routes());
+app.use(judgesChoiceAdminRouter.allowedMethods());
 
 app.on('error', (err, ctx) => {
     // tslint:disable-next-line

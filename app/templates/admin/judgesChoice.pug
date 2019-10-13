@@ -1,0 +1,32 @@
+extends ../layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                if applications.length
+                    table.hover
+                        thead
+                            tr
+                                th Applicant
+                                th Reason
+                                th
+                        tbody
+                            each application in applications
+                                tr
+                                    td= application.user.username
+                                    td= application.reason
+                                    td
+                                        if currentJudges.find(j => j.id === application.user.id)
+                                            form(action="/admin/judgesChoice/destroy", method="post")
+                                                input(type="hidden", name="userId" value=application.user.id)
+                                                button.btn-flat.waves-effect.waves-teal(type="submit")
+                                                    | Remove
+                                        else
+                                            form(action="/admin/judgesChoice/store", method="post")
+                                                input(type="hidden", name="userId" value=application.user.id)
+                                                button.btn-flat.waves-effect.waves-teal(type="submit")
+                                                    | Add
+
+                else
+                    p no applications :(
