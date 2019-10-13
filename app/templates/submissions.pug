@@ -1,0 +1,37 @@
+extends layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                h4 OSZ Submissions
+
+                if submissions
+                    table.hightlight.reponsive-table
+                        thead
+                            tr
+                                th Round
+                                th Submission Date
+                                th Link
+                        tbody
+                            each submission in submissions
+                                tr
+                                    td= submission.round.title
+                                    td= new Date(submission.updatedAt).toLocaleString()
+                                    td
+                                        a(href=submission.originalLink) #{submission.originalLink}
+
+        if currentRound
+            .row
+                form.col.s12(action="/submissions/save", method="post")
+                    h5= currentRound.title
+                    
+                    p.
+                        You have from #[b= currentRound.submissionsStartedAt] to 
+                        #[b= currentRound.submissionsEndedAt] to submit your entry
+
+                    .input-field
+                        input.validate(type="text" name="oszFile" required value=(currentSubmission && currentSubmission.originalLink))
+                        label OSZ Link
+
+                    button.btn.waves-effect.waves-light(type="submit") Submit

@@ -9,22 +9,22 @@ export class Submission extends BaseEntity {
     id!: number;
 
     @Column()
-    originalPath!: string;
+    originalLink!: string;
+
+    @Column({ nullable: true })
+    anonymisedLink!: string;
 
     @Column()
-    anonymisedPAth!: string;
+    teamId!: number;
 
     @ManyToOne((type) => Team, { nullable: false })
     team!: Team;
 
+    @Column()
+    roundId!: number;
+
     @ManyToOne((type) => Round, { nullable: false })
     round!: Round;
-
-    @Column('date')
-    judgingStartedAt!: Date;
-
-    @Column('date')
-    judgingEndedAt!: Date;
 
     @CreateDateColumn()
     createdAt!: Date;

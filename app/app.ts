@@ -18,6 +18,7 @@ import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/captainVoting';
 import mappersChoiceRouter from './routes/mappersChoice';
+import submissionsRouter from './routes/submissions';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -59,6 +60,10 @@ app.use(captainVotingRouter.routes());
 app.use(captainVotingRouter.allowedMethods());
 app.use(mappersChoiceRouter.routes());
 app.use(mappersChoiceRouter.allowedMethods());
+
+// OSZ Submissions - captain
+app.use(submissionsRouter.routes());
+app.use(submissionsRouter.allowedMethods());
 
 // Admin routes - pre start
 app.use(scheduleAdminRouter.routes());
