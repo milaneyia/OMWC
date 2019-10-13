@@ -17,13 +17,13 @@ roundsAdminRouter.get('/', async (ctx) => {
 });
 
 roundsAdminRouter.get('/create', async (ctx) => {
-    return ctx.render('admin/rounds/edit');
+    return ctx.render('admin/rounds/manage');
 });
 
 roundsAdminRouter.get('/edit/:id', async (ctx) => {
     const round = await Round.findOneOrFail({ where: { id: ctx.params.id } });
 
-    return ctx.render('admin/rounds/edit', {
+    return ctx.render('admin/rounds/manage', {
         round,
     });
 });
