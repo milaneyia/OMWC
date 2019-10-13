@@ -5,9 +5,14 @@ block content
         form.row(action="/admin/rounds/save" method="post")
             h4 Manage Round
 
-            .col.s12
+            .col.s6
                 .input-field
-                    textarea.materialize-textarea.validate(data-length="3000" name="information" required)
+                    input.validate(type="text", name="title" maxlength="255" required value=round && round.title)
+                    label Title
+
+            .col.s6
+                .input-field
+                    textarea.materialize-textarea.validate(data-length="3000" name="information")
                         = round && round.information
                     label Information
 

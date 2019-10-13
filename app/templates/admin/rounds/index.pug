@@ -12,6 +12,7 @@ block content
                 table.highlight.responsive-table
                     thead
                         tr
+                            th Title
                             th Information
                             th Submission Start
                             th Submission End
@@ -22,6 +23,7 @@ block content
                     tbody
                         each round in rounds
                             tr
+                                td= round.title
                                 td= round.information
                                 td= round.submissionsStartedAt
                                 td= round.submissionsEndedAt
