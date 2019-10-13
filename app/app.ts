@@ -61,7 +61,7 @@ app.use(captainVotingRouter.allowedMethods());
 app.use(mappersChoiceRouter.routes());
 app.use(mappersChoiceRouter.allowedMethods());
 
-// OSZ Submissions - captain
+// .osz Submissions - captain
 app.use(submissionsRouter.routes());
 app.use(submissionsRouter.allowedMethods());
 

@@ -4,7 +4,7 @@ block content
     .container.center-align
         .row
             .col.s12
-                h4 OSZ Submissions
+                h4 .osz Submissions
 
                 if submissions
                     table.hightlight.reponsive-table
@@ -26,12 +26,14 @@ block content
                 form.col.s12(action="/submissions/save", method="post")
                     h5= currentRound.title
                     
+                    p= currentRound.information
+
                     p.
                         You have from #[b= currentRound.submissionsStartedAt] to 
                         #[b= currentRound.submissionsEndedAt] to submit your entry
 
                     .input-field
                         input.validate(type="text" name="oszFile" required value=(currentSubmission && currentSubmission.originalLink))
-                        label OSZ Link
+                        label .osz Link
 
                     button.btn.waves-effect.waves-light(type="submit") Submit
