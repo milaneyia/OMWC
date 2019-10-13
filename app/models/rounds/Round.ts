@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, LessThanOrEqual,
-    MoreThanOrEqual, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+    MoreThanOrEqual, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Submission } from './Submission';
 
 @Entity()
 export class Round extends BaseEntity {
@@ -35,6 +36,9 @@ export class Round extends BaseEntity {
 
     @Column('date')
     judgingEndedAt!: Date;
+
+    @OneToMany((type) => Submission, (submission) => submission.round)
+    submissions!: Submission[];
 
     @CreateDateColumn()
     createdAt!: Date;

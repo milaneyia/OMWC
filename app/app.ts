@@ -10,6 +10,7 @@ import config from '../config.json';
 import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
 import judgesChoiceAdminRouter from './routes/admin/judgesChoice';
+import submissionsAdminRouter from './routes/admin/manageSubmissions';
 import roundsAdminRouter from './routes/admin/rounds';
 import scheduleAdminRouter from './routes/admin/schedule';
 import teamsChoiceAdminRouter from './routes/admin/teamsChoice';
@@ -78,6 +79,8 @@ app.use(judgesChoiceAdminRouter.allowedMethods());
 // Admin Routes - after start
 app.use(roundsAdminRouter.routes());
 app.use(roundsAdminRouter.allowedMethods());
+app.use(submissionsAdminRouter.routes());
+app.use(submissionsAdminRouter.allowedMethods());
 
 app.on('error', (err, ctx) => {
     // tslint:disable-next-line

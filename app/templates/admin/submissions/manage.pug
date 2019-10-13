@@ -1,0 +1,22 @@
+extends ../../layout.pug
+
+block content
+    .container.center-align
+        form.row(action="/admin/manageSubmissions/save" method="post")
+            .col.s12
+                h4 Manage Submission
+
+            .col.s6
+                .input-field
+                    input.validate(type="text", name="originalLink" maxlength="255" required value=submission.originalLink)
+                    label Original Link
+
+            .col.s6
+                .input-field
+                    input.validate(type="text", name="anonymisedLink" maxlength="255" value=submission.anonymisedLink)
+                    label Anonymised Link
+                    
+            .col.s12
+                input(type="hidden", name="submissionId" value=submission.id)
+                button.btn.waves-effect.waves-light(type="submit")
+                    | Update Submission

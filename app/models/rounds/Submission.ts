@@ -23,7 +23,7 @@ export class Submission extends BaseEntity {
     @Column()
     roundId!: number;
 
-    @ManyToOne((type) => Round, { nullable: false })
+    @ManyToOne((type) => Round, (round) => round.submissions, { nullable: false })
     round!: Round;
 
     @CreateDateColumn()
