@@ -36,7 +36,7 @@ submissionsAdminRouter.post('/save', async (ctx) => {
     }
 
     submission.originalLink = ctx.request.body.originalLink.trim();
-    submission.anonymisedLink = ctx.request.body.anonymisedLink && ctx.request.body.anonymisedLink.trim() || null;
+    submission.anonymisedAs = ctx.request.body.anonymisedAs.trim() || null;
     await submission.save();
 
     return ctx.redirect('/admin/manageSubmissions');

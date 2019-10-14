@@ -16,7 +16,7 @@ block content
                                     th Team
                                     th Submission Date
                                     th Original Link
-                                    th Anonymised Link
+                                    th Anonymised As
                                     th
                             tbody
                                 each submission in round.submissions
@@ -25,8 +25,7 @@ block content
                                         td= new Date(submission.updatedAt).toLocaleString()
                                         td
                                             a(href=submission.originalLink) #{submission.originalLink}
-                                        td
-                                            a(href=submission.anonymisedLink) #{submission.anonymisedLink}
+                                        td=submission.anonymisedAs
                                         td
                                             a.btn-flat.waves-effect.waves-teal(href="/admin/manageSubmissions/edit/" + submission.id) Edit
                             

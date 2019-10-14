@@ -35,12 +35,13 @@ roundsAdminRouter.post('/save', async (ctx) => {
         round = new Round();
     }
 
-    if (!ctx.request.body.title.trim()) {
+    if (!ctx.request.body.title) {
         return ctx.render('error');
     }
 
     round.title = ctx.request.body.title.trim();
-    round.information = ctx.request.body.information.trim();
+    round.information = ctx.request.body.information.trim() || null;
+    round.anonymisedLink = ctx.request.body.anonymisedLink.trim() || null;
     round.submissionsStartedAt = ctx.request.body.submissionsStartedAt;
     round.submissionsEndedAt = ctx.request.body.submissionsEndedAt;
     round.judgingStartedAt = ctx.request.body.judgingStartedAt;

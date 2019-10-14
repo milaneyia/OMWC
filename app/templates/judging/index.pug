@@ -1,0 +1,12 @@
+extends ../layout.pug
+
+block content
+    #app
+        judging(
+            :current-round-prop=currentRound
+            :judging-done-prop=judgingDone
+            :criterias=criterias
+        )
+
+block scripts
+    script(src="/js/judging.js")

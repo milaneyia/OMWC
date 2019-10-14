@@ -39,6 +39,14 @@ export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<a
     }
 }
 
+export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any>) {
+    if (User.isJudge(ctx.state.user)) {
+        return await next();
+    } else {
+        return ctx.redirect('back');
+    }
+}
+
 export async function canVoteForCaptain(ctx: ParameterizedContext, next: () => Promise<any>) {
     const mapperApplication = await MapperApplication.findOne({ where: { userId: ctx.state.user.id } });
     const captainApplication = await CaptainApplication.findOne({ where: { userId: ctx.state.user.id } });

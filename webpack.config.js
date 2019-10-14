@@ -3,7 +3,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: {
-        index: './src/index.ts',
+        judging: './src/judging.ts',
     },
     output: {
         path: path.resolve(__dirname, './dist/public/js/'),

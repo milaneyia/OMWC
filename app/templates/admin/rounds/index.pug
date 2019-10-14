@@ -14,6 +14,7 @@ block content
                         tr
                             th Title
                             th Information
+                            th Anonymised Link
                             th Submission Start
                             th Submission End
                             th Judging Start
@@ -25,6 +26,8 @@ block content
                             tr
                                 td= round.title
                                 td= round.information
+                                td
+                                    a(href=round.anonymisedLink) #{round.anonymisedLink}
                                 td= round.submissionsStartedAt
                                 td= round.submissionsEndedAt
                                 td= round.judgingStartedAt

@@ -12,7 +12,7 @@ export class Submission extends BaseEntity {
     originalLink!: string;
 
     @Column({ nullable: true })
-    anonymisedLink!: string;
+    anonymisedAs!: string;
 
     @Column()
     teamId!: number;

@@ -21,6 +21,10 @@ export class User extends BaseEntity {
         return user.team && user.team.captainId;
     }
 
+    static isJudge(user: User) {
+        return user.roleId === ROLE.Judge;
+    }
+
     @PrimaryGeneratedColumn()
     id!: number;
 

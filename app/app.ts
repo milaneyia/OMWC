@@ -10,6 +10,7 @@ import config from '../config.json';
 import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
 import judgesChoiceAdminRouter from './routes/admin/judgesChoice';
+import criteriasAdminRouter from './routes/admin/judging/criterias';
 import submissionsAdminRouter from './routes/admin/manageSubmissions';
 import roundsAdminRouter from './routes/admin/rounds';
 import scheduleAdminRouter from './routes/admin/schedule';
@@ -18,6 +19,7 @@ import captainApplicationsRouter from './routes/applications/captains';
 import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/captainVoting';
+import judgingRouter from './routes/judging';
 import mappersChoiceRouter from './routes/mappersChoice';
 import submissionsRouter from './routes/submissions';
 
@@ -66,6 +68,10 @@ app.use(mappersChoiceRouter.allowedMethods());
 app.use(submissionsRouter.routes());
 app.use(submissionsRouter.allowedMethods());
 
+// Judges page
+app.use(judgingRouter.routes());
+app.use(judgingRouter.allowedMethods());
+
 // Admin routes - pre start
 app.use(scheduleAdminRouter.routes());
 app.use(scheduleAdminRouter.allowedMethods());
@@ -77,6 +83,8 @@ app.use(judgesChoiceAdminRouter.routes());
 app.use(judgesChoiceAdminRouter.allowedMethods());
 
 // Admin Routes - after start
+app.use(criteriasAdminRouter.routes());
+app.use(criteriasAdminRouter.allowedMethods());
 app.use(roundsAdminRouter.routes());
 app.use(roundsAdminRouter.allowedMethods());
 app.use(submissionsAdminRouter.routes());
