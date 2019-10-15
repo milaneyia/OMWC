@@ -37,6 +37,6 @@ export class Judging extends BaseEntity {
     @Column()
     submissionId!: number;
 
-    @ManyToOne((type) => Submission, { nullable: false })
+    @ManyToOne((type) => Submission, (submission) => submission.judging, { nullable: false })
     submission!: Submission;
 }

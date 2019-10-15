@@ -12,7 +12,7 @@ submissionsRouter.use(async (ctx, next) => {
     if (ctx.state.user.team.isCompeting) {
         await next();
     } else {
-        return ctx.render('error', 'Your team is not competing');
+        return ctx.render('error', { error: 'Your team is not competing' });
     }
 });
 

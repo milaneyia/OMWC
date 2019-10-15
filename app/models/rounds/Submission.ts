@@ -1,4 +1,6 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne,
+    OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Judging } from '../judging/Judging';
 import { Team } from '../Team';
 import { Round } from './Round';
 
@@ -25,6 +27,9 @@ export class Submission extends BaseEntity {
 
     @ManyToOne((type) => Round, (round) => round.submissions, { nullable: false })
     round!: Round;
+
+    @OneToMany((type) => Judging, (judging) => judging.submission)
+    judging!: Judging[];
 
     @CreateDateColumn()
     createdAt!: Date;

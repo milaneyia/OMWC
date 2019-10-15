@@ -11,6 +11,7 @@ import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
 import judgesChoiceAdminRouter from './routes/admin/judgesChoice';
 import criteriasAdminRouter from './routes/admin/judging/criterias';
+import judgingAdminRouter from './routes/admin/judging/index';
 import submissionsAdminRouter from './routes/admin/manageSubmissions';
 import roundsAdminRouter from './routes/admin/rounds';
 import scheduleAdminRouter from './routes/admin/schedule';
@@ -27,7 +28,14 @@ const app = new Koa();
 app.keys = config.keys;
 
 // DB initialization
-createConnection();
+createConnection().then(() => {
+    // tslint:disable-next-line
+    console.log('DB initializated');
+})
+.catch((err) => {
+    // tslint:disable-next-line
+    console.log(err);
+});
 
 // Middlewares
 app.use(session(app));
@@ -89,6 +97,8 @@ app.use(roundsAdminRouter.routes());
 app.use(roundsAdminRouter.allowedMethods());
 app.use(submissionsAdminRouter.routes());
 app.use(submissionsAdminRouter.allowedMethods());
+app.use(judgingAdminRouter.routes());
+app.use(judgingAdminRouter.allowedMethods());
 
 app.on('error', (err, ctx) => {
     // tslint:disable-next-line
