@@ -1,0 +1,23 @@
+extends layout.pug
+
+block content
+    .container.center-align
+        .row
+            .col.s12
+                h4 Leaderboard
+
+        .row
+            .col.s12
+                if teams
+                    table.hightlight.reponsive-table
+                        thead
+                            tr
+                                th Team
+                                th Score
+                                th Eliminated On
+                        tbody
+                            each team in teams
+                                tr
+                                    td= team.country.name
+                                    td= team.score
+                                    td= team.eliminationRound && team.eliminationRound.title

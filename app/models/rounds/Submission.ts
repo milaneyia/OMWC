@@ -19,7 +19,7 @@ export class Submission extends BaseEntity {
     @Column()
     teamId!: number;
 
-    @ManyToOne((type) => Team, { nullable: false })
+    @ManyToOne((type) => Team, (team) => team.submissions, { nullable: false })
     team!: Team;
 
     @Column()

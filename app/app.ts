@@ -21,6 +21,7 @@ import judgeApplicationsRouter from './routes/applications/judges';
 import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/captainVoting';
 import judgingRouter from './routes/judging';
+import leaderboardRouter from './routes/leaderboard';
 import mappersChoiceRouter from './routes/mappersChoice';
 import submissionsRouter from './routes/submissions';
 
@@ -49,6 +50,10 @@ app.use(views(path.join(__dirname, 'templates'), {
 app.use(async (ctx, next) => {
     try {
         await next();
+
+        if (ctx.status === 404) {
+            await ctx.render('error');
+        }
     } catch (err) {
         ctx.status = err.status || 500;
         await ctx.render('error');
@@ -56,9 +61,11 @@ app.use(async (ctx, next) => {
     }
 });
 
-// Index route
+// Public routes
 app.use(indexRouter.routes());
 app.use(indexRouter.allowedMethods());
+app.use(leaderboardRouter.routes());
+app.use(leaderboardRouter.allowedMethods());
 
 // Applications & Choices routes
 app.use(captainApplicationsRouter.routes());

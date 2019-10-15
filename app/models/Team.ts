@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Country } from './Country';
 import { Round } from './rounds/Round';
+import { Submission } from './rounds/Submission';
 import { User } from './User';
 
 @Entity()
@@ -36,4 +37,10 @@ export class Team extends BaseEntity {
 
     @OneToMany((type) => User, (user) => user.team)
     users!: User[];
+
+    @OneToMany((type) => Submission, (submissions) => submissions.team)
+    submissions!: Submission[];
+
+    // Used for the leaderboard
+    score!: number;
 }
