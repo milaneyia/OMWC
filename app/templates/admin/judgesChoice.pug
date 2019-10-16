@@ -1,11 +1,12 @@
 extends ../layout.pug
+include ../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 if applications.length
-                    table.highlight.responsive-table
+                    table.table.table-hover
                         thead
                             tr
                                 th Applicant
@@ -18,15 +19,14 @@ block content
                                     td= application.reason
                                     td
                                         if currentJudges.find(j => j.id === application.user.id)
-                                            form(action="/admin/judgesChoice/destroy", method="post")
+                                            form(action="/admin/judgesChoice/destroy" method="post")
                                                 input(type="hidden", name="userId" value=application.user.id)
-                                                button.btn-flat.waves-effect.waves-teal(type="submit")
-                                                    | Remove
+                                                +submit-button('Remove')
+
                                         else
-                                            form(action="/admin/judgesChoice/store", method="post")
+                                            form(action="/admin/judgesChoice/store" method="post")
                                                 input(type="hidden", name="userId" value=application.user.id)
-                                                button.btn-flat.waves-effect.waves-teal(type="submit")
-                                                    | Add
+                                                +submit-button('Add')
 
                 else
-                    p no applications :(
+                    p No applications yet

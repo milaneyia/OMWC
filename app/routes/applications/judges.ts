@@ -14,7 +14,7 @@ judgeApplicationsRouter.use(async (ctx, next) => {
 judgeApplicationsRouter.use(onGoingApplications);
 
 judgeApplicationsRouter.get('/edit', async (ctx) => {
-    const app = await JudgeApplication.findUserApplication(ctx.state.user);
+    const app = await JudgeApplication.findUserApplication(ctx.state.user.id);
 
     return ctx.render('applications/judges', {
         app,
@@ -23,7 +23,7 @@ judgeApplicationsRouter.get('/edit', async (ctx) => {
 });
 
 judgeApplicationsRouter.post('/save', async (ctx) => {
-    let app = await JudgeApplication.findUserApplication(ctx.state.user);
+    let app = await JudgeApplication.findUserApplication(ctx.state.user.id);
 
     if (!app) {
         app = new JudgeApplication();

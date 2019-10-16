@@ -1,7 +1,7 @@
 {
   "name": "omwc",
   "scripts": {
-    "dev": "run-p watch-app watch-src",
+    "dev": "run-p -rl watch-app watch-src",
     "watch-app": "ts-node-dev --respawn --transpileOnly app/app.ts",
     "watch-src": "webpack-dev-server",
     "build-app": "tsc",
@@ -35,8 +35,12 @@
     "css-loader": "^3.2.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.12.0",
     "npm-run-all": "^4.1.5",
     "pug-plain-loader": "^1.0.0",
+    "sass": "^1.23.0",
+    "sass-loader": "^8.0.0",
     "ts-loader": "^6.2.0",
     "ts-node-dev": "^1.0.0-pre.43",
     "tslint": "^5.20.0",

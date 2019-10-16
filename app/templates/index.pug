@@ -1,67 +1,71 @@
 extends layout.pug
+include ./mixins/buttons.pug
+include ./mixins/extras.pug
 
 block content
-    #app.container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h1 osu! Mapping World Cup
 
                 if user
                     p #{user.username} #{user.country.name}
-                    img(src=`https://osu.ppy.sh/images/flags/${user.country.code}.png`, alt="flag")
+                    +img-flag(user.country.code)
                 else
                     form(action="/login" method="GET")
-                        button(class="btn waves-effect waves-light" type="submit")
+                        button.btn.btn-primary(type="submit")
                             | Verify your osu! account to continue
 
         if user
-            .row
-                .col.s12
-                    a(href="/applications/captains/edit" class="btn waves-effect waves-light")
-                        if captainApplication
-                            | Edit your team captain application
-                        else
-                            | Apply for team captain
+            .row.my-2
+                .col-sm
+                    +link-button(
+                        captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
+                        '/applications/captains/edit'
+                    )
 
-            .row
-                .col.s12
+            .row.my-2
+                .col-sm
                     if mapperApplication
-                        a(href="#" class="btn waves-effect waves-light disabled")
-                            | You've applied as a mapper
+                        +link-button-disabled(`You've applied as a mapper`)
                     else
-                        a(href="/applications/mappers/edit" class="btn waves-effect waves-light")
-                            | Apply as a mapper
+                        +link-button('Apply as a mapper', '/applications/mappers/edit')
 
-            .row
-                .col.s12
-                    a(href="/applications/judges/edit" class="btn waves-effect waves-light")
-                        if judgeApplication
-                            | Edit your judge application
-                        else
-                            | Apply as a judge
+            .row.my-2
+                .col-sm
+                    +link-button(
+                        judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
+                        '/applications/judges/edit'
+                    )
 
-            .row
-                .divider
+            hr
 
-            .row
-                .col.s12
-                    a(href="/captainVoting" class="btn waves-effect waves-light")
-                        | Captain Voting
+            .row.my-2
+                .col-sm
+                    +link-button(
+                        'Captain Voting',
+                        '/captainVoting'
+                    )
 
-            .row
-                .col.s12
-                    a(href="/mappersChoice" class="btn waves-effect waves-light")
-                        | Mappers Choice
+            .row.my-2
+                .col-sm
+                    +link-button(
+                        'Mappers Choice',
+                        '/mappersChoice'
+                    )
 
-            .row
-                .col.s12
-                    a(href="/submissions" class="btn waves-effect waves-light")
-                        | .osz submissions
+            .row.my-2
+                .col-sm
+                    +link-button(
+                        '.osz submissions',
+                        '/submissions'
+                    )
 
-            .row
-                .divider
+            hr
 
-            .row
-                .col.s12
-                    a(href="/judging" class="btn waves-effect waves-light")
-                        | Judging
+            .row.my-2
+                .col.sm
+                    +link-button(
+                        'Judging',
+                        '/judging'
+                    )

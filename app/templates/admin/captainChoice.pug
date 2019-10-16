@@ -1,14 +1,15 @@
 extends ../layout.pug
+include ../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 if applicationsByCountry.length
                     each country in applicationsByCountry
                         h4= country.name
 
-                        table.highlight.responsive-table
+                        table.table.table-hover
                             thead
                                 tr
                                     th Applicant
@@ -27,12 +28,13 @@ block content
                                             if (application.user.team && application.user.team.captainId === application.user.id)
                                                 form(action="/admin/captainChoice/destroy", method="post")
                                                     input(type="hidden", name="applicationId" value=application.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Remove
+                                                    +submit-button('Remove')
+
                                             //- If there's NOT any captain in the country
                                             else if !(country.captainApplications.find(a => a.user.team && a.user.team.captainId))
                                                 form(action="/admin/captainChoice/store", method="post")
                                                     input(type="hidden", name="applicationId" value=application.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Choose
+                                                    +submit-button('Choose')
 
                 else
-                    p no applications :(
+                    p No applications yet

@@ -14,7 +14,7 @@ captainApplicationsRouter.use(async (ctx, next) => {
 captainApplicationsRouter.use(onGoingApplications);
 
 captainApplicationsRouter.get('/edit', async (ctx) => {
-    const app = await CaptainApplication.findUserApplication(ctx.state.user);
+    const app = await CaptainApplication.findUserApplication(ctx.state.user.id);
 
     return ctx.render('applications/captains', {
         app,
@@ -23,7 +23,7 @@ captainApplicationsRouter.get('/edit', async (ctx) => {
 });
 
 captainApplicationsRouter.post('/save', async (ctx) => {
-    let app = await CaptainApplication.findUserApplication(ctx.state.user);
+    let app = await CaptainApplication.findUserApplication(ctx.state.user.id);
 
     if (!app) {
         app = new CaptainApplication();

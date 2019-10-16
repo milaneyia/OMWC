@@ -1,23 +1,26 @@
 extends layout.pug
+include ./mixins/extras.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 Leaderboard
 
         .row
-            .col.s12
+            .col-sm
                 if teams
-                    table.hightlight.reponsive-table
+                    table.table.table-hover
                         thead
                             tr
+                                th #
                                 th Team
-                                th Score
+                                th Final Score
                                 th Eliminated On
                         tbody
-                            each team in teams
+                            each team, i in teams
                                 tr
-                                    td= team.country.name
+                                    td= i + 1
+                                    td #[+inline-flag(team.country.code)] #{team.country.name}
                                     td= team.score
                                     td= team.eliminationRound && team.eliminationRound.title

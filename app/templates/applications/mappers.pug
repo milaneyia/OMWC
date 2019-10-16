@@ -1,13 +1,13 @@
 extends ../layout.pug
+include ../mixins/buttons.pug
 
 block content
-    form.container(action="/applications/mappers/store", method="post")
+    .container.text-center
         .row
-            .col.s12.center-align
+            .col-sm
                 h4 Hi #{user.username} you're applying to be part of the team #{user.country.name} as a mapper
 
         .row
-            .col.s12.center-align
-                button.btn.waves-effect.waves-light(type="submit")
-                    | Apply! 
-                    i.material-icons.right send
+            .col-sm
+                form(action="/applications/mappers/store", method="post")
+                    +submit-button('Apply')

@@ -1,0 +1,29 @@
+.tabs {
+    display: flex;
+    justify-content: center;
+    & .tab {
+        padding: 10px;
+        background-color: lightblue;
+        border-radius: 10px;
+        margin-right: 10px;
+    }
+}
+
+.country-flag {
+    border-radius: 4px;
+    height: 20px;
+    width: 30px;
+    background-size: cover;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.avatar {
+    border-radius: 8px;
+    height: 60px;
+    width: 60px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: inline-block;
+}

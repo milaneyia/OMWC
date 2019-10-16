@@ -7,8 +7,8 @@ import { User } from '../User';
 @Entity()
 export class CaptainApplication extends BaseEntity {
 
-    static findUserApplication(user: User) {
-        return this.findOne({ where: { user } });
+    static findUserApplication(userId: number) {
+        return this.findOne({ where: { userId } });
     }
 
     static findOneOrFailWithUser(captainApplicationId: number) {
@@ -23,6 +23,9 @@ export class CaptainApplication extends BaseEntity {
 
     @Column({ length: 3000 })
     reason!: string;
+
+    @Column()
+    userId!: number;
 
     @ManyToOne((type) => User, (user) => user.captainApplication, { nullable: false })
     user!: User;

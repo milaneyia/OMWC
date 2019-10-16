@@ -3,6 +3,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: {
+        app: './src/app.ts',
         judging: './src/judging.ts',
     },
     output: {
@@ -37,14 +38,15 @@ module.exports = {
             {
                 test: /\.pug$/,
                 loader: 'pug-plain-loader'
+            },
+            {
+                test: /\.s[ac]ss$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader',
+                    'sass-loader'
+                ]
             }
-            // {
-            //     test: /\.css$/,
-            //     use: [
-            //         'vue-style-loader',
-            //         'css-loader'
-            //     ]
-            // }
         ]
     },
     resolve: {

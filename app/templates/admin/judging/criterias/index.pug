@@ -1,15 +1,16 @@
 extends ../../../layout.pug
+include ../../../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 Manage Criterias 
-                    a.btn.waves-effect.waves-light(href="/admin/judging/criterias/create") Create
+                    +link-button('Create', '/admin/judging/criterias/create')
 
         .row
-            .col.s12
-                table.highlight.responsive-table
+            .col-sm
+                table.table.table-hover
                     thead
                         tr
                             th Name
@@ -22,4 +23,4 @@ block content
                                 td= criteria.name
                                 td= criteria.maxScore
                                 td
-                                    a.btn-flat.waves-effect.waves-teal(href="/admin/judging/criterias/edit/" + criteria.id) Edit
+                                    +link-button('Edit', '/admin/judging/criterias/edit/' + criteria.id)

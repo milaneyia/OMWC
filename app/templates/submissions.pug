@@ -1,13 +1,15 @@
 extends layout.pug
+include ./mixins/buttons.pug
+include ./mixins/extras.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 .osz Submissions
 
                 if submissions
-                    table.hightlight.reponsive-table
+                    table.table.table-hover
                         thead
                             tr
                                 th Round
@@ -17,23 +19,24 @@ block content
                             each submission in submissions
                                 tr
                                     td= submission.round.title
-                                    td= new Date(submission.updatedAt).toLocaleString()
+                                    td
+                                        +local-date(submission.updatedAt)
                                     td
                                         a(href=submission.originalLink) #{submission.originalLink}
 
+        hr
+
         if currentRound
             .row
-                form.col.s12(action="/submissions/save", method="post")
+                form.col-sm(action="/submissions/save", method="post")
                     h5= currentRound.title
-                    
                     p= currentRound.information
-
                     p.
                         You have from #[b= currentRound.submissionsStartedAt] to 
                         #[b= currentRound.submissionsEndedAt] to submit your entry
 
-                    .input-field
-                        input.validate(type="text" name="oszFile" required value=(currentSubmission && currentSubmission.originalLink))
+                    .form-group
                         label .osz Link
+                        input.form-control(type="text" name="oszFile" required value=(currentSubmission && currentSubmission.originalLink))
 
-                    button.btn.waves-effect.waves-light(type="submit") Submit
+                    +submit-button

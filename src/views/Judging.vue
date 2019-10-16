@@ -1,36 +1,38 @@
 <template lang="pug">
-    .container.center-align
-        .row
-            .col.s12
+    .container.text-center
+        .row.mb-4
+            .col-sm
                 h4 {{ currentRound.title }}
                 a(:href="currentRound.anonymisedLink") Download .osz
         
-        .row
-            .col.s12
-                label Entry to evaluate
-                select.browser-default(v-model="selectedSubmissionId" @change="setRelatedJudging()")
-                    option(value="0" disabled selected) Choose an entry
-                    option(v-for="submission in currentRound.submissions" :key="submission.id" :value="submission.id")
-                        | {{ submission.anonymisedAs }}
+        .row.mb-4
+            .col-sm
+                .form-group
+                    select.form-control(v-model="selectedSubmissionId" @change="setRelatedJudging()")
+                        option(value="0" disabled selected) Choose an entry
+                        option(v-for="submission in currentRound.submissions" :key="submission.id" :value="submission.id")
+                            | {{ submission.anonymisedAs }}
 
         .row(v-if="selectedSubmissionId")
-            .col.s12
-                a(href="#" v-for="criteria in criterias" @click="selectCriteria(criteria.id)") {{ criteria.name }} 
+            .col-sm
+                .tabs
+                    a.tab(href="#" v-for="criteria in criterias" @click="selectCriteria(criteria.id)")
+                        | {{ criteria.name }}
 
                 div(v-if="selectedCriteriaId")
-                    .input-field
-                        input(type="number" step=".01" v-model="judging.score")
+                    .form-group
                         label Score
+                        input.form-control(type="number" step=".01" v-model="judging.score")
 
-                    .input-field
-                        textarea.materialize-textarea(data-length="3000" v-model.trim="judging.comment")
+                    .form-group
                         label Comment
+                        textarea.form-control(maxlength="3000" rows="3" v-model.trim="judging.comment")
 
-                    button.btn.waves-effect.waves-light(type="button" @click="save()")
+                    button.btn.btn-primary(type="button" @click="save()")
                         | Save
 
         .row
-            .col.s12
+            .col-sm
                 p {{ info }}
 
 </template>

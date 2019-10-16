@@ -1,16 +1,18 @@
 extends ../../layout.pug
+include ../../mixins/buttons.pug
+include ../../mixins/extras.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 Submissions
 
                 each round in rounds
                     h5= round.title
 
                     if round.submissions && round.submissions.length
-                        table.hightlight.reponsive-table
+                        table.table.table-hover
                             thead
                                 tr
                                     th Team
@@ -22,12 +24,13 @@ block content
                                 each submission in round.submissions
                                     tr
                                         td= submission.team.country.name
-                                        td= new Date(submission.updatedAt).toLocaleString()
+                                        td
+                                            +local-date(submission.updatedAt)
                                         td
                                             a(href=submission.originalLink) #{submission.originalLink}
-                                        td=submission.anonymisedAs
+                                        td= submission.anonymisedAs
                                         td
-                                            a.btn-flat.waves-effect.waves-teal(href="/admin/manageSubmissions/edit/" + submission.id) Edit
+                                            +link-button('Edit', '/admin/manageSubmissions/edit/' + submission.id)
                             
                     else
                         p None.

@@ -1,13 +1,14 @@
 extends layout.pug
+include ./mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
-                h4 Hi #{user.username}, vote for the person that best fits the captain role for your country!
+            .col-sm
+                h4 Hi #{user.username}, vote for the person who best fits the captain role for your country!
 
                 if applications && applications.length
-                    table.highlight.responsive-table
+                    table.table.table-hover
                         thead
                             tr
                                 th Person
@@ -21,13 +22,13 @@ block content
                                     td
                                         if application.user.id !== user.id
                                             if votesDone && votesDone.find((v) => v.captainApplication.id === application.id)
-                                                form(action="/captainVoting/destroy", method="post")
+                                                form(action="/captainVoting/destroy" method="post")
                                                     input(type="hidden" name="applicationId" value=application.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Cancel Vote
+                                                    +submit-button('Cancel Vote')
                                             else
-                                                form(action="/captainVoting/store", method="post")
+                                                form(action="/captainVoting/store" method="post")
                                                     input(type="hidden" name="applicationId" value=application.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Vote
+                                                    +submit-button('Vote')
 
                 else
                     | Noone applied :(

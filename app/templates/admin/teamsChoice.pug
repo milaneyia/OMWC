@@ -1,37 +1,41 @@
 extends ../layout.pug
+include ../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 if teams.length
-                    each team in teams
-                        h4= team.country.name
-
-                        table.highlight.responsive-table
-                            thead
+                    h4 Confirm Teams
+                    table.table.table-hover
+                        thead
+                            tr
+                                th Team
+                                th Chosen
+                                th Not chosen
+                                th
+                        tbody
+                            each team in teams
                                 tr
-                                    th :)
-                                    th :(
-                                    th
-                            tbody
-                                each application in applications
-                                    tr
-                                        td
-                                            if (team.users && team.users.find(u => u.id === application.user.id) !== undefined)
-                                                span= application.user.username
-                                        td
-                                            if (!team.users || team.users.find(u => u.id === application.user.id) === undefined)
-                                                span= application.user.username
-                                        td
-                                            if team.isCompeting
-                                                form(action="/admin/teamsChoice/deny", method="post")
-                                                    input(type="hidden", name="teamId" value=team.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Deny team
-                                            else
-                                                form(action="/admin/teamsChoice/confirm", method="post")
-                                                    input(type="hidden", name="teamId" value=team.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Confirm team
+                                    td= team.country.name
+                                    td
+                                        if team.users
+                                            each user in team.users
+                                                = user.username + ' '
+                                    td
+                                        - let notChosen = (team.users ? applications.filter(a => (!team.users || team.users.find(u => u.id === a.user.id) === undefined)) : applications)
+                                        each application in notChosen
+                                            = application.user.username + ' '
+                                    td
+                                        if team.isCompeting
+                                            form(action="/admin/teamsChoice/deny" method="post")
+                                                input(type="hidden", name="teamId" value=team.id)
+                                                +submit-button('Deny team')
+
+                                        else
+                                            form(action="/admin/teamsChoice/confirm" method="post")
+                                                input(type="hidden", name="teamId" value=team.id)
+                                                +submit-button('Confirm team')
 
                 else
-                    p no teams :(
+                    p No teams yet

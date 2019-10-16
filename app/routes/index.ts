@@ -10,10 +10,21 @@ import { User } from '../models/User';
 const indexRouter = new Router();
 
 indexRouter.get('/', async (ctx) => {
-    const captainApplication = await CaptainApplication.findUserApplication(ctx.state.user);
-    const mapperApplication = await MapperApplication.findUserApplication(ctx.state.user);
-    const judgeApplication = await JudgeApplication.findUserApplication(ctx.state.user);
-    const user = await User.findOne({ where: { osuId: ctx.session.osuId }});
+    const osuId = ctx.session.osuId;
+    let user;
+    let captainApplication;
+    let mapperApplication;
+    let judgeApplication;
+
+    if (osuId) {
+        user = await User.findOne({ osuId });
+
+        if (user) {
+            captainApplication = await CaptainApplication.findUserApplication(user.id);
+            mapperApplication = await MapperApplication.findUserApplication(user.id);
+            judgeApplication = await JudgeApplication.findUserApplication(user.id);
+        }
+    }
 
     return await ctx.render('index', {
         captainApplication,

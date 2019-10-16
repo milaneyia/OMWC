@@ -1,23 +1,18 @@
 extends ../layout.pug
+include ../mixins/buttons.pug
 
 block content
-    form.container(action="/applications/judges/save", method="post")
+    form.container.text-center(action="/applications/judges/save" method="post")
         .row
-            .col.s12.center-align
+            .col-sm
                 h4 Hi #{user.username} you're applying for judging
                 
         .row
-            .col.s12.center-align.input-field
-                textarea.materialize-textarea(data-length="3000" name="reason" required)
-                    if app
-                        | #{app.reason}
-                label Tell us why
+            .col-sm
+                .form-group
+                    label Tell us why
+                    textarea.form-control(maxlength="3000" name="reason" row="3" required) #{app && app.reason}
 
         .row
-            .col.s12.center-align
-                button.btn.waves-effect.waves-light(type="submit")
-                    if app 
-                        | Update
-                    else
-                        | Apply! 
-                    i.material-icons.right send
+            .col-sm
+                +submit-button(app ? 'Update' : 'Update')

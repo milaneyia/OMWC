@@ -1,57 +1,52 @@
 extends ../layout.pug
+include ../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 Update schedule to follow
 
-        .row
+        form.row(action="/admin/schedule/save", method="post")
+            .col-sm-6
+                .form-group
+                    label Applications Start Date
+                    input.form-control(type="date", name="applicationsStartedAt" required value=(schedule && schedule.applicationsStartedAt))
+            .col-sm-6
+                .form-group
+                    label Captain Applications End Date
+                    input.form-control(type="date", name="captainApplicationsEndedAt" value=(schedule && schedule.captainApplicationsEndedAt))
+            .col-sm-6
+                .form-group
+                    label Captain Voting Start Date
+                    input.form-control(type="date", name="captainVotingStartedAt" value=(schedule && schedule.captainVotingStartedAt))
+            .col-sm-6
+                .form-group
+                    label Captain Voting End Date
+                    input.form-control(type="date", name="captainVotingEndedAt" value=(schedule && schedule.captainVotingEndedAt))
+            .col-sm-6
+                .form-group
+                    label Mappers Choice Start Date
+                    input.form-control(type="date", name="mappersChoiceStartedAt" value=(schedule && schedule.mappersChoiceStartedAt))
+            .col-sm-6
+                .form-group
+                    label Mappers Choice End Date
+                    input.form-control(type="date", name="mappersChoiceEndedAt" value=(schedule && schedule.mappersChoiceEndedAt))
+            .col-sm-6
+                .form-group
+                    label Mapper Applications End Date
+                    input.form-control(type="date", name="mapperApplicationsEndedAt" value=(schedule && schedule.mapperApplicationsEndedAt))
+            .col-sm-6
+                .form-group
+                    label Judge Applications End Date
+                    input.form-control(type="date", name="judgeApplicationsEndedAt" value=(schedule && schedule.judgeApplicationsEndedAt))
+            .col-sm-6
+                .form-group
+                    label Contest Start Date
+                    input.form-control(type="date", name="constestStartedAt" value=(schedule && schedule.constestStartedAt))
+            .col-sm-6
+                .form-group
+                    label Contest End Date
+                    input.form-control(type="date", name="constestEndedAt" value=(schedule && schedule.constestEndedAt))
             .col.s12
-                form(action="/admin/schedule/save", method="post")
-                    .col.s6
-                        .input-field
-                            input.validate(type="date", name="applicationsStartedAt" required value=(schedule && schedule.applicationsStartedAt))
-                            label Applications Start Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="captainApplicationsEndedAt" value=(schedule && schedule.captainApplicationsEndedAt))
-                            label Captain Applications End Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="captainVotingStartedAt" value=(schedule && schedule.captainVotingStartedAt))
-                            label Captain Voting Start Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="captainVotingEndedAt" value=(schedule && schedule.captainVotingEndedAt))
-                            label Captain Voting End Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="mappersChoiceStartedAt" value=(schedule && schedule.mappersChoiceStartedAt))
-                            label Mappers Choice Start Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="mappersChoiceEndedAt" value=(schedule && schedule.mappersChoiceEndedAt))
-                            label Mappers Choice End Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="mapperApplicationsEndedAt" value=(schedule && schedule.mapperApplicationsEndedAt))
-                            label Mapper Applications End Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="judgeApplicationsEndedAt" value=(schedule && schedule.judgeApplicationsEndedAt))
-                            label Judge Applications End Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="constestStartedAt" value=(schedule && schedule.constestStartedAt))
-                            label Contest Start Date
-                    .col.s6
-                        .input-field
-                            input(type="date", name="constestEndedAt" value=(schedule && schedule.constestEndedAt))
-                            label Contest End Date
-                    .col.s12
-                        button.btn.waves-effect.waves-light(type="submit")
-                            if schedule
-                                | Update Schedule
-                            else
-                                | Submit Schedule
+                +submit-button(schedule ? 'Update Schedule': 'Submit Schedule')

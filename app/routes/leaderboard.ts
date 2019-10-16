@@ -10,7 +10,7 @@ leaderboardRouter.get('/', async (ctx) => {
         .createQueryBuilder('team')
         .innerJoin('team.country', 'country')
         .leftJoin('team.eliminationRound', 'eliminationRound')
-        .select(['team.id', 'country.id', 'country.name', 'eliminationRound.title'])
+        .select(['team.id', 'country.id', 'country.code', 'country.name', 'eliminationRound.title'])
         .getMany();
 
     const scores = await Team
@@ -26,6 +26,8 @@ leaderboardRouter.get('/', async (ctx) => {
         const score = scores.find((s) => s.id === t.id);
         t.score = score && score.score;
     });
+
+    teams.sort((a, b) => b.score - a.score);
 
     return await ctx.render('leaderboard', {
         teams,

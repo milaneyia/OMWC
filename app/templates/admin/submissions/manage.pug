@@ -1,22 +1,22 @@
 extends ../../layout.pug
+include ../../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         form.row(action="/admin/manageSubmissions/save" method="post")
-            .col.s12
+            .col-sm-12
                 h4 Manage Submission
 
-            .col.s6
-                .input-field
-                    input.validate(type="text", name="originalLink" maxlength="255" required value=submission.originalLink)
+            .col-sm-6
+                .form-group
                     label Original Link
+                    input.form-control(type="text", name="originalLink" maxlength="255" required value=submission.originalLink)
 
-            .col.s6
-                .input-field
-                    input.validate(type="text", name="anonymisedAs" maxlength="255" value=submission.anonymisedAs)
+            .col-sm-6
+                .form-group
                     label Anonymised As
+                    input.form-control(type="text", name="anonymisedAs" maxlength="255" value=submission.anonymisedAs)
                     
-            .col.s12
+            .col-sm-12
                 input(type="hidden", name="submissionId" value=submission.id)
-                button.btn.waves-effect.waves-light(type="submit")
-                    | Update Submission
+                +submit-button('Update Submission')

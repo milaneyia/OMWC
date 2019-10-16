@@ -1,26 +1,24 @@
 extends ../../../layout.pug
+include ../../../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         form.row(action="/admin/judging/criterias/save" method="post")
-            h4 Manage Criteria
+            .col-sm-12
+                h4 Manage Criteria
 
-            .col.s6
-                .input-field
-                    input.validate(type="text", name="name" maxlength="255" required value=(criteria && criteria.name))
+            .col-sm-6
+                .form-group
+                    input.form-control(type="text", name="name" maxlength="255" required value=(criteria && criteria.name))
                     label Name
 
-            .col.s6
-                .input-field
-                    input.validate(type="number", name="maxScore" min="0" step=".01" required value=(criteria && criteria.maxScore))
+            .col-sm-6
+                .form-group
+                    input.form-control(type="number", name="maxScore" min="0" step=".01" required value=(criteria && criteria.maxScore))
                     label Max Score
 
-            .col.s12
+            .col-sm-12
                 if criteria
                     input(type="hidden" name="criteriaId" value=criteria.id)
                 
-                button.btn.waves-effect.waves-light(type="submit")
-                    if criteria
-                        | Update Criteria
-                    else
-                        | Submit Criteria
+                +submit-button(criteria ? 'Update Criteria' : 'Submit Criteria')

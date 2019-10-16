@@ -1,13 +1,14 @@
 extends ../../layout.pug
+include ../../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 Judging List
 
         .row
-            .col.s12
+            .col.sm
                 each round in rounds
                     if round.submissions && round.submissions.length
                         h5= round.title
@@ -15,7 +16,7 @@ block content
                         each submission in round.submissions
                             h5= submission.team.country.name + ' - ' + submission.anonymisedAs
 
-                            table.hightlight.reponsive-table
+                            table.table.table-hover
                                 thead
                                     tr
                                         th Judge
@@ -34,7 +35,7 @@ block content
                 
                         h5= round.title + ' - Summary'
                         
-                        table.hightlight.reponsive-table
+                        table.table.table-hover
                             thead
                                 tr
                                     th Team
@@ -50,4 +51,4 @@ block content
                                             if (submission.team.isCompeting)
                                                 form(action="/admin/judging/eliminateTeam" method="post")
                                                     input(type="hidden" name="eliminatedTeamId" value=submission.team.id)
-                                                    button.btn-flat.waves-effect.waves-teal(type="submit") Eliminate Team
+                                                    +submit-button('Eliminate Team')

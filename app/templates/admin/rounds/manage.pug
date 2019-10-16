@@ -1,50 +1,50 @@
 extends ../../layout.pug
+include ../../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         form.row(action="/admin/rounds/save" method="post")
-            h4 Manage Round
+            .col-sm-12
+                h4 Manage Round
 
-            .col.s4
-                .input-field
-                    input.validate(type="text", name="title" maxlength="255" required value=(round && round.title))
+            .col-sm-4
+                .form-group
                     label Title
+                    input.form-control(type="text", name="title" maxlength="255" required value=(round && round.title))
 
-            .col.s4
-                .input-field
-                    textarea.materialize-textarea.validate(data-length="3000" name="information")
-                        = round && round.information
+            .col-sm-4
+                .form-group
                     label Information
+                    textarea.form-control(maxlength="3000" rows="3" name="information")
+                        = round && round.information
 
-            .col.s4
-                .input-field
-                    input.validate(type="text", name="anonymisedLink" maxlength="255" value=(round && round.anonymisedLink))
+            .col-sm-4
+                .form-group
                     label Anonymised .osz Link
+                    input.form-control(type="text", name="anonymisedLink" maxlength="255" value=(round && round.anonymisedLink))
 
-            .col.s6
-                .input-field
-                    input.validate(type="date", name="submissionsStartedAt" required value=(round && round.submissionsStartedAt))
+            .col-sm-6
+                .form-group
                     label Submissions Start Date
+                    input.form-control(type="date", name="submissionsStartedAt" required value=(round && round.submissionsStartedAt))
 
-            .col.s6
-                .input-field
-                    input.validate(type="date", name="submissionsEndedAt" required value=(round && round.submissionsEndedAt))
+            .col-sm-6
+                .form-group
                     label Submissions Start Date
+                    input.form-control(type="date", name="submissionsEndedAt" required value=(round && round.submissionsEndedAt))
 
-            .col.s6
-                .input-field
-                    input.validate(type="date", name="judgingStartedAt" required value=(round && round.judgingStartedAt))
+            .col-sm-6
+                .form-group
                     label Judging Start Date
+                    input.form-control(type="date", name="judgingStartedAt" required value=(round && round.judgingStartedAt))
 
-            .col.s6
-                .input-field
-                    input.validate(type="date", name="judgingEndedAt" required value=(round && round.judgingEndedAt))
+            .col-sm-6
+                .form-group
                     label Judging Start Date
+                    input.form-control(type="date", name="judgingEndedAt" required value=(round && round.judgingEndedAt))
 
-            .col.s12
-                button.btn.waves-effect.waves-light(type="submit")
-                    if round
-                        | Update Round
-                        input(type="hidden", name="roundId" value=round.id)
-                    else
-                        | Submit Round
+            .col-sm-12
+                if round
+                    input(type="hidden", name="roundId" value=round.id)
+
+                +submit-button(round ? 'Update Round' : 'Submit Round')

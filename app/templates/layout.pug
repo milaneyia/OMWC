@@ -4,87 +4,43 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
-        
-        //- Import Google Icon Font
-        link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
-        //- Compiled and minified CSS
-        link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css")
+
+        link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous")
 
         title osu! Mapping World Cup
     body
-        nav
-            div(class="nav-wrapper")
-                a(href="/" class="brand-logo") o!mwc
-                a(href="#" data-target="sidenav-list" class="sidenav-trigger")
-                    i(class="material-icons") menu
+        nav.navbar.navbar-expand-lg.navbar-light.bg-light
+            a.navbar-brand(href="/") o!mwc
+            button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbar")
+                span.navbar-toggler-icon
 
-                ul(class="right hide-on-med-and-down")
-                    li
-                        a(href="/leaderboard") Leaderboard
-                    li
-                        a(href="/") Home
-                    li
-                        a.dropdown-trigger(href="#!" data-target="admin-dropdown")
-                            | Admin
-                            i.material-icons.right arrow_drop_down
+            #navbar.collapse.navbar-collapse
+                ul.navbar-nav.mr-auto
+                    li.nav-item
+                        a.nav-link(href="/") Home
+                    li.nav-item
+                        a.nav-link(href="/leaderboard") Leaderboard
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#" data-toggle="dropdown") Admin
 
-        ul#admin-dropdown.dropdown-content
-            li
-                a(href="/admin/schedule") Schedule
-            li.divider
-            li
-                a(href="/admin/captainChoice") Captain Choice
-            li
-                a(href="/admin/teamsChoice") Teams Choice
-            li
-                a(href="/admin/judgesChoice") Judge Choice
-            li.divider
-            li
-                a(href="/admin/judging/criterias") Criterias
-            li
-                a(href="/admin/judging") Judging List
-            li.divider
-            li
-                a(href="/admin/rounds") Rounds
-            li
-                a(href="/admin/manageSubmissions") Submissions
-
-        ul#admin-dropdown-sidenav.dropdown-content
-            li
-                a(href="/admin/schedule") Schedule
-            li.divider
-            li
-                a(href="/admin/captainChoice") Captain Choice
-            li
-                a(href="/admin/teamsChoice") Teams Choice
-            li
-                a(href="/admin/judgesChoice") Judge Choice
-            li.divider
-            li
-                a(href="/admin/judging/criterias") Criterias
-            li
-                a(href="/admin/judging") Judging List
-            li.divider
-            li
-                a(href="/admin/rounds") Rounds
-            li
-                a(href="/admin/manageSubmissions") Submissions
-
-        ul#sidenav-list.sidenav
-            li
-                a(href="/") Home
-            li
-                a.dropdown-trigger(href="#!" data-target="admin-dropdown-sidenav")
-                    | Admin
-                    i.material-icons.right arrow_drop_down
+                        .dropdown-menu
+                            a.dropdown-item(href="/admin/schedule") Schedule
+                            .dropdown-divider
+                            a.dropdown-item(href="/admin/captainChoice") Captain Choice
+                            a.dropdown-item(href="/admin/teamsChoice") Teams Choice
+                            a.dropdown-item(href="/admin/judgesChoice") Judge Choice
+                            .dropdown-divider
+                            a.dropdown-item(href="/admin/judging/criterias") Criterias
+                            a.dropdown-item(href="/admin/judging") Judging List
+                            .dropdown-divider
+                            a.dropdown-item(href="/admin/rounds") Rounds
+                            a.dropdown-item(href="/admin/manageSubmissions") Submissions
         
         block content
         
-        //- Compiled and minified JavaScript
-        script(src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js")
-        script.
-            document.addEventListener('DOMContentLoaded', function() {
-                M.AutoInit();
-            });
+        script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous")
+        script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous")
+        script(src="/js/app.js")
 
         block scripts

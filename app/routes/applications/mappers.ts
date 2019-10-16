@@ -14,7 +14,7 @@ mapperApplicationsRouter.use(async (ctx, next) => {
 mapperApplicationsRouter.use(onGoingApplications);
 
 mapperApplicationsRouter.get('/edit', async (ctx) => {
-    const app = await MapperApplication.findUserApplication(ctx.state.user);
+    const app = await MapperApplication.findUserApplication(ctx.state.user.id);
 
     if (app) {
         return ctx.redirect('back');
@@ -24,7 +24,7 @@ mapperApplicationsRouter.get('/edit', async (ctx) => {
 });
 
 mapperApplicationsRouter.post('/store', async (ctx) => {
-    let app = await MapperApplication.findUserApplication(ctx.state.user);
+    let app = await MapperApplication.findUserApplication(ctx.state.user.id);
 
     if (app) {
         return ctx.render('error', {

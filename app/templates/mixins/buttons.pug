@@ -1,0 +1,8 @@
+mixin link-button(text, link='#!')
+    a.btn.btn-primary(href=link) #{text}
+
+mixin link-button-disabled(text, link='#!')
+    a.btn.btn-secondary.disabled(href=link) #{text}
+
+mixin submit-button(text='Save')
+    button.btn.btn-primary(type="submit") #{text}

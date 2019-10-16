@@ -1,15 +1,16 @@
 extends ../../layout.pug
+include ../../mixins/buttons.pug
 
 block content
-    .container.center-align
+    .container.text-center
         .row
-            .col.s12
+            .col-sm
                 h4 Manage Rounds 
-                    a.btn.waves-effect.waves-light(href="/admin/rounds/create") Create
+                    +link-button('Create', '/admin/rounds/create')
 
         .row
-            .col.s12
-                table.highlight.responsive-table
+            .col-sm
+                table.table.table-hover
                     thead
                         tr
                             th Title
@@ -33,4 +34,4 @@ block content
                                 td= round.judgingStartedAt
                                 td= round.judgingEndedAt
                                 td
-                                    a.btn-flat.waves-effect.waves-teal(href="/admin/rounds/edit/" + round.id) Edit
+                                    +link-button('Edit', '/admin/rounds/edit/' + round.id)

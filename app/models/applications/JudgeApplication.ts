@@ -4,8 +4,8 @@ import { User } from '../User';
 @Entity()
 export class JudgeApplication extends BaseEntity {
 
-    static findUserApplication(user: User) {
-        return this.findOne({ where: { user } });
+    static findUserApplication(userId: number) {
+        return this.findOne({ where: { userId } });
     }
 
     @PrimaryGeneratedColumn()
@@ -13,6 +13,9 @@ export class JudgeApplication extends BaseEntity {
 
     @Column({ length: 3000 })
     reason!: string;
+
+    @Column()
+    userId!: number;
 
     @ManyToOne((type) => User, { nullable: false })
     user!: User;
