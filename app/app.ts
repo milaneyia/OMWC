@@ -49,6 +49,11 @@ app.use(views(path.join(__dirname, 'templates'), {
 // Error handler
 app.use(async (ctx, next) => {
     try {
+        if (ctx.originalUrl !== '/favicon.ico') {
+            // tslint:disable-next-line: no-console
+            console.log('\x1b[33m%s\x1b[0m', ctx.originalUrl);
+        }
+
         await next();
 
         if (ctx.status === 404) {

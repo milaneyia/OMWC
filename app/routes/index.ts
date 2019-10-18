@@ -30,6 +30,7 @@ indexRouter.get('/', async (ctx) => {
         captainApplication,
         judgeApplication,
         mapperApplication,
+        path: '/',
         user,
     });
 });

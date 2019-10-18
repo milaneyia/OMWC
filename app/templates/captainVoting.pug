@@ -1,34 +1,47 @@
 extends layout.pug
 include ./mixins/buttons.pug
+include ./mixins/extras.pug
 
 block content
     .container.text-center
-        .row
+        .row.mb-2
             .col-sm
-                h4 Hi #{user.username}, vote for the person who best fits the captain role for your country!
+                .card
+                    .card-body
+                        h4.card-title Hi #{user.username}, vote for the person who best fits the captain role for your country!
 
-                if applications && applications.length
-                    table.table.table-hover
-                        thead
-                            tr
-                                th Person
-                                th Reason
-                                th 
-                        tbody
-                            each application in applications
-                                tr
-                                    td= application.user.username
-                                    td= application.reason
-                                    td
-                                        if application.user.id !== user.id
-                                            if votesDone && votesDone.find((v) => v.captainApplication.id === application.id)
-                                                form(action="/captainVoting/destroy" method="post")
-                                                    input(type="hidden" name="applicationId" value=application.id)
-                                                    +submit-button('Cancel Vote')
-                                            else
-                                                form(action="/captainVoting/store" method="post")
-                                                    input(type="hidden" name="applicationId" value=application.id)
-                                                    +submit-button('Vote')
+        if applications && applications.length
+            each application in applications
+                .row
+                    .col-sm
+                        .card
+                            .card-body
+                                - let iconClass = 'fa-thumbs-up';
+                                - let url = '/captainVoting/store'
+                                - let buttonClass = 'btn-success';
+                                if votesDone && votesDone.find((v) => v.captainApplication.id === application.id)
+                                    - iconClass = 'fa-thumbs-down';
+                                    - url = '/captainVoting/destroy';
+                                    - buttonClass = 'btn-danger';
 
-                else
-                    | Noone applied :(
+                                .d-flex.flex-column
+                                    form.user-comment(action=url method="post")
+                                        input(type="hidden" name="applicationId" value=application.id)
+
+                                        .user-comment__user-box
+                                            +user-avatar(application.user.osuId)
+                                            .mt-1= application.user.username
+                                            if application.user.id !== user.id
+                                                button.btn.btn-sm.btn-block.mt-2(
+                                                    type="submit"
+                                                    class=buttonClass
+                                                )
+                                                    i.fas(class=iconClass)
+                                    
+                                        .user-comment__divider
+                                        .user-comment__comment-box
+                                            = application.reason
+                                    
+
+        else
+            | Noone applied :(

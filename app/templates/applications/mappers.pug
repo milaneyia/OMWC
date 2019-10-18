@@ -5,9 +5,11 @@ block content
     .container.text-center
         .row
             .col-sm
-                h4 Hi #{user.username} you're applying to be part of the team #{user.country.name} as a mapper
+                .card
+                    .card-body
+                        h4 Hi #{user.username} you're applying to be part of the team #{user.country.name} as a mapper
 
         .row
             .col-sm
                 form(action="/applications/mappers/store", method="post")
-                    +submit-button('Apply')
+                    +submit-button('Apply')(class="btn-block")

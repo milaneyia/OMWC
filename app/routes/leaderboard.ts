@@ -30,6 +30,7 @@ leaderboardRouter.get('/', async (ctx) => {
     teams.sort((a, b) => b.score - a.score);
 
     return await ctx.render('leaderboard', {
+        path: '/leaderboard',
         teams,
     });
 });

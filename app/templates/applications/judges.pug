@@ -3,16 +3,20 @@ include ../mixins/buttons.pug
 
 block content
     form.container.text-center(action="/applications/judges/save" method="post")
-        .row
+        .row.mb-2
             .col-sm
-                h4 Hi #{user.username} you're applying for judging
+                .card
+                    .card-body
+                        h4 Hi #{user.username} you're applying to become a judge
                 
         .row
             .col-sm
-                .form-group
-                    label Tell us why
-                    textarea.form-control(maxlength="3000" name="reason" row="3" required) #{app && app.reason}
+                .card
+                    .card-body
+                        .form-group
+                            label Tell us why
+                            textarea.form-control(maxlength="3000" name="reason" rows="10" required) #{app && app.reason}
 
         .row
             .col-sm
-                +submit-button(app ? 'Update' : 'Update')
+                +submit-button(app ? 'Update' : 'Apply')(class="btn-block")

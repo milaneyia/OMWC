@@ -3,40 +3,56 @@ include ./mixins/buttons.pug
 include ./mixins/extras.pug
 
 block content
-    .container.text-center
-        .row
+    form.container.text-center(action="/submissions/save", method="post")
+        .row.mb-2
             .col-sm
-                h4 .osz Submissions
+                .card
+                    .card-body
+                        h4 .osz Submissions
 
-                if submissions
-                    table.table.table-hover
-                        thead
-                            tr
-                                th Round
-                                th Submission Date
-                                th Link
-                        tbody
-                            each submission in submissions
-                                tr
-                                    td= submission.round.title
-                                    td
-                                        +local-date(submission.updatedAt)
-                                    td
-                                        a(href=submission.originalLink) #{submission.originalLink}
-
-        hr
+        .row.mb-2
+            .col-sm
+                .card
+                    .card-body
+                        if submissions
+                            table.table.table-hover
+                                thead
+                                    tr
+                                        th Round
+                                        th Submission Date
+                                        th Link
+                                tbody
+                                    each submission in submissions
+                                        tr
+                                            td= submission.round.title
+                                            td
+                                                +local-date(submission.updatedAt)
+                                            td
+                                                a(href=submission.originalLink) #{submission.originalLink}
 
         if currentRound
             .row
-                form.col-sm(action="/submissions/save", method="post")
-                    h5= currentRound.title
-                    p= currentRound.information
-                    p.
-                        You have from #[b= currentRound.submissionsStartedAt] to 
-                        #[b= currentRound.submissionsEndedAt] to submit your entry
+                .col-sm
+                    .card
+                        .card-header
+                            h5= currentRound.title
 
-                    .form-group
-                        label .osz Link
-                        input.form-control(type="text" name="oszFile" required value=(currentSubmission && currentSubmission.originalLink))
+                        .card-body
+                            p.card-title= currentRound.information
+                            p.card-subtitle.
+                                You have from #[b= currentRound.submissionsStartedAt] to 
+                                #[b= currentRound.submissionsEndedAt] to submit your entry
 
-                    +submit-button
+                            hr
+
+                            label .osz Link
+                            input.form-control(
+                                type="text"
+                                name="oszFile"
+                                required
+                                value=(currentSubmission && currentSubmission.originalLink)
+                            )
+
+            .row
+                .col-sm
+                    +submit-button(class="btn-block")

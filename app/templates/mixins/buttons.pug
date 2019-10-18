@@ -1,8 +1,11 @@
 mixin link-button(text, link='#!')
-    a.btn.btn-primary(href=link) #{text}
+    a.btn.btn-primary(href=link class!=attributes.class) #{text}
 
 mixin link-button-disabled(text, link='#!')
-    a.btn.btn-secondary.disabled(href=link) #{text}
+    a.btn.btn-secondary.disabled(href=link class!=attributes.class) #{text}
 
 mixin submit-button(text='Save')
-    button.btn.btn-primary(type="submit") #{text}
+    if attributes && attributes.class && (attributes.class.includes('danger') || attributes.class.includes('success'))
+        button.btn(type="submit" class!=attributes.class) #{text}
+    else
+        button.btn.btn-primary(type="submit" class!=attributes.class) #{text}

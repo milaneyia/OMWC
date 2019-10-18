@@ -6,66 +6,59 @@ block content
     .container.text-center
         .row
             .col-sm
-                h1 osu! Mapping World Cup
+                .card
+                    .card-body
+                        if user
+                            h3.card-title welcome #[b= user.username]
+                            hr
+                            .card-subtitle.mb-2 you're participating for #[b= user.country.name]
+                            +img-flag(user.country.code)
+                        else
+                            h3.card-title osu! Mapping World Cup
 
-                if user
-                    p #{user.username} #{user.country.name}
-                    +img-flag(user.country.code)
-                else
-                    form(action="/login" method="GET")
-                        button.btn.btn-primary(type="submit")
-                            | Verify your osu! account to continue
+                            form(action="/login" method="GET")
+                                +submit-button('Verify your osu! account to continue')(class="btn-block")
 
         if user
             .row.my-2
                 .col-sm
-                    +link-button(
-                        captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
-                        '/applications/captains/edit'
-                    )
+                    .card
+                        .card-body
+                            +link-button(
+                                captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
+                                '/applications/captains/edit'
+                            )(class="btn-block btn-lg")
 
-            .row.my-2
-                .col-sm
-                    if mapperApplication
-                        +link-button-disabled(`You've applied as a mapper`)
-                    else
-                        +link-button('Apply as a mapper', '/applications/mappers/edit')
+                            if mapperApplication
+                                +link-button-disabled(`You've applied as a mapper`)(class="btn-block btn-lg")
+                            else
+                                +link-button('Apply as a mapper', '/applications/mappers/edit')(class="btn-block btn-lg")
 
-            .row.my-2
-                .col-sm
-                    +link-button(
-                        judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
-                        '/applications/judges/edit'
-                    )
+                            +link-button(
+                                judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
+                                '/applications/judges/edit'
+                            )(class="btn-block btn-lg")
 
-            hr
+                            hr
 
-            .row.my-2
-                .col-sm
-                    +link-button(
-                        'Captain Voting',
-                        '/captainVoting'
-                    )
+                            +link-button(
+                                'Captain Voting',
+                                '/captainVoting'
+                            )(class="btn-block btn-lg")
 
-            .row.my-2
-                .col-sm
-                    +link-button(
-                        'Mappers Choice',
-                        '/mappersChoice'
-                    )
+                            +link-button(
+                                'Mappers Choice',
+                                '/mappersChoice'
+                            )(class="btn-block btn-lg")
 
-            .row.my-2
-                .col-sm
-                    +link-button(
-                        '.osz submissions',
-                        '/submissions'
-                    )
+                            +link-button(
+                                '.osz submissions',
+                                '/submissions'
+                            )(class="btn-block btn-lg")
 
-            hr
+                            hr
 
-            .row.my-2
-                .col.sm
-                    +link-button(
-                        'Judging',
-                        '/judging'
-                    )
+                            +link-button(
+                                'Judging',
+                                '/judging'
+                            )(class="btn-block btn-lg")

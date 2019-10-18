@@ -3,24 +3,28 @@ include ./mixins/extras.pug
 
 block content
     .container.text-center
-        .row
+        .row.mb-2
             .col-sm
-                h4 Leaderboard
+                .card
+                    .card-body
+                        h4 Leaderboard
 
-        .row
-            .col-sm
-                if teams
-                    table.table.table-hover
-                        thead
-                            tr
-                                th #
-                                th Team
-                                th Final Score
-                                th Eliminated On
-                        tbody
-                            each team, i in teams
-                                tr
-                                    td= i + 1
-                                    td #[+inline-flag(team.country.code)] #{team.country.name}
-                                    td= team.score
-                                    td= team.eliminationRound && team.eliminationRound.title
+        if teams
+            .row
+                .col-sm
+                    .card
+                        .card-body
+                            table.table.table-hover
+                                thead
+                                    tr
+                                        th #
+                                        th Team
+                                        th Final Score
+                                tbody
+                                    each team, i in teams
+                                        tr(class=team.eliminationRound && 'team-eliminated')
+                                            td= i + 1
+                                            td.d-flex.justify-content-center.align-items-center
+                                                | #[+inline-flag(team.country.code)] 
+                                                .ml-2 #{team.country.name}
+                                            td= team.score

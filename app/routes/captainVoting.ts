@@ -50,8 +50,8 @@ captainVotingRouter.post('/store', async (ctx) => {
 captainVotingRouter.post('/destroy', async (ctx) => {
     const vote = await CaptainVote.findOneOrFail({
         where: {
-            captainApplicationId: ctx.request.body.applicationId,
-            userId: ctx.state.user.Id,
+            captainApplicationId: parseInt(ctx.request.body.applicationId, 10),
+            userId: ctx.state.user.id,
         },
     });
 

@@ -1,12 +1,9 @@
-.tabs {
-    display: flex;
-    justify-content: center;
-    & .tab {
-        padding: 10px;
-        background-color: lightblue;
-        border-radius: 10px;
-        margin-right: 10px;
-    }
+@import "variables";
+@import "~bootstrap/scss/bootstrap";
+@import "custom";
+
+body {
+    background-image: url('/img/triangles.png');
 }
 
 .country-flag {
@@ -26,4 +23,42 @@
     background-size: cover;
     background-repeat: no-repeat;
     display: inline-block;
+}
+
+.user-comment {
+    display: flex;
+
+    &__user-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+    &__divider {
+        margin: 10px 15px;
+        padding: 1px;
+        border-radius: 10px;
+        background-color: $blue;
+    }
+    
+    &__comment-box {
+        flex: 1 1 auto;
+        background-color: $gray-900;
+        border-radius: 10px;
+        padding: 15px;
+    }
+}
+
+.custom-checkbox .custom-control-label {
+    &::before, &::after {
+        top: initial;
+        width: 1.2rem;
+        height: 1.2rem;
+        left: -2rem;
+    }
+}
+
+.team-eliminated {
+    opacity: 0.3;
 }

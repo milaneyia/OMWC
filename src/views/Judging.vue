@@ -2,34 +2,43 @@
     .container.text-center
         .row.mb-4
             .col-sm
-                h4 {{ currentRound.title }}
-                a(:href="currentRound.anonymisedLink") Download .osz
-        
-        .row.mb-4
-            .col-sm
-                .form-group
-                    select.form-control(v-model="selectedSubmissionId" @change="setRelatedJudging()")
-                        option(value="0" disabled selected) Choose an entry
-                        option(v-for="submission in currentRound.submissions" :key="submission.id" :value="submission.id")
-                            | {{ submission.anonymisedAs }}
+                .card
+                    .card-body
+                        h4.card-title {{ currentRound.title }}
+                        a.card-subtitle(:href="currentRound.anonymisedLink") Download .osz
 
+                        hr
+
+                        .form-group
+                            select.form-control(v-model="selectedSubmissionId" @change="setRelatedJudging()")
+                                option(value="0" disabled selected) Choose an entry
+                                option(v-for="submission in currentRound.submissions" :key="submission.id" :value="submission.id")
+                                    | {{ submission.anonymisedAs }}
+        
         .row(v-if="selectedSubmissionId")
             .col-sm
-                .tabs
-                    a.tab(href="#" v-for="criteria in criterias" @click="selectCriteria(criteria.id)")
-                        | {{ criteria.name }}
+                .card
+                    .card-body
+                        ul.nav.nav-tabs.mb-4
+                            li.nav-item(v-for="criteria in criterias" :key="criteria.id")
+                                a.nav-link(
+                                    href="#"
+                                    @click="selectCriteria(criteria.id)"
+                                    :class="selectedCriteriaId === criteria.id ? 'active' : ''"
+                                )
+                                    | {{ criteria.name }}
 
-                div(v-if="selectedCriteriaId")
-                    .form-group
-                        label Score
-                        input.form-control(type="number" step=".01" v-model="judging.score")
+                        div(v-if="selectedCriteriaId")
+                            .form-group
+                                label Score
+                                input.form-control(type="number" step=".01" v-model="judging.score")
 
-                    .form-group
-                        label Comment
-                        textarea.form-control(maxlength="3000" rows="3" v-model.trim="judging.comment")
+                            .form-group
+                                label Comment
+                                textarea.form-control(maxlength="3000" rows="3" v-model.trim="judging.comment")
 
-                    button.btn.btn-primary(type="button" @click="save()")
-                        | Save
+                            button.btn.btn-primary.btn-block(type="button" @click="save()")
+                                | Save
 
         .row
             .col-sm
