@@ -20,6 +20,8 @@ block content
                                         th #
                                         th Team
                                         th Final Score
+                                        each criteria in criterias
+                                            th= criteria.name
                                 tbody
                                     each team, i in teams
                                         tr(class=team.eliminationRound && 'team-eliminated')
@@ -27,4 +29,7 @@ block content
                                             td.d-flex.justify-content-center.align-items-center
                                                 | #[+inline-flag(team.country.code)] 
                                                 .ml-2 #{team.country.name}
-                                            td= team.score
+                                            td= team.finalScore
+                                            each criteria in criterias
+                                                - let criteriaScore = team.criteriaScores.find(s => s.criteria === criteria.name);
+                                                td= criteriaScore && criteriaScore.score

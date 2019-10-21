@@ -42,5 +42,11 @@ export class Team extends BaseEntity {
     submissions!: Submission[];
 
     // Used for the leaderboard
-    score!: number;
+    finalScore!: number;
+    criteriaScores!: ICriteriaScore[];
+}
+
+export interface ICriteriaScore {
+    criteria: string;
+    score: number;
 }
