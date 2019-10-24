@@ -7,7 +7,7 @@ module.exports = {
         judging: './src/judging.ts',
     },
     output: {
-        path: path.resolve(__dirname, './dist/public/js/'),
+        path: path.resolve(__dirname, './public/js/'),
         filename: '[name].js',
         publicPath: '/js/'
     },
