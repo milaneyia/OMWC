@@ -1,0 +1,51 @@
+extends layout.pug
+include ./mixins/extras.pug
+
+block content
+    .container.text-center
+        .row.mb-2
+            .col-sm
+                .card
+                    .card-body
+                        h4 Results per Round
+
+        if rounds
+            each round in rounds
+                if round.submissions && round.submissions.length
+                    - let judges = round.submissions[0].judging.map(j => j.judge.username);
+                    - judges = [...new Set(judges)];
+
+                    .row
+                        .col-sm
+                            .card
+                                .card-header
+                                    h5= round.title
+                                .card-body
+                                    table.table.table-hover
+                                        thead
+                                            tr
+                                                th Team
+                                                th Entry's Name
+
+                                                each judge in judges
+                                                    th= judge
+                                                
+                                                th Final Score
+                                        tbody
+                                            each submission in round.submissions
+                                                tr
+                                                    td.d-flex.justify-content-center.align-items-center
+                                                        | #[+inline-flag(submission.team.country.code)] 
+                                                        .ml-2 #{submission.team.country.name}
+                                                    
+                                                    td= submission.anonymisedAs
+                                                    
+                                                    - let finalScore = 0;
+                                                    each judge in judges
+                                                        - let relatedJudging = submission.judging.filter(j => j.judge.username === judge);
+                                                        if relatedJudging && relatedJudging.length
+                                                            - let totalJudgeScore = relatedJudging.map(j => j.score).reduce((total, score) => total + score) || 0;
+                                                            - finalScore += totalJudgeScore
+                                                            td= totalJudgeScore
+                                                    
+                                                    td= finalScore

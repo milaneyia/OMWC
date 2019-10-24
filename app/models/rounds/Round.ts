@@ -5,7 +5,7 @@ import { Submission } from './Submission';
 @Entity()
 export class Round extends BaseEntity {
 
-    static findCurrentRound() {
+    static findCurrentSubmissionRound() {
         const today = new Date();
 
         return this.findOne({
@@ -13,6 +13,34 @@ export class Round extends BaseEntity {
                 submissionsEndedAt: MoreThanOrEqual(today),
                 submissionsStartedAt: LessThanOrEqual(today),
             },
+        });
+    }
+
+    static findCurrentJudgingRound() {
+        const today = new Date();
+
+        return this.findOne({
+            where: {
+                judgingEndedAt: MoreThanOrEqual(today),
+                judgingStartedAt: LessThanOrEqual(today),
+            },
+        });
+    }
+
+    static findCurrentRound() {
+        const today = new Date();
+
+        return this.findOne({
+            where: [
+                {
+                    submissionsEndedAt: MoreThanOrEqual(today),
+                    submissionsStartedAt: LessThanOrEqual(today),
+                },
+                {
+                    judgingEndedAt: MoreThanOrEqual(today),
+                    judgingStartedAt: LessThanOrEqual(today),
+                },
+            ],
         });
     }
 

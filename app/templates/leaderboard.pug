@@ -31,5 +31,6 @@ block content
                                                 .ml-2 #{team.country.name}
                                             td= team.finalScore
                                             each criteria in criterias
-                                                - let criteriaScore = team.criteriaScores.find(s => s.criteria === criteria.name);
-                                                td= criteriaScore && criteriaScore.score
+                                                if team.criteriaScores
+                                                    - let criteriaScore = team.criteriaScores.find(s => s.criteria === criteria.name);
+                                                    td= criteriaScore && criteriaScore.score

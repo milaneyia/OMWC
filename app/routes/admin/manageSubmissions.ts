@@ -11,7 +11,7 @@ submissionsAdminRouter.use(isStaff);
 
 submissionsAdminRouter.get('/', async (ctx) => {
     const rounds = await Round.find({ relations: ['submissions', 'submissions.team', 'submissions.team.country'] });
-    const currentRound = await Round.findCurrentRound();
+    const currentRound = await Round.findCurrentSubmissionRound();
 
     return ctx.render('admin/submissions/index', {
         currentRound,

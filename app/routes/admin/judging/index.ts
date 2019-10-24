@@ -19,30 +19,26 @@ judgingAdminRouter.use(authenticate);
 judgingAdminRouter.use(isStaff);
 
 judgingAdminRouter.get('/', async (ctx) => {
-    const rounds = await Round.find({ relations: [
-        'submissions',
-        'submissions.team',
-        'submissions.team.country',
-        'submissions.judging',
-        'submissions.judging.judge',
-        'submissions.judging.judgingCriteria',
-    ]});
+    const rounds = await Round.find({
+        order: {
+            judgingEndedAt: 'DESC',
+        },
+        relations: [
+            'submissions',
+            'submissions.team',
+            'submissions.team.country',
+            'submissions.judging',
+            'submissions.judging.judge',
+            'submissions.judging.judgingCriteria',
+        ],
+    });
 
     const criterias = await JudgingCriteria.find({});
-    const judges = await User.find({ where: { roleId: ROLE.Judge } });
 
     const finalScores: IFinalScore[] = [];
     rounds.forEach((r) => {
         r.submissions.forEach((s) => {
-            const scores = s.judging.map((j) => {
-                if (judges.find((judge) => judge.id === j.judgeId)) {
-                    return j.score;
-                }
-
-                return 0;
-            });
-
-            const finalScore = scores.reduce((total, score) => total + score);
+            const finalScore = s.judging.map((j) => j.score).reduce((total, score) => total + score);
 
             finalScores.push({
                 finalScore,
@@ -55,7 +51,6 @@ judgingAdminRouter.get('/', async (ctx) => {
     return ctx.render('admin/judging/index', {
         criterias,
         finalScores,
-        judges,
         rounds,
     });
 });

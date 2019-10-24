@@ -22,7 +22,7 @@ submissionsRouter.get('/', async (ctx) => {
         where: { teamId: ctx.state.user.team.id },
     });
 
-    const currentRound = await Round.findCurrentRound();
+    const currentRound = await Round.findCurrentSubmissionRound();
     let currentSubmission: Submission | undefined;
 
     if (currentRound) {
@@ -43,7 +43,7 @@ submissionsRouter.get('/', async (ctx) => {
 });
 
 submissionsRouter.post('/save', async (ctx) => {
-    const currentRound = await Round.findCurrentRound();
+    const currentRound = await Round.findCurrentSubmissionRound();
 
     if (!currentRound || !ctx.request.body.oszFile) {
         return ctx.render('error');

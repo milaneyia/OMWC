@@ -24,14 +24,12 @@ block content
                                         th Comment
                                         th Score
                                 tbody
-                                    each judge in judges
-                                        each criteria in criterias
-                                            - const judging = submission.judging.find(j => j.judgeId === judge.id && j.judgingCriteriaId === criteria.id);
-                                            tr
-                                                td= judge.username
-                                                td= criteria.name
-                                                td= (judging && judging.comment) || 'Not done yet'
-                                                td= (judging && judging.score) || 'Not done yet'
+                                    each judging in submission.judging
+                                        tr
+                                            td= judging.judge.username
+                                            td= judging.judgingCriteria.name
+                                            td= judging.comment
+                                            td= judging.score
                 
                         h5= round.title + ' - Summary'
                         

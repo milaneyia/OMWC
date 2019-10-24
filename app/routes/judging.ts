@@ -16,8 +16,9 @@ judgingRouter.get('/', async (ctx) => {
     const currentRound = await Round
         .createQueryBuilder('round')
         .leftJoinAndSelect('round.submissions', 'submission')
-        .where('submissionsStartedAt <= :today', { today })
-        .andWhere('submissionsEndedAt >= :today', { today })
+        .where('judgingStartedAt <= :today', { today })
+        .andWhere('judgingEndedAt >= :today', { today })
+        .andWhere('submission.anonymisedAs IS NOT NULL')
         .select(['round', 'submission.id', 'submission.anonymisedAs'])
         .getOne();
 
@@ -43,7 +44,7 @@ judgingRouter.get('/', async (ctx) => {
 judgingRouter.post('/save', async (ctx) => {
     const submission = await Submission.findOneOrFail({ where: { id: ctx.request.body.submissionId } });
     const criteria = await JudgingCriteria.findOneOrFail({ where: { id: ctx.request.body.criteriaId } });
-    const round = await Round.findCurrentRound();
+    const round = await Round.findCurrentJudgingRound();
     const score = ctx.request.body.score;
     const comment = ctx.request.body.comment;
 
