@@ -10,7 +10,7 @@ judgingResultsRouter.prefix('/judgingResults');
 judgingResultsRouter.get('/', async (ctx) => {
     const rounds = await Round.find({
         order: {
-            judgingEndedAt: 'DESC',
+            resultsAt: 'DESC',
         },
         relations: [
             'submissions',
@@ -20,7 +20,7 @@ judgingResultsRouter.get('/', async (ctx) => {
             'submissions.judging.judgingCriteria',
             'submissions.judging.judge',
         ],
-        where: { judgingEndedAt: LessThan(new Date()) },
+        where: { resultsAt: LessThan(new Date()) },
     });
 
     const criterias = await JudgingCriteria.find({});

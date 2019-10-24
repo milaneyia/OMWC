@@ -15,7 +15,7 @@ leaderboardRouter.get('/', async (ctx) => {
         .select(['team.id', 'country.id', 'country.code', 'country.name', 'eliminationRound.title'])
         .getMany();
 
-    const query = Team
+    const scores = await Team
         .createQueryBuilder('team')
         .innerJoin('team.submissions', 'submission')
         .innerJoin('submission.judging', 'judging')
@@ -26,15 +26,9 @@ leaderboardRouter.get('/', async (ctx) => {
         .addSelect('SUM(judging.score)', 'score')
         .groupBy('team.id')
         .addGroupBy('criteria.id')
-        .addGroupBy('criteria.name');
-
-    const currentRound = await Round.findCurrentRound();
-
-    if (currentRound) {
-        query.where('round.id != :roundId', { roundId: currentRound.id });
-    }
-
-    const scores = await query.getRawMany();
+        .addGroupBy('criteria.name')
+        .where('round.resultsAt < :today', { today: new Date() })
+        .getRawMany();
 
     if (scores && scores.length) {
         teams.map((t) => {

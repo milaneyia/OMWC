@@ -43,6 +43,11 @@ block content
                     label Judging End Date
                     input.form-control(type="date", name="judgingEndedAt" required value=(round && round.judgingEndedAt))
 
+            .col-sm-6
+                .form-group
+                    label Results Date
+                    input.form-control(type="date", name="resultsAt" required value=(round && round.resultsAt))
+
             .col-sm-12
                 if round
                     input(type="hidden", name="roundId" value=round.id)

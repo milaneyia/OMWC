@@ -68,6 +68,9 @@ export class Round extends BaseEntity {
     @Column('date')
     judgingEndedAt!: Date;
 
+    @Column('date')
+    resultsAt!: Date;
+
     @OneToMany((type) => Submission, (submission) => submission.round)
     submissions!: Submission[];
 

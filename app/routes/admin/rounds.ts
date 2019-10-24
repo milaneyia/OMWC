@@ -46,6 +46,7 @@ roundsAdminRouter.post('/save', async (ctx) => {
     round.submissionsEndedAt = ctx.request.body.submissionsEndedAt;
     round.judgingStartedAt = ctx.request.body.judgingStartedAt;
     round.judgingEndedAt = ctx.request.body.judgingEndedAt;
+    round.resultsAt = ctx.request.body.resultsAt;
     await round.save();
 
     return ctx.redirect('/admin/rounds/');
