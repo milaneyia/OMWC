@@ -25,6 +25,7 @@ import judgingResultsRouter from './routes/judgingResults';
 import leaderboardRouter from './routes/leaderboard';
 import mappersChoiceRouter from './routes/mappersChoice';
 import submissionsRouter from './routes/submissions';
+import teamsRouter from './routes/teams';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -74,6 +75,8 @@ app.use(leaderboardRouter.routes());
 app.use(leaderboardRouter.allowedMethods());
 app.use(judgingResultsRouter.routes());
 app.use(judgingResultsRouter.allowedMethods());
+app.use(teamsRouter.routes());
+app.use(teamsRouter.allowedMethods());
 
 // Applications & Choices routes
 app.use(captainApplicationsRouter.routes());

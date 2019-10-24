@@ -1,0 +1,25 @@
+extends layout.pug
+include ./mixins/extras.pug
+
+block content
+    .container.text-center
+        .row.mb-2
+            .col-sm
+                .card
+                    .card-body
+                        h4 Teams
+
+        if teams
+            each team in teams
+                .row
+                    .col-sm
+                        .card
+                            .card-header
+                                +img-flag(team.country.code)
+                                h5.mt-2= team.country.name
+                            .card-body
+                                .row
+                                    each user in team.users
+                                        .col-sm
+                                            +user-avatar(user.osuId)
+                                            p #[+user-link(user.username)]
