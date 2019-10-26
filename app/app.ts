@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import bodyparser from 'koa-bodyparser';
+import helmet from 'koa-helmet';
 import session from 'koa-session';
 import serve from 'koa-static';
 import views from 'koa-views';
@@ -41,7 +42,8 @@ createConnection().then(() => {
 });
 
 // Middlewares
-app.use(session(app));
+app.use(helmet());
+app.use(session({ key: 'omwc:sess' }, app));
 app.use(serve(path.join(__dirname, '../public')));
 app.use(bodyparser());
 app.use(views(path.join(__dirname, 'templates'), {
