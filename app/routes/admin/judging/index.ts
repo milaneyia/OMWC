@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToInt, convertToIntOrThrow } from '../../../helpers';
 import { authenticate, isStaff } from '../../../middlewares/authentication';
 import { JudgingCriteria } from '../../../models/judging/JudgingCriteria';
 import { ROLE } from '../../../models/Role';
@@ -58,11 +59,12 @@ judgingAdminRouter.get('/', async (ctx) => {
 judgingAdminRouter.post('/eliminateTeam', async (ctx) => {
     const currentRound = await Round.findCurrentRound();
 
-    if (!currentRound || !ctx.request.body.eliminatedTeamId) {
+    if (!currentRound) {
         return ctx.render('error');
     }
 
-    const team = await Team.findOneOrFail({ id: ctx.request.body.eliminatedTeamId });
+    const eliminatedTeamId = convertToIntOrThrow(ctx.request.body.eliminatedTeamId);
+    const team = await Team.findOneOrFail({ id: eliminatedTeamId });
     team.isCompeting = false;
     team.eliminationRoundId = currentRound.id;
     team.save();

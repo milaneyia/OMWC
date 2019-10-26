@@ -9,32 +9,32 @@ export class Schedule extends BaseEntity {
     @Column('date')
     applicationsStartedAt!: Date;
 
-    @Column('date', { nullable: true })
-    captainApplicationsEndedAt?: Date;
+    @Column('date')
+    captainApplicationsEndedAt!: Date;
 
-    @Column('date', { nullable: true })
-    captainVotingStartedAt?: Date;
+    @Column('date')
+    captainVotingStartedAt!: Date;
 
-    @Column('date', { nullable: true })
-    captainVotingEndedAt?: Date;
+    @Column('date')
+    captainVotingEndedAt!: Date;
 
-    @Column('date', { nullable: true })
-    mappersChoiceStartedAt?: Date;
+    @Column('date')
+    mappersChoiceStartedAt!: Date;
 
-    @Column('date', { nullable: true })
-    mappersChoiceEndedAt?: Date;
+    @Column('date')
+    mappersChoiceEndedAt!: Date;
 
-    @Column('date', { nullable: true })
-    mapperApplicationsEndedAt?: Date;
+    @Column('date')
+    mapperApplicationsEndedAt!: Date;
 
-    @Column('date', { nullable: true })
-    judgeApplicationsEndedAt?: Date;
+    @Column('date')
+    judgeApplicationsEndedAt!: Date;
 
-    @Column('date', { nullable: true })
-    constestStartedAt?: Date;
+    @Column('date')
+    constestStartedAt!: Date;
 
-    @Column('date', { nullable: true })
-    constestEndedAt?: Date;
+    @Column('date')
+    constestEndedAt!: Date;
 
     @CreateDateColumn()
     createdAt!: Date;

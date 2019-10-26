@@ -28,7 +28,7 @@ mapperApplicationsRouter.post('/store', async (ctx) => {
 
     if (app) {
         return ctx.render('error', {
-            error: 'Already applied.',
+            title: 'Already applied.',
         });
     }
 

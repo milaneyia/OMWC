@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToInt, convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { MapperApplication } from '../../models/applications/MapperApplication';
 import { Team } from '../../models/Team';
@@ -21,7 +22,8 @@ teamsChoiceAdminRouter.get('/', async (ctx) => {
 });
 
 teamsChoiceAdminRouter.post('/confirm', async (ctx) => {
-    const team = await Team.findOneOrFail({ where: { id: ctx.request.body.teamId } });
+    const teamId = convertToIntOrThrow(ctx.request.body.teamId);
+    const team = await Team.findOneOrFail({ id: teamId });
     team.isCompeting = true;
     await team.save();
 
@@ -29,7 +31,8 @@ teamsChoiceAdminRouter.post('/confirm', async (ctx) => {
 });
 
 teamsChoiceAdminRouter.post('/deny', async (ctx) => {
-    const team = await Team.findOneOrFail({ where: { id: ctx.request.body.teamId } });
+    const teamId = convertToIntOrThrow(ctx.request.body.teamId);
+    const team = await Team.findOneOrFail({ id: teamId });
     team.isCompeting = false;
     await team.save();
 

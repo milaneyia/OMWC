@@ -7,7 +7,7 @@ block content
             .col-sm
                 h4 Update schedule to follow
 
-        form.row(action="/admin/schedule/save", method="post")
+        form.row.mb-2(action="/admin/schedule/save", method="post")
             .col-sm-6
                 .form-group
                     label Applications Start Date
@@ -15,38 +15,40 @@ block content
             .col-sm-6
                 .form-group
                     label Captain Applications End Date
-                    input.form-control(type="date", name="captainApplicationsEndedAt" value=(schedule && schedule.captainApplicationsEndedAt))
+                    input.form-control(type="date", name="captainApplicationsEndedAt" required value=(schedule && schedule.captainApplicationsEndedAt))
             .col-sm-6
                 .form-group
                     label Captain Voting Start Date
-                    input.form-control(type="date", name="captainVotingStartedAt" value=(schedule && schedule.captainVotingStartedAt))
+                    input.form-control(type="date", name="captainVotingStartedAt" required value=(schedule && schedule.captainVotingStartedAt))
             .col-sm-6
                 .form-group
                     label Captain Voting End Date
-                    input.form-control(type="date", name="captainVotingEndedAt" value=(schedule && schedule.captainVotingEndedAt))
+                    input.form-control(type="date", name="captainVotingEndedAt" required value=(schedule && schedule.captainVotingEndedAt))
             .col-sm-6
                 .form-group
                     label Mappers Choice Start Date
-                    input.form-control(type="date", name="mappersChoiceStartedAt" value=(schedule && schedule.mappersChoiceStartedAt))
+                    input.form-control(type="date", name="mappersChoiceStartedAt" required value=(schedule && schedule.mappersChoiceStartedAt))
             .col-sm-6
                 .form-group
                     label Mappers Choice End Date
-                    input.form-control(type="date", name="mappersChoiceEndedAt" value=(schedule && schedule.mappersChoiceEndedAt))
+                    input.form-control(type="date", name="mappersChoiceEndedAt" required value=(schedule && schedule.mappersChoiceEndedAt))
             .col-sm-6
                 .form-group
                     label Mapper Applications End Date
-                    input.form-control(type="date", name="mapperApplicationsEndedAt" value=(schedule && schedule.mapperApplicationsEndedAt))
+                    input.form-control(type="date", name="mapperApplicationsEndedAt" required value=(schedule && schedule.mapperApplicationsEndedAt))
             .col-sm-6
                 .form-group
                     label Judge Applications End Date
-                    input.form-control(type="date", name="judgeApplicationsEndedAt" value=(schedule && schedule.judgeApplicationsEndedAt))
+                    input.form-control(type="date", name="judgeApplicationsEndedAt" required value=(schedule && schedule.judgeApplicationsEndedAt))
             .col-sm-6
                 .form-group
                     label Contest Start Date
-                    input.form-control(type="date", name="constestStartedAt" value=(schedule && schedule.constestStartedAt))
+                    input.form-control(type="date", name="constestStartedAt" required value=(schedule && schedule.constestStartedAt))
             .col-sm-6
                 .form-group
                     label Contest End Date
-                    input.form-control(type="date", name="constestEndedAt" value=(schedule && schedule.constestEndedAt))
-            .col.s12
+                    input.form-control(type="date", name="constestEndedAt" required value=(schedule && schedule.constestEndedAt))
+            .col-sm-12
                 +submit-button(schedule ? 'Update Schedule': 'Submit Schedule')
+
+        include ../mixins/info.pug

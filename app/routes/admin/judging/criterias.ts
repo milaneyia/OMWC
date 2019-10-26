@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToFloatOrThrow, convertToInt } from '../../../helpers';
 import { authenticate, isStaff } from '../../../middlewares/authentication';
 import { JudgingCriteria } from '../../../models/judging/JudgingCriteria';
 
@@ -21,7 +22,8 @@ criteriasAdminRouter.get('/create', async (ctx) => {
 });
 
 criteriasAdminRouter.get('/edit/:id', async (ctx) => {
-    const criteria = await JudgingCriteria.findOneOrFail({ where: { id: ctx.params.id } });
+    const criteriaId = convertToInt(ctx.params.id);
+    const criteria = await JudgingCriteria.findOneOrFail({ id: criteriaId });
 
     return ctx.render('admin/judging/criterias/manage', {
         criteria,
@@ -29,7 +31,9 @@ criteriasAdminRouter.get('/edit/:id', async (ctx) => {
 });
 
 criteriasAdminRouter.post('/save', async (ctx) => {
-    let criteria = await JudgingCriteria.findOne({ where: { id: ctx.request.body.criteriaId } });
+    const criteriaId = convertToInt(ctx.request.body.criteriaId);
+    const maxScore = convertToFloatOrThrow(ctx.request.body.maxScore);
+    let criteria = await JudgingCriteria.findOne({ id: criteriaId });
 
     if (!criteria) {
         criteria = new JudgingCriteria();
@@ -40,7 +44,7 @@ criteriasAdminRouter.post('/save', async (ctx) => {
     }
 
     criteria.name = ctx.request.body.name.trim();
-    criteria.maxScore = ctx.request.body.maxScore;
+    criteria.maxScore = maxScore;
     await criteria.save();
 
     return ctx.redirect('/admin/judging/criterias');

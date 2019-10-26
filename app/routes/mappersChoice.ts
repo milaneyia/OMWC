@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToArray } from '../helpers';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { onGoingMappersChoice } from '../middlewares/scheduleCheck';
 import { MapperApplication } from '../models/applications/MapperApplication';
@@ -13,6 +14,9 @@ mappersChoiceRouter.use(onGoingMappersChoice);
 mappersChoiceRouter.use(isCaptain);
 
 mappersChoiceRouter.get('/', async (ctx) => {
+    const info = ctx.session.info;
+    delete ctx.session.info;
+
     const applications = await MapperApplication
         .createQueryBuilder('mapperApplication')
         .innerJoinAndSelect('mapperApplication.user', 'user')
@@ -23,20 +27,17 @@ mappersChoiceRouter.get('/', async (ctx) => {
 
     return ctx.render('mappersChoice', {
         applications,
+        info,
         team,
         user: ctx.state.user,
     });
 });
 
 mappersChoiceRouter.post('/save', async (ctx) => {
-    const applicationsIds = ctx.request.body.applicationsIds;
-
-    if (!applicationsIds || !applicationsIds.length) {
-        return ctx.redirect('back');
-    }
-
+    const applicationsIds = convertToArray(ctx.request.body.applicationsIds);
     const captain: User = ctx.state.user;
-    const team = await Team.findOneOrFail({ where: { countryId: captain.country.id } });
+
+    const team = await Team.findOneOrFail({ countryId: captain.country.id });
     let applications = await MapperApplication.findByIds(applicationsIds, { relations: ['user'] });
 
     applications = applications.filter((a) => a.user.country.id === team.countryId);
@@ -45,7 +46,8 @@ mappersChoiceRouter.post('/save', async (ctx) => {
     mappers.push(captain);
 
     if (mappers.length > 6) {
-        return ctx.render('error', { error: 'Too many members in the team' });
+        ctx.session.info = 'Too many members in the team';
+        return ctx.redirect('back');
     }
 
     team.users = mappers;

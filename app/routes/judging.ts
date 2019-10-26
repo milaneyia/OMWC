@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToFloat, convertToInt, convertToIntOrThrow } from '../helpers';
 import { authenticate, isJudge } from '../middlewares/authentication';
 import { Judging } from '../models/judging/Judging';
 import { JudgingCriteria } from '../models/judging/JudgingCriteria';
@@ -28,10 +29,8 @@ judgingRouter.get('/', async (ctx) => {
 
     const criterias = await JudgingCriteria.find({});
     const judgingDone = await Judging.find({
-        where: {
-            judgeId: ctx.state.user.id,
-            roundId: currentRound.id,
-        },
+        judgeId: ctx.state.user.id,
+        roundId: currentRound.id,
     });
 
     return ctx.render('judging/index', {
@@ -42,11 +41,14 @@ judgingRouter.get('/', async (ctx) => {
 });
 
 judgingRouter.post('/save', async (ctx) => {
-    const submission = await Submission.findOneOrFail({ where: { id: ctx.request.body.submissionId } });
-    const criteria = await JudgingCriteria.findOneOrFail({ where: { id: ctx.request.body.criteriaId } });
+    const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
+    const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
+    const score = convertToFloat(ctx.request.body.score);
+    const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
+
+    const submission = await Submission.findOneOrFail({ id: submissionId });
+    const criteria = await JudgingCriteria.findOneOrFail({ id: criteriaId });
     const round = await Round.findCurrentJudgingRound();
-    const score = ctx.request.body.score;
-    const comment = ctx.request.body.comment;
 
     if (!round || !score || !comment) {
         return ctx.body = { error: 'Missing data' };
@@ -57,12 +59,10 @@ judgingRouter.post('/save', async (ctx) => {
     }
 
     let judging = await Judging.findOne({
-        where: {
-            judgeId: ctx.state.user.id,
-            judgingCriteriaId: criteria.id,
-            roundId: round.id,
-            submissionId: submission.id,
-        },
+        judgeId: ctx.state.user.id,
+        judgingCriteriaId: criteria.id,
+        roundId: round.id,
+        submissionId: submission.id,
     });
 
     if (!judging) {

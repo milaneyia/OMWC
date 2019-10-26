@@ -28,7 +28,13 @@ captainVotingRouter.get('/', async (ctx) => {
 });
 
 captainVotingRouter.post('/store', async (ctx) => {
-    const application = await CaptainApplication.findOneOrFailWithUser(ctx.request.body.applicationId);
+    const applicationId = ctx.request.body.applicationId && parseInt(ctx.request.body.applicationId, 10);
+
+    if (!applicationId || isNaN(applicationId)) {
+        return ctx.render('error');
+    }
+
+    const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
     const votesDone = await CaptainVote.findUserVotes(ctx.state.user);
 
     const hasVotedForIt = votesDone.find((v) => v.captainApplication.id === application.id);
@@ -48,11 +54,15 @@ captainVotingRouter.post('/store', async (ctx) => {
 });
 
 captainVotingRouter.post('/destroy', async (ctx) => {
+    const applicationId = ctx.request.body.applicationId && parseInt(ctx.request.body.applicationId, 10);
+
+    if (!applicationId || isNaN(applicationId)) {
+        return ctx.render('error');
+    }
+
     const vote = await CaptainVote.findOneOrFail({
-        where: {
-            captainApplicationId: parseInt(ctx.request.body.applicationId, 10),
-            userId: ctx.state.user.id,
-        },
+        captainApplicationId: applicationId,
+        userId: ctx.state.user.id,
     });
 
     await vote.remove();

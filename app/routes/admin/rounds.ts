@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToInt, convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
 
@@ -21,7 +22,8 @@ roundsAdminRouter.get('/create', async (ctx) => {
 });
 
 roundsAdminRouter.get('/edit/:id', async (ctx) => {
-    const round = await Round.findOneOrFail({ where: { id: ctx.params.id } });
+    const roundId = convertToIntOrThrow(ctx.params.id);
+    const round = await Round.findOneOrFail({ id: roundId });
 
     return ctx.render('admin/rounds/manage', {
         round,
@@ -29,13 +31,21 @@ roundsAdminRouter.get('/edit/:id', async (ctx) => {
 });
 
 roundsAdminRouter.post('/save', async (ctx) => {
-    let round = await Round.findOne({ where: { id: ctx.request.body.roundId } });
+    const roundId = convertToInt(ctx.request.body.roundId);
+    let round = await Round.findOne({ id: roundId });
 
     if (!round) {
         round = new Round();
     }
 
-    if (!ctx.request.body.title) {
+    if (!ctx.request.body.title ||
+        !ctx.request.body.submissionsStartedAt ||
+        !ctx.request.body.submissionsEndedAt ||
+        !ctx.request.body.judgingStartedAt ||
+        !ctx.request.body.judgingEndedAt ||
+        !ctx.request.body.resultsAt
+        ) {
+
         return ctx.render('error');
     }
 

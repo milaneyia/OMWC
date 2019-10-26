@@ -9,66 +9,96 @@ block content
                 .card
                     .card-body
                         if user
-                            h3.card-title welcome #[b= user.username]
-                            hr
-                            .card-subtitle.mb-2 you're participating for #[b= user.country.name]
-                            +img-flag(user.country.code)
+                            //- if restricted
+                            if user.roleId === 2
+                                h3.card-title you did something bad
+                            
+                            else
+                                h3.card-title welcome #[b= user.username]
+                                hr
+                                .card-subtitle.mb-2 you're participating for #[b= user.country.name]
+                                +img-flag(user.country.code)
                         else
                             h3.card-title osu! Mapping World Cup
 
                             form(action="/login" method="GET")
                                 +submit-button('Verify your osu! account to continue')(class="btn-block btn-lg")
 
-        if user
-            .row
+        if user && user.roleId !== 2
+            .row.mb-2
                 .col-sm
                     .card
                         .card-body
-                            +link-button(
-                                captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
-                                '/applications/captains/edit'
-                            )(class="btn-block btn-lg")
+                            if schedule.captainApplicationsEndedAt && new Date(schedule.captainApplicationsEndedAt) > new Date()
+                                +link-button(
+                                    captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
+                                    '/applications/captains/edit'
+                                )(class="btn-block btn-lg")
+                                p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.captainApplicationsEndedAt)]
 
-                            if mapperApplication
-                                +link-button-disabled(`You've applied as a mapper`)(class="btn-block btn-lg")
-                            else
-                                +link-button('Apply as a mapper', '/applications/mappers/edit')(class="btn-block btn-lg")
+                            if schedule.mapperApplicationsEndedAt && new Date(schedule.mapperApplicationsEndedAt) > new Date()
+                                if mapperApplication
+                                    +link-button-disabled(`You've applied as a mapper`)(class="btn-block btn-lg")
+                                else
+                                    +link-button('Apply as a mapper', '/applications/mappers/edit')(class="btn-block btn-lg")
+                                p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.mapperApplicationsEndedAt)]
 
-                            +link-button(
-                                judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
-                                '/applications/judges/edit'
-                            )(class="btn-block btn-lg")
-
-                            hr
-
-                            +link-button(
-                                'Captain Voting',
-                                '/captainVoting'
-                            )(class="btn-block btn-lg")
-
-                            +link-button(
-                                'Mappers Choice',
-                                '/mappersChoice'
-                            )(class="btn-block btn-lg")
-
-                            +link-button(
-                                '.osz submissions',
-                                '/submissions'
-                            )(class="btn-block btn-lg")
+                            if schedule.judgeApplicationsEndedAt && new Date(schedule.judgeApplicationsEndedAt) > new Date()
+                                +link-button(
+                                    judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
+                                    '/applications/judges/edit'
+                                )(class="btn-block btn-lg")
+                                p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.judgeApplicationsEndedAt)]
 
                             hr
 
-                            +link-button(
-                                'Judging',
-                                '/judging'
-                            )(class="btn-block btn-lg")
+                            if schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()
+                                if new Date(schedule.captainVotingStartedAt) > new Date()
+                                    +link-button-disabled(
+                                        'Captain Voting',
+                                        '/captainVoting'
+                                    )(class="btn-block btn-lg")
+                                else
+                                    +link-button(
+                                        'Captain Voting',
+                                        '/captainVoting'
+                                    )(class="btn-block btn-lg")
+                                
+                                p.small from #[+local-date(schedule.captainVotingStartedAt)] to #[+local-date(schedule.captainVotingEndedAt)]
+
+                            if schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && isCaptain
+                                +link-button(
+                                    'Mappers Choice',
+                                    '/mappersChoice'
+                                )(class="btn-block btn-lg")
+                                p.small from #[+local-date(schedule.mappersChoiceStartedAt)] to #[+local-date(schedule.mappersChoiceEndedAt)]
+
+                            if isCaptain
+                                +link-button(
+                                    '.osz submissions',
+                                    '/submissions'
+                                )(class="btn-block btn-lg")
+
+                            hr
+
+                            //- if judge
+                            if user.roleId === 3
+                                if judgingRound
+                                    +link-button(
+                                        'Judging',
+                                        '/judging'
+                                    )(class="btn-block btn-lg")
+                                else
+                                    +link-button-disabled(
+                                        'Judging',
+                                        '/judging'
+                                    )(class="btn-block btn-lg")
 
 
-        else
-            .row
-                .col-sm
-                    .card
-                        .card-header
-                            h5 Important information
-                        .card-body
-                            .card-title Something important here
+        .row
+            .col-sm
+                .card
+                    .card-header
+                        h5 Important information
+                    .card-body
+                        .card-title Something important here

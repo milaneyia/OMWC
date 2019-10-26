@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 import { Country } from '../../models/Country';
@@ -41,8 +42,9 @@ captainChoiceAdminRouter.get('/', async (ctx) => {
 });
 
 captainChoiceAdminRouter.post('/store', async (ctx) => {
-    const application = await CaptainApplication.findOneOrFailWithUser(ctx.request.body.applicationId);
-    const user = await User.findOneOrFail({ where: { id: application.user.id } });
+    const applicationId = convertToIntOrThrow(ctx.request.body.applicationId);
+    const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
+    const user = await User.findOneOrFail({ id: application.user.id });
     let team = await Team.findOne({ countryId: user.country.id });
 
     if (!team) {
@@ -59,13 +61,17 @@ captainChoiceAdminRouter.post('/store', async (ctx) => {
 });
 
 captainChoiceAdminRouter.post('/destroy', async (ctx) => {
-    const application = await CaptainApplication.findOneOrFailWithUser(ctx.request.body.applicationId);
-    const user = await User.findOneOrFail({ where: { id: application.user.id } });
-    const team = await Team.findOneOrFail({ where: { id: user.teamId } });
-    team.captainId = null;
-    user.teamId = null;
-    await team.save();
-    await user.save();
+    const applicationId = convertToIntOrThrow(ctx.request.body.applicationId);
+    const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
+    const user = await User.findOneOrFail({ id: application.user.id });
+
+    if (user.teamId) {
+        const team = await Team.findOneOrFail({ id: user.teamId });
+        team.captainId = null;
+        user.teamId = null;
+        await team.save();
+        await user.save();
+    }
 
     return ctx.redirect('back');
 });

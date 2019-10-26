@@ -4,33 +4,46 @@ import { CaptainApplication } from '../models/applications/CaptainApplication';
 import { JudgeApplication } from '../models/applications/JudgeApplication';
 import { MapperApplication } from '../models/applications/MapperApplication';
 import { Country } from '../models/Country';
-import { Role, ROLE } from '../models/Role';
+import { ROLE } from '../models/Role';
+import { Round } from '../models/rounds/Round';
+import { Schedule } from '../models/Schedule';
 import { User } from '../models/User';
 
 const indexRouter = new Router();
 
 indexRouter.get('/', async (ctx) => {
+    const schedule = await Schedule.findOne({});
     const osuId = ctx.session.osuId;
     let user;
     let captainApplication;
     let mapperApplication;
     let judgeApplication;
+    let judgingRound;
+    let isCaptain = false;
 
     if (osuId) {
-        user = await User.findOne({ osuId });
+        user = await User.findOne({ where: { osuId }, relations: ['team'] });
 
         if (user) {
             captainApplication = await CaptainApplication.findUserApplication(user.id);
             mapperApplication = await MapperApplication.findUserApplication(user.id);
             judgeApplication = await JudgeApplication.findUserApplication(user.id);
+            judgingRound = await Round.findCurrentJudgingRound();
+
+            if (user.team && user.team.captainId === user.id) {
+                isCaptain = true;
+            }
         }
     }
 
     return await ctx.render('index', {
         captainApplication,
+        isCaptain,
         judgeApplication,
+        judgingRound,
         mapperApplication,
         path: '/',
+        schedule,
         user,
     });
 });
@@ -58,7 +71,7 @@ indexRouter.get('/callback', async (ctx) => {
     let response = await osuApi.getToken(ctx.query.code);
 
     if (response.error) {
-        ctx.render('error');
+        return ctx.render('error');
     } else {
         ctx.session.accessToken = response.access_token;
         ctx.session.refreshToken = response.refresh_token;

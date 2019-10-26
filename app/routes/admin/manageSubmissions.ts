@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
 import { Submission } from '../../models/rounds/Submission';
@@ -21,7 +22,8 @@ submissionsAdminRouter.get('/', async (ctx) => {
 });
 
 submissionsAdminRouter.get('/edit/:id', async (ctx) => {
-    const submission = await Submission.findOneOrFail({ where: { id: ctx.params.id } });
+    const submissionId = convertToIntOrThrow(ctx.params.id);
+    const submission = await Submission.findOneOrFail({ id: submissionId });
 
     return ctx.render('admin/submissions/manage', {
         submission,
@@ -29,7 +31,8 @@ submissionsAdminRouter.get('/edit/:id', async (ctx) => {
 });
 
 submissionsAdminRouter.post('/save', async (ctx) => {
-    const submission = await Submission.findOneOrFail({ where: { id: ctx.request.body.submissionId } });
+    const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
+    const submission = await Submission.findOneOrFail({ id: submissionId });
 
     if (!ctx.request.body.originalLink) {
         return ctx.render('error');

@@ -26,21 +26,24 @@ html(lang="en")
                         a.nav-link(href="/judgingResults" class=(path === '/judgingResults' ? 'active' : '')) Results
                     li.nav-item
                         a.nav-link(href="/teams" class=(path === '/teams' ? 'active' : '')) Teams
-                    li.nav-item.dropdown
-                        a.nav-link.dropdown-toggle(href="#" data-toggle="dropdown") Admin
 
-                        .dropdown-menu
-                            a.dropdown-item(href="/admin/schedule") Schedule
-                            .dropdown-divider
-                            a.dropdown-item(href="/admin/captainChoice") Captain Choice
-                            a.dropdown-item(href="/admin/teamsChoice") Teams Choice
-                            a.dropdown-item(href="/admin/judgesChoice") Judge Choice
-                            .dropdown-divider
-                            a.dropdown-item(href="/admin/judging/criterias") Criterias
-                            a.dropdown-item(href="/admin/judging") Judging List
-                            .dropdown-divider
-                            a.dropdown-item(href="/admin/rounds") Rounds
-                            a.dropdown-item(href="/admin/manageSubmissions") Submissions
+                    //- if admin
+                    if user && user.roleId === 4
+                        li.nav-item.dropdown
+                            a.nav-link.dropdown-toggle(href="#" data-toggle="dropdown") Admin
+
+                            .dropdown-menu
+                                a.dropdown-item(href="/admin/schedule") Schedule
+                                .dropdown-divider
+                                a.dropdown-item(href="/admin/captainChoice") Captain Choice
+                                a.dropdown-item(href="/admin/teamsChoice") Teams Choice
+                                a.dropdown-item(href="/admin/judgesChoice") Judge Choice
+                                .dropdown-divider
+                                a.dropdown-item(href="/admin/judging/criterias") Criterias
+                                a.dropdown-item(href="/admin/judging") Judging List
+                                .dropdown-divider
+                                a.dropdown-item(href="/admin/rounds") Rounds
+                                a.dropdown-item(href="/admin/manageSubmissions") Submissions
         
         block content
         

@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { JudgeApplication } from '../../models/applications/JudgeApplication';
 import { ROLE } from '../../models/Role';
@@ -12,7 +13,7 @@ judgesChoiceAdminRouter.use(isStaff);
 
 judgesChoiceAdminRouter.get('/', async (ctx) => {
     const applications = await JudgeApplication.find({ relations: ['user'] });
-    const currentJudges = await User.find({ where: { roleId: ROLE.Judge } });
+    const currentJudges = await User.find({ roleId: ROLE.Judge });
 
     return ctx.render('admin/judgesChoice', {
         applications,
@@ -21,7 +22,8 @@ judgesChoiceAdminRouter.get('/', async (ctx) => {
 });
 
 judgesChoiceAdminRouter.post('/store', async (ctx) => {
-    const user = await User.findOneOrFail({ where: { id: ctx.request.body.userId } });
+    const userId = convertToIntOrThrow(ctx.request.body.userId);
+    const user = await User.findOneOrFail({ id: userId });
 
     if (user.teamId) {
         return ctx.render('error', { error: 'User has a team' });
@@ -34,7 +36,8 @@ judgesChoiceAdminRouter.post('/store', async (ctx) => {
 });
 
 judgesChoiceAdminRouter.post('/destroy', async (ctx) => {
-    const user = await User.findOneOrFail({ where: { id: ctx.request.body.userId } });
+    const userId = convertToIntOrThrow(ctx.request.body.userId);
+    const user = await User.findOneOrFail({ id: userId });
     user.roleId = ROLE.User;
     await user.save();
 

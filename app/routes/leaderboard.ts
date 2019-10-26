@@ -1,6 +1,5 @@
 import Router from '@koa/router';
 import { JudgingCriteria } from '../models/judging/JudgingCriteria';
-import { Round } from '../models/rounds/Round';
 import { ICriteriaScore, Team } from '../models/Team';
 
 const leaderboardRouter = new Router();
