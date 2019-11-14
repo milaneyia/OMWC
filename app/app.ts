@@ -25,6 +25,7 @@ import judgingRouter from './routes/judging';
 import judgingResultsRouter from './routes/judgingResults';
 import leaderboardRouter from './routes/leaderboard';
 import mappersChoiceRouter from './routes/mappersChoice';
+import staffRouter from './routes/staff';
 import submissionsRouter from './routes/submissions';
 import teamsRouter from './routes/teams';
 
@@ -79,6 +80,8 @@ app.use(judgingResultsRouter.routes());
 app.use(judgingResultsRouter.allowedMethods());
 app.use(teamsRouter.routes());
 app.use(teamsRouter.allowedMethods());
+app.use(staffRouter.routes());
+app.use(staffRouter.allowedMethods());
 
 // Applications & Choices routes
 app.use(captainApplicationsRouter.routes());

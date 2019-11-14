@@ -12,7 +12,6 @@ html(lang="en")
         nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
             a.navbar-brand.p-0(href="/")
                 img.d-inline-block.mr-2(src="/img/logo.jpg" width="36" height="36" alt="")
-                | o!mwc
             button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbar")
                 span.navbar-toggler-icon
 
@@ -26,6 +25,8 @@ html(lang="en")
                         a.nav-link(href="/judgingResults" class=(path === '/judgingResults' ? 'active' : '')) Results
                     li.nav-item
                         a.nav-link(href="/teams" class=(path === '/teams' ? 'active' : '')) Teams
+                    li.nav-item
+                        a.nav-link(href="/staff" class=(path === '/staff' ? 'active' : '')) Staff
 
                     //- if admin
                     if user && user.roleId === 4

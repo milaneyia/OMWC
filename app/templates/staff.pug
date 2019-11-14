@@ -1,0 +1,30 @@
+extends layout.pug
+include ./mixins/extras.pug
+
+block content
+    .container.text-center
+
+        if users
+            .row
+                .col-sm
+                    .card
+                        .card-header
+                            h5.mt-2 Staff
+                        .card-body
+                            .row
+                                each user in users.filter(u => u.roleId === 4)
+                                    .col-sm
+                                        +user-avatar(user.osuId)
+                                        p #[+user-link(user.username)]
+
+            .row
+                .col-sm
+                    .card
+                        .card-header
+                            h5.mt-2 Judges
+                        .card-body
+                            .row
+                                each user in users.filter(u => u.roleId === 3)
+                                    .col-sm
+                                        +user-avatar(user.osuId)
+                                        p #[+user-link(user.username)]
