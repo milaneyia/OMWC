@@ -20,12 +20,11 @@ block content
                                     td= team.country.name
                                     td
                                         if team.users
-                                            each user in team.users
-                                                = user.username + ' '
+                                            = team.users.map(u => u.username).join(', ')
                                     td
-                                        - let notChosen = (team.users ? applications.filter(a => (!team.users || team.users.find(u => u.id === a.user.id) === undefined)) : applications)
-                                        each application in notChosen
-                                            = application.user.username + ' '
+                                        - let relatedApplications = applications.filter(a => a.user.countryId === team.countryId)
+                                        - let notChosen = (team.users ? relatedApplications.filter(a => (!team.users || team.users.find(u => u.id === a.user.id) === undefined)) : relatedApplications)
+                                        = notChosen.map(a => a.user.username).join(', ')
                                     td
                                         if team.isCompeting
                                             form(action="/admin/teamsChoice/deny" method="post")

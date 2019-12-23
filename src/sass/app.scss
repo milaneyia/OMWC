@@ -62,3 +62,77 @@ body {
 .team-eliminated {
     opacity: 0.3;
 }
+
+@mixin leaderboard-highlight($color) {
+    & > td:first-child {
+        background: $color;
+        background: linear-gradient(67deg, $color 25%, #fff0 85%);
+    }
+}
+
+.first-place  {
+    @include leaderboard-highlight(rgba(201, 206, 50, 0.9));
+}
+
+.second-place  {
+    @include leaderboard-highlight(#959595);
+}
+
+.third-place  {
+    @include leaderboard-highlight(#cfb087);
+}
+
+$default-shadow: 0px 0px 10px 0px #333;
+
+.card {
+    box-shadow: $default-shadow;
+}
+
+.header {
+    background: linear-gradient(to right, transparent, rgba(76, 69, 63, 0.5) 50%, transparent);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+
+    @extend .d-flex;
+    @extend .justify-content-center;
+    @extend .align-items-center;
+}
+
+.team {
+    box-shadow: $default-shadow;
+    @extend .mb-2;
+
+    &__country {
+        background-color:rgba(61, 61, 61, 1);
+
+        @extend .d-flex;
+        @extend .py-2;
+        @extend .align-items-center;
+    }
+
+    &__members {
+        background-color:rgba(61, 61, 61, 0.8);
+
+        @extend .py-2;
+        @extend .d-flex;
+        @extend .align-items-center;
+    }
+}
+
+.box {
+    background-color: rgba(61, 61, 61, 0.8);
+    box-shadow: $default-shadow;
+}
+
+.leaderboard {
+    @extend .box;
+    @extend .table;
+    @extend .table-hover;
+    @extend .table-responsive-md;
+}
+
+.staff {
+    @extend .box;
+    @extend .py-3;
+    @extend .justify-content-center;
+}

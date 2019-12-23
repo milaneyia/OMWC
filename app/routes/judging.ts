@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { convertToFloat, convertToInt, convertToIntOrThrow } from '../helpers';
+import { convertToFloat, convertToIntOrThrow } from '../helpers';
 import { authenticate, isJudge } from '../middlewares/authentication';
 import { Judging } from '../models/judging/Judging';
 import { JudgingCriteria } from '../models/judging/JudgingCriteria';

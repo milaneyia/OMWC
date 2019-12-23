@@ -7,17 +7,24 @@ const staffRouter = new Router();
 staffRouter.prefix('/staff');
 
 staffRouter.get('/', async (ctx) => {
-    const users = await User.find({
+    const judges = await User.find({
         relations: ['role'],
         where: [
-            { roleId: ROLE.Staff },
             { roleId: ROLE.Judge },
         ],
     });
 
+    const osuId = ctx.session.osuId;
+    let user;
+
+    if (osuId) {
+        user = await User.findOne({ osuId });
+    }
+
     return await ctx.render('staff', {
+        judges,
         path: '/staff',
-        users,
+        user,
     });
 });
 

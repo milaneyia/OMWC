@@ -1,36 +1,35 @@
 extends layout.pug
 include ./mixins/extras.pug
+include ./mixins/header.pug
 
 block content
     .container.text-center
-        .row.mb-2
-            .col-sm
-                .card
-                    .card-body
-                        h4 Leaderboard
+        +header('Leaderboard')
 
         if teams
             .row
                 .col-sm
-                    .card
-                        .card-body
-                            table.table.table-hover
-                                thead
-                                    tr
-                                        th #
-                                        th Team
-                                        th Final Score
-                                        each criteria in criterias
-                                            th= criteria.name
-                                tbody
-                                    each team, i in teams
-                                        tr(class=team.eliminationRound && 'team-eliminated')
-                                            td= i + 1
-                                            td.d-flex.justify-content-center.align-items-center
-                                                | #[+inline-flag(team.country.code)] 
-                                                .ml-2 #{team.country.name}
-                                            td= team.finalScore
-                                            each criteria in criterias
-                                                if team.criteriaScores
-                                                    - let criteriaScore = team.criteriaScores.find(s => s.criteria === criteria.name);
-                                                    td= criteriaScore && criteriaScore.score
+                    table.leaderboard
+                        thead
+                            tr
+                                th #
+                                th Team
+                                each criteria in criterias
+                                    th= criteria.name
+                                th Final Score
+                        tbody
+                            each team, i in teams
+                                tr(class=(team.eliminationRound ? 'team-eliminated ' : '') + (i == 0 ? 'first-place': i == 1 ? 'second-place' : i == 2 ? 'third-place' : ''))
+                                    td= i + 1
+                                    td.d-flex.justify-content-center.align-items-center
+                                        | #[+inline-flag(team.country.code)] 
+                                        .ml-2 #{team.country.name}
+
+                                    each criteria in criterias
+                                        if team.criteriaScores
+                                            - let criteriaScore = team.criteriaScores.find(s => s.criteria === criteria.name);
+                                            td= (criteriaScore && criteriaScore.score) || 0
+                                        else
+                                            td
+
+                                    td= team.finalScore

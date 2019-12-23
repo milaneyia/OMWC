@@ -1,52 +1,78 @@
 extends ../../layout.pug
 include ../../mixins/buttons.pug
+include ../../mixins/extras.pug
+include ../../mixins/header.pug
 
 block content
     .container.text-center
-        .row
-            .col-sm
-                h4 Judging List
+        +header('Judging List')
 
         .row
             .col.sm
                 each round in rounds
                     if round.submissions && round.submissions.length
-                        h5= round.title
+                        a.btn.btn-primary.btn-block.mb-2(data-toggle="collapse" href=`#${round.title.split(' ').join('')}`)
+                            = round.title
 
-                        each submission in round.submissions
-                            h5= submission.team.country.name + ' - ' + submission.anonymisedAs
+                        .collapse(id=round.title.split(' ').join(''))
+                            .card.mb-2
+                                .card-header
+                                    h5= round.title + ' - Summary'
+                                
+                                .card-body.p-0
+                                    table.table.table-hover
+                                        thead
+                                            tr
+                                                th Team
+                                                th Final Score
+                                                th
+                                        tbody
+                                            each submission in round.submissions
+                                                - const finalScore = finalScores.find(s => s.submissionId === submission.id && s.roundId === round.id);
+                                                tr
+                                                    td= submission.team.country.name + ' - ' + submission.anonymisedAs
+                                                    td= finalScore && finalScore.finalScore
+                                                    td
+                                                        if (submission.team.isCompeting)
+                                                            form(action="/admin/judging/eliminateTeam" method="post")
+                                                                input(type="hidden" name="eliminatedTeamId" value=submission.team.id)
+                                                                +submit-button('Eliminate Team')
 
-                            table.table.table-hover
-                                thead
-                                    tr
-                                        th Judge
-                                        th Criteria
-                                        th Comment
-                                        th Score
-                                tbody
-                                    each judging in submission.judging
-                                        tr
-                                            td= judging.judge.username
-                                            td= judging.judgingCriteria.name
-                                            td= judging.comment
-                                            td= judging.score
-                
-                        h5= round.title + ' - Summary'
-                        
-                        table.table.table-hover
-                            thead
-                                tr
-                                    th Team
-                                    th Final Score
-                                    th
-                            tbody
-                                each submission in round.submissions
-                                    - const finalScore = finalScores.find(s => s.submissionId === submission.id && s.roundId === round.id);
-                                    tr
-                                        td= submission.team.country.name + ' - ' + submission.anonymisedAs
-                                        td= finalScore && finalScore.finalScore
-                                        td
-                                            if (submission.team.isCompeting)
-                                                form(action="/admin/judging/eliminateTeam" method="post")
-                                                    input(type="hidden" name="eliminatedTeamId" value=submission.team.id)
-                                                    +submit-button('Eliminate Team')
+                            hr
+                            
+                            .card
+                                .card-header
+                                    h5= round.title + ' - Detail'
+
+                            each submission in round.submissions
+                                .card.mb-2
+                                    .card-header
+                                        h5.d-flex.justify-content-center.align-items-center
+                                            | #[+inline-flag(submission.team.country.code)] 
+                                            .ml-2= submission.team.country.name + ' - ' + submission.anonymisedAs
+
+                                    .card-body.p-0
+                                        - let judges = submission.judging.map(j => j.judge.username)
+                                        - judges = [...new Set(judges)]
+
+                                        table.table.table-hover.table-responsive
+                                            thead
+                                                tr
+                                                    th Criteria
+                                                    each judge in judges 
+                                                        th= judge + ' - Score'
+                                                        th= judge + ' - Comment'
+                                            tbody
+                                                each criteria in criterias
+                                                    tr
+                                                        td= criteria.name
+                                                        each judge in judges
+                                                            - let relatedJudging = submission.judging.find(j => j.judge.username === judge && j.judgingCriteria.id === criteria.id)
+                                                            if relatedJudging
+                                                                td= relatedJudging.score
+                                                                td= relatedJudging.comment
+                                                            else
+                                                                td
+                                                                td
+
+                        hr

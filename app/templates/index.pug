@@ -6,72 +6,73 @@ block content
     .container.text-center
         .row.mb-2
             .col-sm
-                .card
-                    .card-body
-                        if user
-                            //- if restricted
-                            if user.roleId === 2
-                                h3.card-title you did something bad
-                            
-                            else
-                                h3.card-title welcome #[b= user.username]
-                                hr
-                                .card-subtitle.mb-2 you're participating for #[b= user.country.name]
-                                +img-flag(user.country.code)
-                        else
-                            h3.card-title osu! Mapping World Cup
+                if user
+                    - const message = (user.roleId === 2 ? 'you did something bad ' : 'Welcome ')
+                    .header
+                        img(src="/img/logo.png" width="60" heigth="60")
+                        div
+                            h3.ml-2
+                                = message
+                                b= user.username
+                            .d-flex.ml-2.align-items-center
+                                span.mr-2 you're participating for #[b= user.country.name]
+                                +inline-flag(user.country.code)
+                else
+                    div
+                        h2 osu! Mapping World Cup
+                        h5 xx january to xx something
+                        img(src="/img/logo.png" width="350" height="350")
 
-                            form(action="/login" method="GET")
-                                +submit-button('Verify your osu! account to continue')(class="btn-block btn-lg")
 
         if user && user.roleId !== 2
             .row.mb-2
                 .col-sm
                     .card
                         .card-body
-                            if schedule.captainApplicationsEndedAt && new Date(schedule.captainApplicationsEndedAt) > new Date()
-                                +link-button(
-                                    captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
-                                    '/applications/captains/edit'
-                                )(class="btn-block btn-lg")
-                                p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.captainApplicationsEndedAt)]
-
-                            if schedule.mapperApplicationsEndedAt && new Date(schedule.mapperApplicationsEndedAt) > new Date()
-                                if mapperApplication
-                                    +link-button-disabled(`You've applied as a mapper`)(class="btn-block btn-lg")
-                                else
-                                    +link-button('Apply as a mapper', '/applications/mappers/edit')(class="btn-block btn-lg")
-                                p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.mapperApplicationsEndedAt)]
-
-                            if schedule.judgeApplicationsEndedAt && new Date(schedule.judgeApplicationsEndedAt) > new Date()
-                                +link-button(
-                                    judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
-                                    '/applications/judges/edit'
-                                )(class="btn-block btn-lg")
-                                p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.judgeApplicationsEndedAt)]
-
-                            hr
-
-                            if schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()
-                                if new Date(schedule.captainVotingStartedAt) > new Date()
-                                    +link-button-disabled(
-                                        'Captain Voting',
-                                        '/captainVoting'
-                                    )(class="btn-block btn-lg")
-                                else
+                            if schedule
+                                if schedule.captainApplicationsEndedAt && new Date(schedule.captainApplicationsEndedAt) > new Date()
                                     +link-button(
-                                        'Captain Voting',
-                                        '/captainVoting'
+                                        captainApplication ? 'Edit your team captain application' : 'Apply for team captain',
+                                        '/applications/captains/edit'
                                     )(class="btn-block btn-lg")
-                                
-                                p.small from #[+local-date(schedule.captainVotingStartedAt)] to #[+local-date(schedule.captainVotingEndedAt)]
+                                    p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.captainApplicationsEndedAt)]
 
-                            if schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && isCaptain
-                                +link-button(
-                                    'Mappers Choice',
-                                    '/mappersChoice'
-                                )(class="btn-block btn-lg")
-                                p.small from #[+local-date(schedule.mappersChoiceStartedAt)] to #[+local-date(schedule.mappersChoiceEndedAt)]
+                                if schedule.mapperApplicationsEndedAt && new Date(schedule.mapperApplicationsEndedAt) > new Date()
+                                    if mapperApplication
+                                        +link-button-disabled(`You've applied as a mapper`)(class="btn-block btn-lg")
+                                    else
+                                        +link-button('Apply as a mapper', '/applications/mappers/edit')(class="btn-block btn-lg")
+                                    p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.mapperApplicationsEndedAt)]
+
+                                if schedule.judgeApplicationsEndedAt && new Date(schedule.judgeApplicationsEndedAt) > new Date()
+                                    +link-button(
+                                        judgeApplication ? 'Edit your judge application' : 'Apply as a judge',
+                                        '/applications/judges/edit'
+                                    )(class="btn-block btn-lg")
+                                    p.small from #[+local-date(schedule.applicationsStartedAt)] to #[+local-date(schedule.judgeApplicationsEndedAt)]
+
+                                hr
+
+                                if schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()
+                                    if new Date(schedule.captainVotingStartedAt) > new Date()
+                                        +link-button-disabled(
+                                            'Captain Voting',
+                                            '/captainVoting'
+                                        )(class="btn-block btn-lg")
+                                    else
+                                        +link-button(
+                                            'Captain Voting',
+                                            '/captainVoting'
+                                        )(class="btn-block btn-lg")
+                                    
+                                    p.small from #[+local-date(schedule.captainVotingStartedAt)] to #[+local-date(schedule.captainVotingEndedAt)]
+                                
+                                if schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && isCaptain
+                                    +link-button(
+                                        'Mappers Choice',
+                                        '/mappersChoice'
+                                    )(class="btn-block btn-lg")
+                                    p.small from #[+local-date(schedule.mappersChoiceStartedAt)] to #[+local-date(schedule.mappersChoiceEndedAt)]
 
                             if isCaptain
                                 +link-button(
@@ -79,10 +80,11 @@ block content
                                     '/submissions'
                                 )(class="btn-block btn-lg")
 
-                            hr
 
                             //- if judge
                             if user.roleId === 3
+                                hr
+                                
                                 if judgingRound
                                     +link-button(
                                         'Judging',
@@ -94,11 +96,60 @@ block content
                                         '/judging'
                                     )(class="btn-block btn-lg")
 
-
-        .row
+        .row.mb-2
             .col-sm
                 .card
                     .card-header
-                        h5 Important information
+                        .d-flex.justify-content-around
+                            a.d-flex.align-items-center(href="#" target="__blank")
+                                i.fab.fa-discord.fa-3x.text-white
+                                h4.ml-3 Join us!
+
+                            a.d-flex.align-items-center(href="#" target="__blank")
+                                span.country-flag(style="background-image: url('/img/osu.png'); height: 50px; width: 50px;")
+                                h4.ml-3 Forum Post
+
+        .row.mb-2
+            .col-sm
+                .card
+                    .card-header
+                        h3 Prizes
+                        small imagine some fancy image instead of text below
                     .card-body
-                        .card-title Something important here
+                        .row
+                            .col-sm
+                                h5.text-warning
+                                    i.fas.fa-crown.mr-2
+                                    | 1st place
+
+                                div
+                                    p
+                                        img.mr-2(src="https://assets.ppy.sh/profile-badges/oimc2-2018.jpg")
+                                        | Profile badge
+                                    p
+                                        i.fas.fa-heart.mr-2
+                                        | 6 months of osu!supporter
+
+                                hr
+
+                                h5.text-info
+                                    i.fas.fa-crown.mr-2
+                                    | 2nd place
+
+                                p
+                                    i.fas.fa-heart.mr-2
+                                    | 4 months of osu!supporter
+
+                                hr
+
+                                h5.text-white-50
+                                    i.fas.fa-crown.mr-2
+                                    | 3rd place
+
+                                p
+                                    i.fas.fa-heart.mr-2
+                                    | 2 months of osu!supporter
+
+                                hr
+
+                                small supporter tags are for each team member

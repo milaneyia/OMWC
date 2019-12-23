@@ -1,30 +1,33 @@
 extends layout.pug
 include ./mixins/extras.pug
+include ./mixins/header.pug
 
 block content
     .container.text-center
+        +header('Staff')
 
-        if users
-            .row
-                .col-sm
-                    .card
-                        .card-header
-                            h5.mt-2 Staff
-                        .card-body
-                            .row
-                                each user in users.filter(u => u.roleId === 4)
-                                    .col-sm
-                                        +user-avatar(user.osuId)
-                                        p #[+user-link(user.username)]
+        .row.mb-2.staff
+            - 
+                const staff = [
+                    { osuId: 2628870, username: 'Chaos', title: 'Organizer, Manager' },
+                    { osuId: 6100837, username: 'Imakuri', title: 'Organizer, Manager' },
+                    { osuId: 3076909, username: 'Regraz', title: 'Organizer, Statistician' },
+                    { osuId: 2716981, username: 'Nozhomi', title: 'Organizer, Statistician' },
+                    { osuId: 2850983, username: 'Pachiru', title: 'Organizer, Manager' },
+                    { osuId: 6485263, username: 'Electoz', title: 'Helper' },
+                ];
+            
+            each user in staff
+                .col-sm-3.mb-2
+                    +user-avatar(user.osuId)
+                    div #[+user-link(user.username)]
+                    i.small= user.title
 
-            .row
-                .col-sm
-                    .card
-                        .card-header
-                            h5.mt-2 Judges
-                        .card-body
-                            .row
-                                each user in users.filter(u => u.roleId === 3)
-                                    .col-sm
-                                        +user-avatar(user.osuId)
-                                        p #[+user-link(user.username)]
+        if judges
+            +header('Judges')
+
+            .row.staff
+                each user in judges
+                    .col-sm-3.mb-2
+                        +user-avatar(user.osuId)
+                        div #[+user-link(user.username)]

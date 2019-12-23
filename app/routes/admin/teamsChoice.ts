@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { convertToInt, convertToIntOrThrow } from '../../helpers';
+import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { MapperApplication } from '../../models/applications/MapperApplication';
 import { Team } from '../../models/Team';

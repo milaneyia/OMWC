@@ -62,7 +62,7 @@ app.use(async (ctx, next) => {
         await next();
 
         if (ctx.status === 404) {
-            await ctx.render('error');
+            ctx.redirect('/');
         }
     } catch (err) {
         ctx.status = err.status || 500;

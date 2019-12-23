@@ -7,81 +7,33 @@ function randomInt(maxLength: number) {
 
 function randomString() {
     return Math.random().toString(36).substring(7);
- }
+}
+
+async function generateUsers(length: number, roleId: number): Promise<object[]> {
+    const generatedUsers = [];
+
+    for (let i = 0; i < length; i++) {
+        const country = await Country.findOne({ id: randomInt(6) });
+        generatedUsers.push({
+            countryId: country && country.id,
+            osuId: randomInt(1000000),
+            roleId,
+            username: randomString(),
+        });
+    }
+
+    return generatedUsers;
+}
 
 export default async function users() {
-    await User.insert([
-        {
-            country: await Country.findOne({ code: 'CL' }),
-            osuId: 1052994,
-            roleId: 4,
-            username: 'Milan-',
-        },
-        {
-            country: await Country.findOne({ code: 'US' }),
-            osuId: 3178418,
-            roleId: 1,
-            username: 'pishifat',
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-        {
-            country: await Country.findOne({ id: randomInt(3) }),
-            osuId: randomInt(1000000),
-            roleId: 1,
-            username: randomString(),
-        },
-    ]);
+    let generatedUsers = await generateUsers(50, 1);
+    generatedUsers = generatedUsers.concat(await generateUsers(4, 3));
+    generatedUsers.push({
+        country: await Country.findOne({ code: 'CL' }),
+        osuId: 1052994,
+        roleId: 4,
+        username: 'Milan-',
+    });
+
+    await User.insert(generatedUsers);
 }

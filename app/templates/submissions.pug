@@ -1,14 +1,11 @@
 extends layout.pug
 include ./mixins/buttons.pug
 include ./mixins/extras.pug
+include ./mixins/header.pug
 
 block content
     form.container.text-center(action="/submissions/save", method="post")
-        .row.mb-2
-            .col-sm
-                .card
-                    .card-body
-                        h4 .osz Submissions
+        +header('.osz Submissions')
 
         .row.mb-2
             .col-sm

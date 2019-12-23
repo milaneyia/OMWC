@@ -80,10 +80,10 @@ $table-border-color:          $gray-700 !default;
 
 // Forms
 
-$input-border-color:                    transparent !default;
+$input-border-color:                transparent !default;
 
-$input-group-addon-color:               $gray-500 !default;
-$input-group-addon-bg:                  $gray-700 !default;
+$input-group-addon-color:           $gray-500 !default;
+$input-group-addon-bg:              $gray-700 !default;
 
 $custom-file-color:                 $gray-500 !default;
 $custom-file-border-color:          $gray-700 !default;
@@ -145,8 +145,8 @@ $jumbotron-bg:                      $gray-800 !default;
 
 // Cards
 
-$card-cap-bg:                       $gray-700 !default;
-$card-bg:                           $gray-800 !default;
+$card-cap-bg:                       rgba(61, 61, 61, 1); //$gray-700 !default;
+$card-bg:                           rgba(61, 61, 61, 0.8); //$gray-800 !default;
 
 // Popovers
 

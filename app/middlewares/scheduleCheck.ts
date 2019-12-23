@@ -99,3 +99,25 @@ export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () =
         return ctx.render('error', { error: `It's not the time for mappers choice` });
     }
 }
+
+export async function onGoingContest(ctx: ParameterizedContext, next: () => Promise<any>) {
+    const schedule = await getSchedule();
+
+    if (!schedule) {
+        return ctx.render('error');
+    }
+
+    const hasStarted = (schedule.constestStartedAt && new Date() >= new Date(schedule.constestStartedAt));
+    const hasEnded = (schedule.constestEndedAt && new Date() >= new Date(schedule.constestEndedAt));
+
+    const onGoing = (
+        hasStarted &&
+        !hasEnded
+    );
+
+    if (onGoing) {
+        return await next();
+    } else {
+        return ctx.render('error', { error: `Contest hasn't started yet` });
+    }
+}

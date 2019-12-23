@@ -23,6 +23,7 @@ block content
                                     value=application.id
                                     name="applicationsIds"
                                     checked=(team && team.users && team.users.find(u => u.id === application.user.id) !== undefined)
+                                    disabled=(user.id === application.user.id)
                                 )
                                 label.custom-control-label.d-flex.align-items-center(for=application.id)
                                     +user-avatar(application.user.osuId)

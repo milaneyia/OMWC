@@ -34,6 +34,9 @@ export class User extends BaseEntity {
     @Column({ unique: true })
     username!: string;
 
+    @Column()
+    countryId!: number;
+
     @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
     country!: Country;
 

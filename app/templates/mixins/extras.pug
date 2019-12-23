@@ -1,5 +1,5 @@
 mixin img-flag(code)
-    img(src=`https://osu.ppy.sh/images/flags/${code}.png`, alt=code)
+    img(src=`https://osu.ppy.sh/images/flags/${code}.png`, alt=code, class!=attributes.class)
 
 mixin inline-flag(code)
     .country-flag(style=`background-image: url(https://osu.ppy.sh/images/flags/${code}.png);`)

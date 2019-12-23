@@ -1,11 +1,9 @@
 import Router from '@koa/router';
-import { convertToInt, convertToIntOrThrow } from '../../../helpers';
+import { convertToIntOrThrow } from '../../../helpers';
 import { authenticate, isStaff } from '../../../middlewares/authentication';
 import { JudgingCriteria } from '../../../models/judging/JudgingCriteria';
-import { ROLE } from '../../../models/Role';
 import { Round } from '../../../models/rounds/Round';
 import { Team } from '../../../models/Team';
-import { User } from '../../../models/User';
 
 interface IFinalScore {
     finalScore: number;
@@ -39,7 +37,7 @@ judgingAdminRouter.get('/', async (ctx) => {
     const finalScores: IFinalScore[] = [];
     rounds.forEach((r) => {
         r.submissions.forEach((s) => {
-            const finalScore = s.judging.map((j) => j.score).reduce((total, score) => total + score);
+            const finalScore = s.judging.map((j) => j.score).reduce((total, score) => total + score, 0);
 
             finalScores.push({
                 finalScore,

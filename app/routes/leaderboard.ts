@@ -1,6 +1,8 @@
 import Router from '@koa/router';
+import { Brackets } from 'typeorm';
 import { JudgingCriteria } from '../models/judging/JudgingCriteria';
 import { ICriteriaScore, Team } from '../models/Team';
+import { User } from '../models/User';
 
 const leaderboardRouter = new Router();
 
@@ -12,6 +14,8 @@ leaderboardRouter.get('/', async (ctx) => {
         .innerJoin('team.country', 'country')
         .leftJoin('team.eliminationRound', 'eliminationRound')
         .select(['team.id', 'country.id', 'country.code', 'country.name', 'eliminationRound.title'])
+        .where('team.isCompeting = true')
+        .orWhere('team.eliminationRound is not null')
         .getMany();
 
     const scores = await Team
@@ -27,6 +31,11 @@ leaderboardRouter.get('/', async (ctx) => {
         .addGroupBy('criteria.id')
         .addGroupBy('criteria.name')
         .where('round.resultsAt < :today', { today: new Date() })
+        .andWhere(new Brackets((qb) => {
+            qb
+                .where('team.isCompeting = true')
+                .orWhere('team.eliminationRound is not null');
+        }))
         .getRawMany();
 
     if (scores && scores.length) {
@@ -38,7 +47,7 @@ leaderboardRouter.get('/', async (ctx) => {
                     score: s.score,
                 };
             });
-            const finalScore: number = criteriaScores.map((s) => s.score).reduce((total, s) => total + s);
+            const finalScore: number = criteriaScores.map((s) => s.score).reduce((total, s) => total + s, 0);
             t.criteriaScores = criteriaScores;
             t.finalScore = finalScore;
         });
@@ -48,10 +57,18 @@ leaderboardRouter.get('/', async (ctx) => {
 
     const criterias = await JudgingCriteria.find({});
 
+    const osuId = ctx.session.osuId;
+    let user;
+
+    if (osuId) {
+        user = await User.findOne({ osuId });
+    }
+
     return await ctx.render('leaderboard', {
         criterias,
         path: '/leaderboard',
         teams,
+        user,
     });
 });
 
