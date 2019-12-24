@@ -1,40 +1,47 @@
 extends ../layout.pug
 include ../mixins/buttons.pug
+include ../mixins/header.pug
 
 block content
     .container.text-center
+        +header('Confirm Teams')
+
         .row
             .col-sm
                 if teams.length
-                    h4 Confirm Teams
-                    table.table.table-hover
-                        thead
-                            tr
-                                th Team
-                                th Chosen
-                                th Not chosen
-                                th
-                        tbody
-                            each team in teams
-                                tr
-                                    td= team.country.name
-                                    td
-                                        if team.users
-                                            = team.users.map(u => u.username).join(', ')
-                                    td
-                                        - let relatedApplications = applications.filter(a => a.user.countryId === team.countryId)
-                                        - let notChosen = (team.users ? relatedApplications.filter(a => (!team.users || team.users.find(u => u.id === a.user.id) === undefined)) : relatedApplications)
-                                        = notChosen.map(a => a.user.username).join(', ')
-                                    td
-                                        if team.isCompeting
-                                            form(action="/admin/teamsChoice/deny" method="post")
-                                                input(type="hidden", name="teamId" value=team.id)
-                                                +submit-button('Deny team')
+                    .card
+                        .card-header
+                            | When you set a captain, their team/country will appear here + the members he's or not chosen
 
-                                        else
-                                            form(action="/admin/teamsChoice/confirm" method="post")
-                                                input(type="hidden", name="teamId" value=team.id)
-                                                +submit-button('Confirm team')
+                        .card-body.p-0
+                            table.table.table-hover
+                                thead
+                                    tr
+                                        th Team
+                                        th Chosen
+                                        th Not chosen
+                                        th
+                                tbody
+                                    each team in teams
+                                        tr
+                                            td= team.country.name
+                                            td
+                                                if team.users
+                                                    = team.users.map(u => u.username).join(', ')
+                                            td
+                                                - let relatedApplications = applications.filter(a => a.user.countryId === team.countryId)
+                                                - let notChosen = (team.users ? relatedApplications.filter(a => (!team.users || team.users.find(u => u.id === a.user.id) === undefined)) : relatedApplications)
+                                                = notChosen.map(a => a.user.username).join(', ')
+                                            td
+                                                if team.isCompeting
+                                                    form(action="/admin/teamsChoice/deny" method="post")
+                                                        input(type="hidden", name="teamId" value=team.id)
+                                                        +submit-button('Deny team')
+
+                                                else
+                                                    form(action="/admin/teamsChoice/confirm" method="post")
+                                                        input(type="hidden", name="teamId" value=team.id)
+                                                        +submit-button('Confirm team')
 
                 else
                     p No teams yet

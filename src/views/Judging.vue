@@ -1,44 +1,55 @@
 <template lang="pug">
     .container.text-center
-        .row.mb-4
+        .row.mb-2
             .col-sm
                 .card
-                    .card-body
+                    .card-header
+                        p This shows a listing of the scores you set in each entry
+                        div When editing you need to add a comment for each criteria in addition to the score 
+                        small (if you don't save and close this window or start editing another entry, the changes'll be lost!)
+
+        .row.mb-2
+            .col-sm
+                .card
+                    .card-header
                         h4.card-title {{ currentRound.title }}
                         a.card-subtitle(:href="currentRound.anonymisedLink") Download .osz
+                    .card-body.p-0
+                        table.table.table-hover.table-responsive-sm
+                            thead
+                                tr
+                                    th Entry's Name
+                                    th(v-for="criteria in criterias" :key="criteria.id")
+                                        | {{ criteria.name }}
 
-                        hr
-
-                        .form-group
-                            select.form-control(v-model="selectedSubmissionId" @change="setRelatedJudging()")
-                                option(value="0" disabled selected) Choose an entry
-                                option(v-for="submission in currentRound.submissions" :key="submission.id" :value="submission.id")
-                                    | {{ submission.anonymisedAs }}
+                            tbody
+                                tr(v-for="submission in currentRound.submissions" :key="submission.id")
+                                    td {{ submission.anonymisedAs }}
+                                    td(v-for="criteria in criterias" :key="criteria.id")
+                                        a.d-flex.align-items-center.justify-content-center(href="#" @click.prevent="selectToEdit(submission, criteria)")
+                                            i.small.mr-1.fas(
+                                                :class="(editingJudging.submissionId === submission.id && editingJudging.judgingCriteriaId === criteria.id) ? 'fa-expand' : 'fa-edit'"
+                                            )
+                                            | {{ getScore(submission.id, criteria.id) }} 
+                                            b.text-danger.ml-1(v-if="wasModified(submission.id, criteria.id)") *
         
-        .row(v-if="selectedSubmissionId")
+        .row.mb-2(v-if="editingJudging && editingJudging.submissionId")
             .col-sm
                 .card
+                    .card-header
+                        | Editing #[b {{ selectedCriteria.name }}] for #[b {{ selectedSubmission.anonymisedAs }}] 
+                        b.text-danger.ml-1(v-if="wasModified(selectedSubmission.id, selectedCriteria.id)") *
                     .card-body
-                        ul.nav.nav-tabs.mb-4
-                            li.nav-item(v-for="criteria in criterias" :key="criteria.id")
-                                a.nav-link(
-                                    href="#"
-                                    @click="selectCriteria(criteria.id)"
-                                    :class="selectedCriteriaId === criteria.id ? 'active' : ''"
-                                )
-                                    | {{ criteria.name }}
+                        .form-group
+                            label Score
+                            input.form-control(type="number" step=".01" v-model.number="editingJudging.score")
 
-                        div(v-if="selectedCriteriaId")
-                            .form-group
-                                label Score
-                                input.form-control(type="number" step=".01" v-model="judging.score")
+                        .form-group
+                            label Comment
+                            textarea.form-control(maxlength="3000" rows="3" v-model.trim="editingJudging.comment")
 
-                            .form-group
-                                label Comment
-                                textarea.form-control(maxlength="3000" rows="3" v-model.trim="judging.comment")
-
-                            button.btn.btn-primary.btn-block(type="button" @click="save()")
-                                | Save
+                        button.btn.btn-primary.btn-block(type="button" @click="save()")
+                            | Save
 
         .row
             .col-sm
@@ -63,37 +74,61 @@ interface Judging {
     comment?: string;
 }
 
+interface JudgingCriteria {
+    id: number;
+    name: string;
+    maxScore: number;
+}
+
 export default Vue.extend({
     props: {
         currentRoundProp: Object,
         judgingDoneProp: Array as () => Judging[],
-        criterias: Array,
+        criterias: Array as () => JudgingCriteria[],
     },
     data () {
         return {
             currentRound: this.currentRoundProp || {},
             judgingDone: this.judgingDoneProp || [],
-            selectedSubmissionId: 0,
-            selectedCriteriaId: 0,
+            selectedSubmission: {} as Submission,
+            selectedCriteria: {} as JudgingCriteria,
+            editingJudging: {} as Judging,
+            initialEditingJudging: {} as Judging,
             info: null,
-            relatedJudging: [] as Judging[],
-            judging: {} as Judging,
         }
     },
     methods: {
-        setRelatedJudging () {
-            this.relatedJudging = this.judgingDone.filter((j) => j.submissionId === this.selectedSubmissionId);
+        selectToEdit (submission: Submission, criteria: JudgingCriteria) {
+            this.selectedSubmission = submission;
+            this.selectedCriteria = criteria;
+
+            const judgingToEdit = this.judgingDone.find(j => j.submissionId === submission.id && j.judgingCriteriaId === criteria.id);
+            this.initialEditingJudging = {
+                submissionId: submission.id,
+                judgingCriteriaId: criteria.id,
+                score: judgingToEdit && judgingToEdit.score,
+                comment: judgingToEdit && judgingToEdit.comment,
+            };
+            this.editingJudging = { ...this.initialEditingJudging };
         },
-        selectCriteria (id: number) {
-            this.selectedCriteriaId = id;
-            this.judging = this.relatedJudging.find((j) => j.judgingCriteriaId === id) || {};
+        wasModified (submissionId: number, criteriaId: number): boolean {
+            if (this.editingJudging.submissionId === submissionId && this.editingJudging.judgingCriteriaId === criteriaId) {
+                return this.initialEditingJudging.score !== this.editingJudging.score || this.initialEditingJudging.comment !== this.editingJudging.comment;
+            } 
+            
+            return false;
+        },
+        getScore (submissionId: number, criteriaId: number): number|undefined {
+            const judging = this.judgingDone.find(j => j.judgingCriteriaId === criteriaId && j.submissionId === submissionId);
+            
+            return (judging && judging.score);
         },
         async save () {
             const res = await axios.post('/judging/save', {
-                submissionId: this.selectedSubmissionId,
-                criteriaId: this.selectedCriteriaId,
-                score: this.judging.score,
-                comment: this.judging.comment,
+                submissionId: this.selectedSubmission.id,
+                criteriaId: this.selectedCriteria.id,
+                score: this.editingJudging.score,
+                comment: this.editingJudging.comment,
             });
 
             if (res.data) {
@@ -104,12 +139,16 @@ export default Vue.extend({
                     const i = this.judgingDone.findIndex(j => j.id === savedJuging.id);
                     
                     if (i !== -1) {
-                        this.judgingDone[i] = savedJuging;
+                        this.judgingDone[i].score = savedJuging.score;
+                        this.judgingDone[i].comment = savedJuging.comment;
                     } else {
                         this.judgingDone.push(savedJuging);
                     }
 
-                    this.setRelatedJudging();
+                    this.editingJudging.score = savedJuging.score;
+                    this.editingJudging.comment = savedJuging.comment;
+                    this.initialEditingJudging.score = savedJuging.score;
+                    this.initialEditingJudging.comment = savedJuging.comment;
                 }
             }
         }

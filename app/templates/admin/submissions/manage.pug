@@ -1,12 +1,12 @@
 extends ../../layout.pug
 include ../../mixins/buttons.pug
+include ../../mixins/header.pug
 
 block content
     .container.text-center
-        form.row(action="/admin/manageSubmissions/save" method="post")
-            .col-sm-12
-                h4 Manage Submission
+        +header('Manage Submission')
 
+        form.row.box(action="/admin/manageSubmissions/save" method="post")
             .col-sm-6
                 .form-group
                     label Original Link
@@ -19,4 +19,5 @@ block content
                     
             .col-sm-12
                 input(type="hidden", name="submissionId" value=submission.id)
-                +submit-button('Update Submission')
+
+            +submit-button('Update Submission')(class="btn-block")

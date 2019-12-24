@@ -8,7 +8,13 @@ block content
         +header('Judging List')
 
         .row
-            .col.sm
+            .col-sm
+                .box
+                    p This shows a listing of all the judging (scores/comments) done by entries (similar to the old spreadsheet).
+                    p In the summary table you can "eliminate" a team, which means that they can't compete anymore but their current score and stuff will remain
+
+        .row
+            .col-sm
                 each round in rounds
                     if round.submissions && round.submissions.length
                         a.btn.btn-primary.btn-block.mb-2(data-toggle="collapse" href=`#${round.title.split(' ').join('')}`)

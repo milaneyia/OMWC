@@ -1,16 +1,14 @@
 extends ../../../layout.pug
 include ../../../mixins/buttons.pug
+include ../../../mixins/header.pug
 
 block content
     .container.text-center
+        +header('Manage Criterias')
+        
         .row
             .col-sm
-                h4 Manage Criterias 
-                    +link-button('Create', '/admin/judging/criterias/create')
-
-        .row
-            .col-sm
-                table.table.table-hover
+                table.table.table-hover.box
                     thead
                         tr
                             th Name
@@ -24,3 +22,5 @@ block content
                                 td= criteria.maxScore
                                 td
                                     +link-button('Edit', '/admin/judging/criterias/edit/' + criteria.id)
+                
+                +link-button('Create', '/admin/judging/criterias/create')(class="btn-block")

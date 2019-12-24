@@ -1,32 +1,65 @@
 extends ../layout.pug
 include ../mixins/buttons.pug
+include ../mixins/header.pug
 
 block content
     .container.text-center
+        +header('Judge Choice')
+
+        .row.mb-2
+            .col-sm
+                if applications.length
+                    .card
+                        .card-header
+                            form.form-inline(action="/admin/judgesChoice/store" method="post")
+                                label.mb-2 In case you need to manually add a judge
+                                input.form-control.mb-2.mx-sm-2(type="text" name="user" placeholder="username/osu id")
+                                button.btn.btn-primary.mb-2(type="submit") Add
+
+                        .card-body.p-0
+                            table.table.table-hover
+                                thead
+                                    tr
+                                        th Judge
+                                        th
+                                tbody
+                                    each judge in currentJudges
+                                        tr
+                                            td= judge.username
+                                            td
+                                                form(action="/admin/judgesChoice/destroy" method="post")
+                                                    input(type="hidden", name="userId" value=judge.id)
+                                                    +submit-button('Remove')(class="btn-danger")
+
         .row
             .col-sm
                 if applications.length
-                    table.table.table-hover
-                        thead
-                            tr
-                                th Applicant
-                                th Reason
-                                th
-                        tbody
-                            each application in applications
-                                tr
-                                    td= application.user.username
-                                    td= application.reason
-                                    td
-                                        if currentJudges.find(j => j.id === application.user.id)
-                                            form(action="/admin/judgesChoice/destroy" method="post")
-                                                input(type="hidden", name="userId" value=application.user.id)
-                                                +submit-button('Remove')
+                    .card
+                        .card-header
+                            | People who has opt-in to become judge will appear here
 
-                                        else
-                                            form(action="/admin/judgesChoice/store" method="post")
-                                                input(type="hidden", name="userId" value=application.user.id)
-                                                +submit-button('Add')
+                        .card-body.p-0
+                            table.table.table-hover
+                                thead
+                                    tr
+                                        th Applicant
+                                        th Reason
+                                        th
+                                tbody
+                                    each application in applications
+                                        tr
+                                            td= application.user.username
+                                            td= application.reason
+                                            td
+                                                if currentJudges.find(j => j.id === application.user.id)
+                                                    form(action="/admin/judgesChoice/destroy" method="post")
+                                                        input(type="hidden", name="userId" value=application.user.id)
+                                                        +submit-button('Remove')
+
+                                                else
+                                                    form(action="/admin/judgesChoice/store" method="post")
+                                                        input(type="hidden", name="userId" value=application.user.id)
+                                                        +submit-button('Add')
 
                 else
                     p No applications yet

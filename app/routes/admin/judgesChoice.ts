@@ -22,8 +22,21 @@ judgesChoiceAdminRouter.get('/', async (ctx) => {
 });
 
 judgesChoiceAdminRouter.post('/store', async (ctx) => {
-    const userId = convertToIntOrThrow(ctx.request.body.userId);
-    const user = await User.findOneOrFail({ id: userId });
+    let userId = ctx.request.body.userId;
+    const userToSearch = ctx.request.body.user;
+
+    let user: User;
+    if (userId) {
+        userId = convertToIntOrThrow(ctx.request.body.userId);
+        user = await User.findOneOrFail({ id: userId });
+    } else {
+        user = await User.findOneOrFail({
+            where: [
+                { username: userToSearch },
+                { osuId: userToSearch },
+            ],
+        });
+    }
 
     if (user.teamId) {
         return ctx.render('error', { error: 'User has a team' });

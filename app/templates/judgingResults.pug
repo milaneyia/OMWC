@@ -16,7 +16,11 @@ block content
                         .col-sm
                             .card
                                 .card-header
-                                    h5= round.title
+                                    h5
+                                        | #{round.title} 
+                                        if round.anonymisedLink
+                                            a(href=round.anonymisedLink) .osz
+
                                 .card-body.p-0
                                     table.table.table-hover.table-responsive-md
                                         thead

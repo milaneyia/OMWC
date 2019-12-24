@@ -1,12 +1,12 @@
 extends ../../layout.pug
 include ../../mixins/buttons.pug
+include ../../mixins/header.pug
 
 block content
     .container.text-center
-        form.row(action="/admin/rounds/save" method="post")
-            .col-sm-12
-                h4 Manage Round
+        +header('Manage Round')
 
+        form.row.box(action="/admin/rounds/save" method="post")
             .col-sm-4
                 .form-group
                     label Title
@@ -52,4 +52,4 @@ block content
                 if round
                     input(type="hidden", name="roundId" value=round.id)
 
-                +submit-button(round ? 'Update Round' : 'Submit Round')
+            +submit-button(round ? 'Update Round' : 'Submit Round')(class="btn-block")

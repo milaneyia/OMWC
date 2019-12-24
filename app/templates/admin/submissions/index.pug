@@ -1,36 +1,46 @@
 extends ../../layout.pug
 include ../../mixins/buttons.pug
 include ../../mixins/extras.pug
+include ../../mixins/header.pug
 
 block content
     .container.text-center
+        +header('Submissions')
+
         .row
             .col-sm
-                h4 Submissions
-
+                .card
+                    .card-header
+                        | Listing of submissions by round, you #[b NEED] to set an anonymised name for the entry, otherwise it'll not show up for the judges
+        
+        .row
+            .col-sm
                 each round in rounds
-                    h5= round.title
-
-                    if round.submissions && round.submissions.length
-                        table.table.table-hover
-                            thead
-                                tr
-                                    th Team
-                                    th Submission Date
-                                    th Original Link
-                                    th Anonymised As
-                                    th
-                            tbody
-                                each submission in round.submissions
-                                    tr
-                                        td= submission.team.country.name
-                                        td
-                                            +local-date(submission.updatedAt)
-                                        td
-                                            a(href=submission.originalLink) #{submission.originalLink}
-                                        td= submission.anonymisedAs
-                                        td
-                                            +link-button('Edit', '/admin/manageSubmissions/edit/' + submission.id)
-                            
-                    else
-                        p None.
+                    .card
+                        .card-header
+                            h5= round.title
+                        
+                        .card-body.p-0
+                            if round.submissions && round.submissions.length
+                                table.table.table-hover
+                                    thead
+                                        tr
+                                            th Team
+                                            th Submission Date
+                                            th Original Link
+                                            th Anonymised As
+                                            th
+                                    tbody
+                                        each submission in round.submissions
+                                            tr
+                                                td= submission.team.country.name
+                                                td
+                                                    +local-date(submission.updatedAt)
+                                                td
+                                                    a(href=submission.originalLink) #{submission.originalLink}
+                                                td= submission.anonymisedAs
+                                                td
+                                                    +link-button('Edit', '/admin/manageSubmissions/edit/' + submission.id)
+                                    
+                            else
+                                p None.

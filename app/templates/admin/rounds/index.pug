@@ -1,16 +1,21 @@
 extends ../../layout.pug
 include ../../mixins/buttons.pug
+include ../../mixins/header.pug
 
 block content
     .container.text-center
-        .row
-            .col-sm
-                h4 Manage Rounds 
-                    +link-button('Create', '/admin/rounds/create')
+        +header('Manage Rounds')
 
         .row
             .col-sm
-                table.table.table-hover
+                .card
+                    .card-header
+                        | Listing of all rounds, once the submissions are done and you made the osz with the anonymised entries, 
+                        | you can add the link here (It'll show up for the judges and results tables)
+
+        .row
+            .col-sm
+                table.leaderboard
                     thead
                         tr
                             th Title
@@ -37,3 +42,5 @@ block content
                                 td= round.resultsAt
                                 td
                                     +link-button('Edit', '/admin/rounds/edit/' + round.id)
+                    
+                +link-button('Create', '/admin/rounds/create')(class="btn-block")
