@@ -22,10 +22,10 @@ judgesChoiceAdminRouter.get('/', async (ctx) => {
 });
 
 judgesChoiceAdminRouter.post('/store', async (ctx) => {
+    let user: User;
     let userId = ctx.request.body.userId;
     const userToSearch = ctx.request.body.user;
 
-    let user: User;
     if (userId) {
         userId = convertToIntOrThrow(ctx.request.body.userId);
         user = await User.findOneOrFail({ id: userId });
