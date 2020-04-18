@@ -3,57 +3,56 @@ import { convertToArray } from '../helpers';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { onGoingMappersChoice } from '../middlewares/scheduleCheck';
 import { MapperApplication } from '../models/applications/MapperApplication';
-import { Team } from '../models/Team';
 import { User } from '../models/User';
+import { Country } from '../models/Country';
+import { ROLE } from '../models/Role';
 
 const mappersChoiceRouter = new Router();
 
-mappersChoiceRouter.prefix('/mappersChoice');
+mappersChoiceRouter.prefix('/api/mappersChoice');
 mappersChoiceRouter.use(authenticate);
 mappersChoiceRouter.use(onGoingMappersChoice);
 mappersChoiceRouter.use(isCaptain);
 
 mappersChoiceRouter.get('/', async (ctx) => {
-    const info = ctx.session.info;
-    delete ctx.session.info;
-
     const applications = await MapperApplication
         .createQueryBuilder('mapperApplication')
         .innerJoinAndSelect('mapperApplication.user', 'user')
         .innerJoin('user.country', 'country', 'country.id = :country', { country: ctx.state.user.country.id })
         .getMany();
 
-    const team = await Team.findOneWithUsers(ctx.state.user.country.id);
-
-    return ctx.render('mappersChoice', {
+    ctx.body = {
         applications,
-        info,
-        team,
-        user: ctx.state.user,
-    });
+    };
 });
 
 mappersChoiceRouter.post('/save', async (ctx) => {
     const applicationsIds = convertToArray(ctx.request.body.applicationsIds);
     const captain: User = ctx.state.user;
 
-    const team = await Team.findOneOrFail({ countryId: captain.country.id });
+    const country = await Country.findOneOrFail({ id: captain.country.id });
     let applications = await MapperApplication.findByIds(applicationsIds, { relations: ['user'] });
 
-    applications = applications.filter((a) => a.user.country.id === team.countryId);
+    applications = applications.filter((a) => a.user.country.id === country.id);
 
     const mappers = applications.map((a) => a.user);
     mappers.push(captain);
 
     if (mappers.length > 6) {
-        ctx.session.info = 'Too many members in the team';
-        return ctx.redirect('back');
+        return ctx.body = {
+            error: 'Too many members in the team',
+        };
     }
 
-    team.users = mappers;
-    team.save();
+    // TODO: test
+    for (const mapper of mappers) {
+        mapper.roleId = ROLE.Contestant;
+        await mapper.save();
+    }
 
-    return ctx.redirect('back');
+    ctx.body = {
+        success: 'ok',
+    };
 });
 
 export default mappersChoiceRouter;

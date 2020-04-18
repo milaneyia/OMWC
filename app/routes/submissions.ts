@@ -6,46 +6,45 @@ import { Submission } from '../models/rounds/Submission';
 
 const submissionsRouter = new Router();
 
-submissionsRouter.prefix('/submissions');
+submissionsRouter.prefix('/api/submissions');
 submissionsRouter.use(authenticate);
 submissionsRouter.use(isCaptain);
 submissionsRouter.use(async (ctx, next) => {
-    if (ctx.state.user.team.isCompeting) {
+    if (ctx.state.user.country.isCompeting) {
         await next();
     } else {
-        return ctx.render('error', { title: 'Your team is not competing' });
+        return ctx.body = {
+            error: 'Your team is not competing',
+        };
     }
 });
 
 submissionsRouter.get('/', async (ctx) => {
-    const info = ctx.session.info;
-    delete ctx.session.info;
-
+    // TODO: link to currentround
     const submissions = await Submission.find({
         relations: ['round'],
-        where: { teamId: ctx.state.user.team.id },
+        where: { country: ctx.state.user.country },
     });
 
     const currentRound = await Round.findCurrentSubmissionRound();
     let currentSubmission: Submission | undefined;
 
     if (currentRound) {
-        currentSubmission = await Submission.findOne({
-            roundId: currentRound.id,
-            teamId: ctx.state.user.team.id,
-        });
+        // currentSubmission = await Submission.findOne({
+        //     match: currentRound.id,
+        //     teamId: ctx.state.user.team.id,
+        // });
     }
 
-    return ctx.render('submissions', {
+    ctx.body = {
         currentRound,
         currentSubmission,
-        info,
         submissions,
-        user: ctx.state.user,
-    });
+    };
 });
 
 submissionsRouter.post('/save', async (ctx) => {
+    // TODO: link to currentround
     const currentRound = await Round.findCurrentSubmissionRound();
 
     if (!currentRound) {
@@ -54,24 +53,27 @@ submissionsRouter.post('/save', async (ctx) => {
 
     if (!isUrl(ctx.request.body.oszFile)) {
         ctx.session.info = 'Not a valid link';
+
         return ctx.redirect('back');
     }
 
     let submission = await Submission.findOne({
-        roundId: currentRound.id,
-        teamId: ctx.state.user.team.id,
+        // roundId: currentRound.id,
+        country: ctx.state.user.country,
     });
 
     if (!submission) {
         submission = new Submission();
     }
 
-    submission.roundId = currentRound.id;
-    submission.teamId = ctx.state.user.team.id;
+    // submission.roundId = currentRound.id;
+    submission.country = ctx.state.user.country;
     submission.originalLink = ctx.request.body.oszFile;
     await submission.save();
 
-    return ctx.redirect('back');
+    ctx.body = {
+        success: 'ok',
+    };
 });
 
 export default submissionsRouter;

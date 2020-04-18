@@ -1,8 +1,5 @@
 import Router from '@koa/router';
 import * as osuApi from '../middlewares/osuApi';
-import { CaptainApplication } from '../models/applications/CaptainApplication';
-import { JudgeApplication } from '../models/applications/JudgeApplication';
-import { MapperApplication } from '../models/applications/MapperApplication';
 import { Country } from '../models/Country';
 import { ROLE } from '../models/Role';
 import { Round } from '../models/rounds/Round';
@@ -13,42 +10,30 @@ const indexRouter = new Router();
 
 indexRouter.get('/api/', async (ctx) => {
     const schedule = await Schedule.findOne({});
+    const judgingRound = await Round.findCurrentJudgingRound();
     const osuId = ctx.session.osuId;
     let user;
-    let captainApplication;
-    let mapperApplication;
-    let judgeApplication;
-    let judgingRound;
-    let isCaptain = false;
 
     if (osuId) {
-        user = await User.findOne({ where: { osuId }, relations: ['team'] });
-
-        if (user) {
-            captainApplication = await CaptainApplication.findUserApplication(user.id);
-            mapperApplication = await MapperApplication.findUserApplication(user.id);
-            judgeApplication = await JudgeApplication.findUserApplication(user.id);
-            judgingRound = await Round.findCurrentJudgingRound();
-
-            if (user.team && user.team.captainId === user.id) {
-                isCaptain = true;
-            }
-        }
+        user = await User.findOne({
+            where: { osuId },
+            relations: [
+                'country',
+                'mapperApplication',
+                'captainApplication',
+                'captainVote',
+            ],
+        });
     }
 
     ctx.body = {
-        captainApplication,
-        isCaptain,
-        judgeApplication,
         judgingRound,
-        mapperApplication,
-        path: '/',
         schedule,
         user,
     };
 });
 
-indexRouter.get('/login', async (ctx) => {
+indexRouter.get('/login', (ctx) => {
     const state = osuApi.generateState();
     ctx.cookies.set('_state', state);
 
@@ -85,7 +70,7 @@ indexRouter.get('/callback', async (ctx) => {
         ctx.session.osuId = response.id;
         ctx.session.username = response.username;
 
-        let country = await Country.findOne({ where: { name: response.country.name }});
+        let country = await Country.findOne({ where: { name: response.country.name } });
 
         if (!country) {
             country = await Country.create({

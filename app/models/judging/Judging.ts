@@ -1,8 +1,8 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Round } from '../rounds/Round';
 import { Submission } from '../rounds/Submission';
 import { User } from '../User';
-import { JudgingCriteria } from './JudgingCriteria';
+import { JudgingToCriteria } from './JudgingToCriteria';
 
 @Entity()
 export class Judging extends BaseEntity {
@@ -15,12 +15,6 @@ export class Judging extends BaseEntity {
 
     @Column()
     comment!: string;
-
-    @Column()
-    judgingCriteriaId!: number;
-
-    @ManyToOne((type) => JudgingCriteria, { nullable: false })
-    judgingCriteria!: JudgingCriteria;
 
     @Column()
     judgeId!: number;
@@ -39,4 +33,16 @@ export class Judging extends BaseEntity {
 
     @ManyToOne((type) => Submission, (submission) => submission.judging, { nullable: false })
     submission!: Submission;
+
+    @Column()
+    vote!: boolean;
+
+    @OneToMany(type => JudgingToCriteria, judgingToCriteria => judgingToCriteria.judging)
+    judgingToCriterias!: JudgingToCriteria[];
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
 }

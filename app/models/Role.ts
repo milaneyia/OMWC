@@ -1,22 +1,21 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum ROLE {
+    User = 1,
+    UserElevated = 2,
+    Restricted = 3,
+    Contestant = 4,
+    Captain = 5,
+    Judge = 6,
+    Staff = 7,
+}
+
 @Entity()
 export class Role extends BaseEntity {
-
-    static findUserRole() {
-        return this.findOne(ROLE.User);
-    }
 
     @PrimaryGeneratedColumn()
     id!: number;
 
     @Column({ unique: true })
     name!: string;
-}
-
-export enum ROLE {
-    User = 1,
-    Restricted = 2,
-    Judge = 3,
-    Staff = 4,
 }

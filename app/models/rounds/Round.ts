@@ -1,6 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, LessThanOrEqual,
-    MoreThanOrEqual, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Submission } from './Submission';
+import { BaseEntity, Column, CreateDateColumn, Entity, LessThanOrEqual, MoreThanOrEqual, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Match } from './Match';
 
 @Entity()
 export class Round extends BaseEntity {
@@ -50,12 +49,6 @@ export class Round extends BaseEntity {
     @Column()
     title!: string;
 
-    @Column({ nullable: true, length: 3000 })
-    information?: string;
-
-    @Column({ nullable: true, length: 3000 })
-    anonymisedLink?: string;
-
     @Column('date')
     submissionsStartedAt!: Date;
 
@@ -71,8 +64,11 @@ export class Round extends BaseEntity {
     @Column('date')
     resultsAt!: Date;
 
-    @OneToMany((type) => Submission, (submission) => submission.round)
-    submissions!: Submission[];
+    @OneToMany((type) => Match, (match) => match.round)
+    matches!: Match[];
+
+    // @Column()
+    // type!: Group | Elimination
 
     @CreateDateColumn()
     createdAt!: Date;

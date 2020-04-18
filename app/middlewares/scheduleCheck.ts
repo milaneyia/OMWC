@@ -1,27 +1,19 @@
 import { ParameterizedContext } from 'koa';
 import { Schedule } from '../models/Schedule';
 
-async function getSchedule() {
+async function getSchedule(): Promise<Schedule | undefined> {
     return await Schedule.findOne();
 }
 
-function hasApplicationsStarted(schedule: Schedule) {
+function hasApplicationsStarted(schedule: Schedule): boolean {
     return (new Date() >= new Date(schedule.applicationsStartedAt));
 }
 
-function hasCaptainApplicationsEnded(schedule: Schedule) {
-    return (schedule.captainApplicationsEndedAt && new Date() >= new Date(schedule.captainApplicationsEndedAt));
+function hasApplicationsEnded(schedule: Schedule): boolean {
+    return (schedule.applicationsEndedAt && new Date() >= new Date(schedule.applicationsEndedAt));
 }
 
-function hasMapperApplicationsEnded(schedule: Schedule) {
-    return (schedule.mapperApplicationsEndedAt && new Date() >= new Date(schedule.mapperApplicationsEndedAt));
-}
-
-function hasJudgeApplicationsEnded(schedule: Schedule) {
-    return (schedule.judgeApplicationsEndedAt && new Date() >= new Date(schedule.judgeApplicationsEndedAt));
-}
-
-export async function onGoingApplications(ctx: ParameterizedContext, next: () => Promise<any>) {
+export async function onGoingApplications(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     const schedule = await getSchedule();
 
     if (!schedule) {
@@ -29,20 +21,7 @@ export async function onGoingApplications(ctx: ParameterizedContext, next: () =>
     }
 
     const hasStarted = hasApplicationsStarted(schedule);
-
-    let hasEnded: boolean|undefined = true;
-
-    switch (ctx.state.applicationType) {
-        case 'captain':
-            hasEnded = hasCaptainApplicationsEnded(schedule);
-            break;
-        case 'mapper':
-            hasEnded = hasMapperApplicationsEnded(schedule);
-            break;
-        case 'judge':
-            hasEnded = hasJudgeApplicationsEnded(schedule);
-            break;
-    }
+    const hasEnded = hasApplicationsEnded(schedule);
 
     const onGoing = (
         hasStarted &&
@@ -56,7 +35,7 @@ export async function onGoingApplications(ctx: ParameterizedContext, next: () =>
     }
 }
 
-export async function onGoingCaptainVoting(ctx: ParameterizedContext, next: () => Promise<any>) {
+export async function onGoingCaptainVoting(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     const schedule = await getSchedule();
 
     if (!schedule) {
@@ -78,7 +57,7 @@ export async function onGoingCaptainVoting(ctx: ParameterizedContext, next: () =
     }
 }
 
-export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () => Promise<any>) {
+export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     const schedule = await getSchedule();
 
     if (!schedule) {
@@ -100,7 +79,7 @@ export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () =
     }
 }
 
-export async function onGoingContest(ctx: ParameterizedContext, next: () => Promise<any>) {
+export async function onGoingContest(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     const schedule = await getSchedule();
 
     if (!schedule) {

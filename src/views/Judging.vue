@@ -5,7 +5,7 @@
                 .card
                     .card-header
                         p This shows a listing of the scores you set in each entry
-                        div When editing you need to add a comment for each criteria in addition to the score 
+                        div When editing you need to add a comment for each criteria in addition to the score
                         small (if you don't save and close this window or start editing another entry, the changes'll be lost!)
 
         .row.mb-2
@@ -30,14 +30,14 @@
                                             i.small.mr-1.fas(
                                                 :class="(editingJudging.submissionId === submission.id && editingJudging.judgingCriteriaId === criteria.id) ? 'fa-expand' : 'fa-edit'"
                                             )
-                                            | {{ getScore(submission.id, criteria.id) }} 
+                                            | {{ getScore(submission.id, criteria.id) }}
                                             b.text-danger.ml-1(v-if="wasModified(submission.id, criteria.id)") *
-        
+
         .row.mb-2(v-if="editingJudging && editingJudging.submissionId")
             .col-sm
                 .card
                     .card-header
-                        | Editing #[b {{ selectedCriteria.name }}] for #[b {{ selectedSubmission.anonymisedAs }}] 
+                        | Editing #[b {{ selectedCriteria.name }}] for #[b {{ selectedSubmission.anonymisedAs }}]
                         b.text-danger.ml-1(v-if="wasModified(selectedSubmission.id, selectedCriteria.id)") *
                     .card-body
                         .form-group
@@ -60,25 +60,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import axios from 'axios';
-
-interface Submission {
-    id: number;
-    anonymisedAs: string;
-}
-
-interface Judging {
-    id?: number;
-    submissionId?: number;
-    judgingCriteriaId?: number;
-    score?: number;
-    comment?: string;
-}
-
-interface JudgingCriteria {
-    id: number;
-    name: string;
-    maxScore: number;
-}
+import { Judging, JudgingCriteria, Submission } from '../interfaces';
 
 export default Vue.extend({
     props: {
@@ -95,7 +77,7 @@ export default Vue.extend({
             editingJudging: {} as Judging,
             initialEditingJudging: {} as Judging,
             info: null,
-        }
+        };
     },
     methods: {
         selectToEdit (submission: Submission, criteria: JudgingCriteria) {
@@ -114,13 +96,13 @@ export default Vue.extend({
         wasModified (submissionId: number, criteriaId: number): boolean {
             if (this.editingJudging.submissionId === submissionId && this.editingJudging.judgingCriteriaId === criteriaId) {
                 return this.initialEditingJudging.score !== this.editingJudging.score || this.initialEditingJudging.comment !== this.editingJudging.comment;
-            } 
-            
+            }
+
             return false;
         },
         getScore (submissionId: number, criteriaId: number): number|undefined {
             const judging = this.judgingDone.find(j => j.judgingCriteriaId === criteriaId && j.submissionId === submissionId);
-            
+
             return (judging && judging.score);
         },
         async save () {
@@ -137,7 +119,7 @@ export default Vue.extend({
                 if (res.data.success) {
                     const savedJuging: Judging = res.data.judging;
                     const i = this.judgingDone.findIndex(j => j.id === savedJuging.id);
-                    
+
                     if (i !== -1) {
                         this.judgingDone[i].score = savedJuging.score;
                         this.judgingDone[i].comment = savedJuging.comment;
@@ -151,7 +133,7 @@ export default Vue.extend({
                     this.initialEditingJudging.comment = savedJuging.comment;
                 }
             }
-        }
+        },
     },
 });
 </script>

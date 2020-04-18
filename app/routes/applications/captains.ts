@@ -5,22 +5,9 @@ import { CaptainApplication } from '../../models/applications/CaptainApplication
 
 const captainApplicationsRouter = new Router();
 
-captainApplicationsRouter.prefix('/applications/captains');
+captainApplicationsRouter.prefix('/api/applications/captains');
 captainApplicationsRouter.use(authenticate);
-captainApplicationsRouter.use(async (ctx, next) => {
-    ctx.state.applicationType = 'captain';
-    return await next();
-});
 captainApplicationsRouter.use(onGoingApplications);
-
-captainApplicationsRouter.get('/edit', async (ctx) => {
-    const app = await CaptainApplication.findUserApplication(ctx.state.user.id);
-
-    return ctx.render('applications/captains', {
-        app,
-        user: ctx.state.user,
-    });
-});
 
 captainApplicationsRouter.post('/save', async (ctx) => {
     let app = await CaptainApplication.findUserApplication(ctx.state.user.id);
@@ -34,10 +21,14 @@ captainApplicationsRouter.post('/save', async (ctx) => {
     await app.save();
 
     if (app) {
-        return ctx.redirect('/');
+        ctx.body = {
+            success: 'ok',
+        };
     }
 
-    return ctx.render('error');
+    ctx.body = {
+        error: `Couldn't create the application`,
+    };
 });
 
 export default captainApplicationsRouter;

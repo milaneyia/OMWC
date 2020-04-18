@@ -1,15 +1,14 @@
-import {
-    BaseEntity, Column, CreateDateColumn, Entity, ManyToOne,
-    OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
 import { CaptainApplication } from './applications/CaptainApplication';
 import { Country } from './Country';
+import { RequestAccess } from './RequestAccess';
 import { Role, ROLE } from './Role';
-import { Team } from './Team';
+import { MapperApplication } from './applications/MapperApplication';
 
 @Entity()
 export class User extends BaseEntity {
 
-    static findOneOrFailWithTeam(userId: number) {
+    static findOneOrFailWithTeam(userId: number): Promise<User> {
         return this.findOneOrFail({ where: { id: userId }, relations: ['team'] });
     }
 
@@ -18,7 +17,7 @@ export class User extends BaseEntity {
     }
 
     static isCaptain(user: User) {
-        return user.team && user.team.captainId;
+        return user.roleId === ROLE.Captain;
     }
 
     static isJudge(user: User) {
@@ -34,17 +33,8 @@ export class User extends BaseEntity {
     @Column({ unique: true })
     username!: string;
 
-    @Column()
-    countryId!: number;
-
-    @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
-    country!: Country;
-
-    @Column({ nullable: true })
-    teamId?: number | null;
-
-    @ManyToOne((type) => Team, (team) => team.users)
-    team?: Team | null;
+    @Column({ default: false })
+    hasRankedMap!: boolean;
 
     @Column()
     roleId!: number;
@@ -52,8 +42,26 @@ export class User extends BaseEntity {
     @ManyToOne((type) => Role, { nullable: false })
     role!: Role;
 
-    @OneToMany((type) => CaptainApplication, (captainApplication) => captainApplication.user)
-    captainApplication!: CaptainApplication[];
+    @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
+    country!: Country;
+
+    @OneToOne((type) => RequestAccess)
+    @JoinColumn()
+    requestAccess?: RequestAccess;
+
+    @OneToOne((type) => MapperApplication)
+    @JoinColumn()
+    mapperApplication?: MapperApplication;
+
+    @OneToOne((type) => CaptainApplication)
+    @JoinColumn()
+    captainApplication?: CaptainApplication;
+
+    @Column()
+    captainVoteId?: number;
+
+    @ManyToOne((type) => CaptainApplication)
+    captainVote?: CaptainApplication;
 
     @CreateDateColumn()
     createdAt!: Date;

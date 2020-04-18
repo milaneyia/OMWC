@@ -5,31 +5,17 @@ import { MapperApplication } from '../../models/applications/MapperApplication';
 
 const mapperApplicationsRouter = new Router();
 
-mapperApplicationsRouter.prefix('/applications/mappers');
+mapperApplicationsRouter.prefix('/api/applications/mappers');
 mapperApplicationsRouter.use(authenticate);
-mapperApplicationsRouter.use(async (ctx, next) => {
-    ctx.state.applicationType = 'mapper';
-    return await next();
-});
 mapperApplicationsRouter.use(onGoingApplications);
-
-mapperApplicationsRouter.get('/edit', async (ctx) => {
-    const app = await MapperApplication.findUserApplication(ctx.state.user.id);
-
-    if (app) {
-        return ctx.redirect('back');
-    }
-
-    return ctx.render('applications/mappers', { user: ctx.state.user });
-});
 
 mapperApplicationsRouter.post('/store', async (ctx) => {
     let app = await MapperApplication.findUserApplication(ctx.state.user.id);
 
     if (app) {
-        return ctx.render('error', {
-            title: 'Already applied.',
-        });
+        return ctx.body = {
+            error: 'Already applied.',
+        };
     }
 
     app = new MapperApplication();
@@ -37,10 +23,14 @@ mapperApplicationsRouter.post('/store', async (ctx) => {
     await app.save();
 
     if (app) {
-        return ctx.redirect('/');
+        ctx.body = {
+            success: 'ok',
+        };
     }
 
-    return ctx.render('error');
+    ctx.body = {
+        error: `Couldn't create the application`,
+    };
 });
 
 export default mapperApplicationsRouter;

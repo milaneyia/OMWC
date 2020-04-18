@@ -2,13 +2,14 @@ import Router from '@koa/router';
 import { convertToFloat, convertToIntOrThrow } from '../helpers';
 import { authenticate, isJudge } from '../middlewares/authentication';
 import { Judging } from '../models/judging/Judging';
-import { JudgingCriteria } from '../models/judging/JudgingCriteria';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
+import { Criteria } from '../models/judging/Criteria';
+import { JudgingToCriteria } from '../models/judging/JudgingToCriteria';
 
 const judgingRouter = new Router();
 
-judgingRouter.prefix('/judging');
+judgingRouter.prefix('/api/judging');
 judgingRouter.use(authenticate);
 judgingRouter.use(isJudge);
 
@@ -27,17 +28,17 @@ judgingRouter.get('/', async (ctx) => {
         return ctx.render('error');
     }
 
-    const criterias = await JudgingCriteria.find({});
+    const criterias = await Criteria.find({});
     const judgingDone = await Judging.find({
         judgeId: ctx.state.user.id,
         roundId: currentRound.id,
     });
 
-    return ctx.render('judging/index', {
+    ctx.body = {
         criterias,
         currentRound,
         judgingDone,
-    });
+    };
 });
 
 judgingRouter.post('/save', async (ctx) => {
@@ -47,7 +48,7 @@ judgingRouter.post('/save', async (ctx) => {
     const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
 
     const submission = await Submission.findOneOrFail({ id: submissionId });
-    const criteria = await JudgingCriteria.findOneOrFail({ id: criteriaId });
+    const criteria = await Criteria.findOneOrFail({ id: criteriaId });
     const round = await Round.findCurrentJudgingRound();
 
     if (!round || !score || !comment) {
@@ -60,22 +61,34 @@ judgingRouter.post('/save', async (ctx) => {
 
     let judging = await Judging.findOne({
         judgeId: ctx.state.user.id,
-        judgingCriteriaId: criteria.id,
         roundId: round.id,
         submissionId: submission.id,
     });
+    let judgingToCriteria;
 
-    if (!judging) {
+    if (judging) {
+        judgingToCriteria = await JudgingToCriteria.findOne({
+            criteria,
+            judging,
+        });
+    } else {
         judging = new Judging();
     }
 
+    if (!judging || !judgingToCriteria) {
+        judgingToCriteria = new JudgingToCriteria();
+    }
+
     judging.judgeId = ctx.state.user.id;
-    judging.judgingCriteriaId = criteria.id;
     judging.roundId = round.id;
     judging.submissionId = submission.id;
-    judging.score = score;
     judging.comment = comment;
     await judging.save();
+
+    judgingToCriteria.criteria = criteria;
+    judgingToCriteria.judging = judging;
+    judgingToCriteria.score = score;
+    await judgingToCriteria.save();
 
     return ctx.body = {
         judging,

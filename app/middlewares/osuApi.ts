@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import axios, { AxiosRequestConfig } from 'axios';
 import Crypto from 'crypto';
 import querystring from 'querystring';
 import config from '../../config.json';
 
-export function generateState() {
+export function generateState(): string {
     return Crypto.randomBytes(48).toString('hex');
 }
 
-export function generateAuthorizeUrl(rawState: string) {
+export function generateAuthorizeUrl(rawState: string): string {
     const hashedState = Buffer.from(rawState).toString('base64');
 
     return 'https://osu.ppy.sh/oauth/authorize?response_type=code' +
@@ -17,11 +18,11 @@ export function generateAuthorizeUrl(rawState: string) {
         '&scope=identify';
 }
 
-export function decodeState(hashedState: string) {
+export function decodeState(hashedState: string): string {
     return Buffer.from(hashedState, 'base64').toString('ascii');
 }
 
-export async function getToken(code: string) {
+export async function getToken(code: string): Promise<any> {
     const data = querystring.stringify({
         client_id: config.osuv2.id,
         client_secret: config.osuv2.secret,
@@ -41,13 +42,14 @@ export async function getToken(code: string) {
 
     try {
         const res = await axios(options);
+
         return res.data;
     } catch (error) {
         return { error };
     }
 }
 
-export async function refreshToken(token: string) {
+export async function refreshToken(token: string): Promise<any> {
     const data = querystring.stringify({
         client_id: config.osuv2.id,
         client_secret: config.osuv2.secret,
@@ -66,13 +68,14 @@ export async function refreshToken(token: string) {
 
     try {
         const res = await axios(options);
+
         return res.data;
     } catch (error) {
         return { error };
     }
 }
 
-export async function getUserInfo(token: string) {
+export async function getUserInfo(token: string): Promise<any> {
     const options: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -83,6 +86,7 @@ export async function getUserInfo(token: string) {
 
     try {
         const res = await axios(options);
+
         return res.data;
     } catch (error) {
         return { error };
