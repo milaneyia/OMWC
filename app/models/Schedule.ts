@@ -25,10 +25,10 @@ export class Schedule extends BaseEntity {
     mappersChoiceEndedAt!: Date;
 
     @Column('date')
-    constestStartedAt!: Date;
+    contestStartedAt!: Date;
 
     @Column('date')
-    constestEndedAt!: Date;
+    contestEndedAt!: Date;
 
     @CreateDateColumn()
     createdAt!: Date;

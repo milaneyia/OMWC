@@ -1,60 +1,102 @@
-<template lang="pug">
-    .container.text-center
-        .row.mb-2
-            .col-sm
-                .card
-                    .card-header
-                        p This shows a listing of the scores you set in each entry
-                        div When editing you need to add a comment for each criteria in addition to the score
-                        small (if you don't save and close this window or start editing another entry, the changes'll be lost!)
+<template>
+    <div class="container text-center">
+        <div class="row mb-2">
+            <div class="col-sm">
+                <div class="card">
+                    <div class="card-header">
+                        <p>This shows a listing of the scores you set in each entry</p>
+                        <div>When editing you need to add a comment for each criteria in addition to the score</div>
+                        <small>(if you don't save and close this window or start editing another entry, the changes'll be lost!)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        .row.mb-2
-            .col-sm
-                .card
-                    .card-header
-                        h4.card-title {{ currentRound.title }}
-                        a.card-subtitle(:href="currentRound.anonymisedLink") Download .osz
-                    .card-body.p-0
-                        table.table.table-hover.table-responsive-sm
-                            thead
-                                tr
-                                    th Entry's Name
-                                    th(v-for="criteria in criterias" :key="criteria.id")
+        <div class="row mb-2">
+            <div class="col-sm">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            {{ currentRound.title }}
+                        </h4>
+                        <a :href="currentRound.anonymisedLink" class="card-subtitle">
+                            Download .osz
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover table-responsive-sm">
+                            <thead>
+                                <tr>
+                                    <th>Entry's Name</th>
+                                    <th v-for="criteria in criterias" :key="criteria.id">
                                         | {{ criteria.name }}
-
-                            tbody
-                                tr(v-for="submission in currentRound.submissions" :key="submission.id")
-                                    td {{ submission.anonymisedAs }}
-                                    td(v-for="criteria in criterias" :key="criteria.id")
-                                        a.d-flex.align-items-center.justify-content-center(href="#" @click.prevent="selectToEdit(submission, criteria)")
-                                            i.small.mr-1.fas(
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="submission in currentRound.submissions" :key="submission.id">
+                                    <td>{{ submission.anonymisedAs }}</td>
+                                    <td v-for="criteria in criterias" :key="criteria.id">
+                                        <a href="#" class="d-flex align-items-center justify-content-center" @click.prevent="selectToEdit(submission, criteria)">
+                                            <i
+                                                class="small mr-1 fas"
                                                 :class="(editingJudging.submissionId === submission.id && editingJudging.judgingCriteriaId === criteria.id) ? 'fa-expand' : 'fa-edit'"
-                                            )
-                                            | {{ getScore(submission.id, criteria.id) }}
+                                            >
+                                                {{ getScore(submission.id, criteria.id) }}
+                                            </i>
                                             b.text-danger.ml-1(v-if="wasModified(submission.id, criteria.id)") *
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        .row.mb-2(v-if="editingJudging && editingJudging.submissionId")
-            .col-sm
-                .card
-                    .card-header
-                        | Editing #[b {{ selectedCriteria.name }}] for #[b {{ selectedSubmission.anonymisedAs }}]
-                        b.text-danger.ml-1(v-if="wasModified(selectedSubmission.id, selectedCriteria.id)") *
-                    .card-body
-                        .form-group
-                            label Score
-                            input.form-control(type="number" step=".01" v-model.number="editingJudging.score")
+        <div v-if="editingJudging && editingJudging.submissionId" class="row mb-2">
+            <div class="col-sm">
+                <div class="card">
+                    <div class="card-header">
+                        Editing <b>{{ selectedCriteria.name }}</b> for <b>{{ selectedSubmission.anonymisedAs }}</b>
+                        <b v-if="wasModified(selectedSubmission.id, selectedCriteria.id)" class="text-danger ml-1">*</b>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="score">Score</label>
+                            <input
+                                id="score"
+                                v-model.number="editingJudging.score"
+                                type="number"
+                                step=".01"
+                                class="form-control"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Comment</label>
+                            <textarea
+                                id="comment"
+                                v-model.trim="editingJudging.comment"
+                                maxlength="3000"
+                                rows="3"
+                                class="form-control"
+                            />
+                        </div>
+                        <button class="btn btn-primary btn-block" type="button" @click="save()">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        .form-group
-                            label Comment
-                            textarea.form-control(maxlength="3000" rows="3" v-model.trim="editingJudging.comment")
-
-                        button.btn.btn-primary.btn-block(type="button" @click="save()")
-                            | Save
-
-        .row
-            .col-sm
-                p {{ info }}
-
+        <div class="row">
+            <div class="col-sm">
+                <p>{{ info }}</p>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">

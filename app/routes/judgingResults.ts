@@ -18,7 +18,7 @@ judgingResultsRouter.get('/', async (ctx) => {
         .where('round.resultsAt < :today', { today: new Date() })
         .andWhere(new Brackets((qb) => {
             qb
-                .where('country.isCompeting = true')
+                .where('country.wasConfirmed = true')
                 .orWhere('country.eliminationRound is not null');
         }))
         .select(['round', 'submissions', 'country', 'judging', 'judgingCriteria', 'judge.username'])

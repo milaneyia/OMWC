@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Router from '@koa/router';
 import * as osuApi from '../middlewares/osuApi';
 import { Country } from '../models/Country';
@@ -5,13 +6,14 @@ import { ROLE } from '../models/Role';
 import { Round } from '../models/rounds/Round';
 import { Schedule } from '../models/Schedule';
 import { User } from '../models/User';
+import { Context, DefaultState } from 'koa';
 
-const indexRouter = new Router();
+const indexRouter = new Router<DefaultState, Context>();
 
 indexRouter.get('/api/', async (ctx) => {
     const schedule = await Schedule.findOne({});
     const judgingRound = await Round.findCurrentJudgingRound();
-    const osuId = ctx.session.osuId;
+    const osuId = ctx.session?.osuId;
     let user;
 
     if (osuId) {
@@ -58,8 +60,8 @@ indexRouter.get('/callback', async (ctx) => {
     if (response.error) {
         return ctx.render('error');
     } else {
-        ctx.session.accessToken = response.access_token;
-        ctx.session.refreshToken = response.refresh_token;
+        ctx.session!.accessToken = response.access_token;
+        ctx.session!.refreshToken = response.refresh_token;
 
         response = await osuApi.getUserInfo(response.access_token);
 
@@ -67,8 +69,8 @@ indexRouter.get('/callback', async (ctx) => {
             return ctx.render('error');
         }
 
-        ctx.session.osuId = response.id;
-        ctx.session.username = response.username;
+        ctx.session!.osuId = response.id;
+        ctx.session!.username = response.username;
 
         let country = await Country.findOne({ where: { name: response.country.name } });
 

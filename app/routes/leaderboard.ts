@@ -13,7 +13,7 @@ leaderboardRouter.get('/', async (ctx) => {
         .createQueryBuilder('country')
         .leftJoin('country.eliminationRound', 'eliminationRound')
         .select(['country.id', 'country.code', 'country.name', 'eliminationRound.title'])
-        .where('country.isCompeting = true')
+        .where('country.wasConfirmed = true')
         .orWhere('country.eliminationRound is not null')
         .getMany();
 
@@ -32,7 +32,7 @@ leaderboardRouter.get('/', async (ctx) => {
     //     .where('round.resultsAt < :today', { today: new Date() })
     //     .andWhere(new Brackets((qb) => {
     //         qb
-    //             .where('team.isCompeting = true')
+    //             .where('team.wasConfirmed = true')
     //             .orWhere('team.eliminationRound is not null');
     //     }))
     //     .getRawMany();

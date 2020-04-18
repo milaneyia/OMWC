@@ -17,7 +17,7 @@ export class Country extends BaseEntity {
     code!: string;
 
     @Column({ default: false })
-    isCompeting!: boolean;
+    wasConfirmed!: boolean;
 
     @OneToMany((type) => User, (user) => user.country)
     users!: User[];

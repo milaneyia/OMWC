@@ -10,7 +10,7 @@ submissionsRouter.prefix('/api/submissions');
 submissionsRouter.use(authenticate);
 submissionsRouter.use(isCaptain);
 submissionsRouter.use(async (ctx, next) => {
-    if (ctx.state.user.country.isCompeting) {
+    if (ctx.state.user.country.wasConfirmed) {
         await next();
     } else {
         return ctx.body = {
@@ -52,9 +52,9 @@ submissionsRouter.post('/save', async (ctx) => {
     }
 
     if (!isUrl(ctx.request.body.oszFile)) {
-        ctx.session.info = 'Not a valid link';
-
-        return ctx.redirect('back');
+        return ctx.body = {
+            error: 'Not a valid link',
+        };
     }
 
     let submission = await Submission.findOne({

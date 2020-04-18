@@ -26,7 +26,9 @@ captainVotingRouter.post('/store', async (ctx) => {
     const applicationId = ctx.request.body.applicationId && parseInt(ctx.request.body.applicationId, 10);
 
     if (!applicationId || isNaN(applicationId)) {
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'Not a valid app',
+        };
     }
 
     const application = await CaptainApplication.findOneOrFailWithUser(applicationId);

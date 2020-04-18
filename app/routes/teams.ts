@@ -8,7 +8,7 @@ teamsRouter.prefix('/api/teams');
 teamsRouter.get('/', async (ctx) => {
     const teams = await Country.find({
         where: {
-            isCompeting: true,
+            wasConfirmed: true,
             // TODO: or eliminatedRound
         },
         relations: [

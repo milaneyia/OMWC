@@ -1,4 +1,3 @@
-import Router from '@koa/router';
 import Koa from 'koa';
 import bodyparser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
@@ -11,9 +10,7 @@ import { createConnection } from 'typeorm';
 import config from '../config.json';
 import indexRouter from './routes';
 import captainChoiceAdminRouter from './routes/admin/captainChoice';
-import judgesChoiceAdminRouter from './routes/admin/judgesChoice';
-import criteriasAdminRouter from './routes/admin/judging/criterias';
-import judgingAdminRouter from './routes/admin/judging/index';
+import judgingAdminRouter from './routes/admin/judging';
 import submissionsAdminRouter from './routes/admin/manageSubmissions';
 import roundsAdminRouter from './routes/admin/rounds';
 import scheduleAdminRouter from './routes/admin/schedule';
@@ -99,12 +96,8 @@ app.use(captainChoiceAdminRouter.routes());
 app.use(captainChoiceAdminRouter.allowedMethods());
 app.use(teamsChoiceAdminRouter.routes());
 app.use(teamsChoiceAdminRouter.allowedMethods());
-app.use(judgesChoiceAdminRouter.routes());
-app.use(judgesChoiceAdminRouter.allowedMethods());
 
 // Admin Routes - after start
-app.use(criteriasAdminRouter.routes());
-app.use(criteriasAdminRouter.allowedMethods());
 app.use(roundsAdminRouter.routes());
 app.use(roundsAdminRouter.allowedMethods());
 app.use(submissionsAdminRouter.routes());

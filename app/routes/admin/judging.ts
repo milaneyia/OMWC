@@ -1,9 +1,8 @@
 import Router from '@koa/router';
-import { convertToIntOrThrow } from '../../../helpers';
-import { authenticate, isStaff } from '../../../middlewares/authentication';
-import { JudgingCriteria } from '../../../models/judging/JudgingCriteria';
-import { Round } from '../../../models/rounds/Round';
-import { Team } from '../../../models/Team';
+import { convertToIntOrThrow } from '../../helpers';
+import { authenticate, isStaff } from '../../middlewares/authentication';
+import { Round } from '../../models/rounds/Round';
+import { Criteria } from '../../models/judging/Criteria';
 
 interface IFinalScore {
     finalScore: number;
@@ -32,7 +31,7 @@ judgingAdminRouter.get('/', async (ctx) => {
         ],
     });
 
-    const criterias = await JudgingCriteria.find({});
+    const criterias = await Criteria.find({});
 
     const finalScores: IFinalScore[] = [];
     rounds.forEach((r) => {

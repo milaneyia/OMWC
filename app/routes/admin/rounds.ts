@@ -5,29 +5,16 @@ import { Round } from '../../models/rounds/Round';
 
 const roundsAdminRouter = new Router();
 
-roundsAdminRouter.prefix('/admin/rounds/');
+roundsAdminRouter.prefix('/api/admin/rounds/');
 roundsAdminRouter.use(authenticate);
 roundsAdminRouter.use(isStaff);
 
 roundsAdminRouter.get('/', async (ctx) => {
-    const rounds = await Round.find({});
+    const rounds = await Round.find({ relations: ['matches'] });
 
-    return ctx.render('admin/rounds/index', {
+    ctx.body = {
         rounds,
-    });
-});
-
-roundsAdminRouter.get('/create', async (ctx) => {
-    return ctx.render('admin/rounds/manage');
-});
-
-roundsAdminRouter.get('/edit/:id', async (ctx) => {
-    const roundId = convertToIntOrThrow(ctx.params.id);
-    const round = await Round.findOneOrFail({ id: roundId });
-
-    return ctx.render('admin/rounds/manage', {
-        round,
-    });
+    };
 });
 
 roundsAdminRouter.post('/save', async (ctx) => {
@@ -44,20 +31,24 @@ roundsAdminRouter.post('/save', async (ctx) => {
         !ctx.request.body.judgingStartedAt ||
         !ctx.request.body.judgingEndedAt ||
         !ctx.request.body.resultsAt
-        ) {
+    ) {
 
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'Not valid inputs',
+        };
     }
 
     round.title = ctx.request.body.title.trim();
-    round.information = ctx.request.body.information.trim() || null;
-    round.anonymisedLink = ctx.request.body.anonymisedLink.trim() || null;
     round.submissionsStartedAt = ctx.request.body.submissionsStartedAt;
     round.submissionsEndedAt = ctx.request.body.submissionsEndedAt;
     round.judgingStartedAt = ctx.request.body.judgingStartedAt;
     round.judgingEndedAt = ctx.request.body.judgingEndedAt;
     round.resultsAt = ctx.request.body.resultsAt;
     await round.save();
+
+    // TODO: create matches automatically ?
+    // round.information = ctx.request.body.information.trim() || null;
+    // round.anonymisedLink = ctx.request.body.anonymisedLink.trim() || null;
 
     return ctx.redirect('/admin/rounds/');
 });
