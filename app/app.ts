@@ -1,3 +1,4 @@
+import Router from '@koa/router';
 import Koa from 'koa';
 import bodyparser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
@@ -47,9 +48,7 @@ app.use(helmet());
 app.use(session({ key: 'omwc:sess' }, app));
 app.use(serve(path.join(__dirname, '../public')));
 app.use(bodyparser());
-app.use(views(path.join(__dirname, 'templates'), {
-    extension: 'pug',
-}));
+app.use(views(path.join(__dirname, '../public')));
 
 // Error handler
 app.use(async (ctx, next) => {

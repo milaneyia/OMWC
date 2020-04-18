@@ -11,7 +11,7 @@ import { User } from '../models/User';
 
 const indexRouter = new Router();
 
-indexRouter.get('/', async (ctx) => {
+indexRouter.get('/api/', async (ctx) => {
     const schedule = await Schedule.findOne({});
     const osuId = ctx.session.osuId;
     let user;
@@ -36,7 +36,7 @@ indexRouter.get('/', async (ctx) => {
         }
     }
 
-    return await ctx.render('index', {
+    ctx.body = {
         captainApplication,
         isCaptain,
         judgeApplication,
@@ -45,7 +45,7 @@ indexRouter.get('/', async (ctx) => {
         path: '/',
         schedule,
         user,
-    });
+    };
 });
 
 indexRouter.get('/login', async (ctx) => {

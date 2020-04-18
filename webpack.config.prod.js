@@ -2,6 +2,7 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -11,26 +12,26 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, './public/js/'),
         filename: '[name].js',
-        publicPath: '/js/'
+        publicPath: '/js/',
     },
     mode: 'production',
     module: {
         rules: [
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
             },
             {
-              test: /\.tsx?$/,
-              loader: 'ts-loader',
-              exclude: /node_modules/,
-              options: {
-                appendTsSuffixTo: [/\.vue$/]
-              }
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/,
+                options: {
+                    appendTsSuffixTo: [/\.vue$/],
+                },
             },
             {
                 test: /\.pug$/,
-                loader: 'pug-plain-loader'
+                loader: 'pug-plain-loader',
             },
             {
                 test: /\.s[ac]ss$/,
@@ -38,21 +39,21 @@ module.exports = {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
-                            publicPath: '/css/'
+                            publicPath: '/css/',
                         },
                     },
                     // 'vue-style-loader',
                     'css-loader',
-                    'sass-loader'
-                ]
-            }
-        ]
+                    'sass-loader',
+                ],
+            },
+        ],
     },
     resolve: {
         extensions: ['.ts', '.js', '.vue', '.json'],
         alias: {
-            'vue$': 'vue/dist/vue.min.js' 
-        }
+            'vue$': 'vue/dist/vue.min.js',
+        },
     },
     plugins: [
         new VueLoaderPlugin(),
@@ -64,7 +65,11 @@ module.exports = {
                 from: path.join(__dirname, 'app/templates'),
                 to: path.join(__dirname, 'dist/app/templates'),
                 toType: 'dir',
-            }
-        ])
-    ]
-}
+            },
+        ]),
+        new HtmlWebpackPlugin({
+            title: 'osu! Beatmapping World Cup',
+            filename: 'public/index.html',
+        }),
+    ],
+};
