@@ -88,7 +88,7 @@ indexRouter.get('/callback', async (ctx) => {
             const newUser = await User.create({
                 country,
                 osuId: response.id,
-                roleId: hasRankedMap ? ROLE.UserElevated : ROLE.User,
+                roleId: hasRankedMap ? ROLE.ElevatedUser : ROLE.BasicUser,
                 username: response.username,
             }).save();
 

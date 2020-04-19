@@ -23,32 +23,32 @@
             <div id="#navbar" class="collapse navbar-collapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/" :class="path === '/' ? 'active' : ''">
+                        <router-link class="nav-link" to="/">
                             Home
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/leaderboard" :class="path === '/leaderboard' ? 'active' : ''">
+                        <router-link class="nav-link" to="/leaderboard">
                             Leaderboard
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/judgingResults" :class="path === '/judgingResults' ? 'active' : ''">
+                        <router-link class="nav-link" to="/judgingResults">
                             Results
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/teams" :class="path === '/teams' ? 'active' : ''">
+                        <router-link class="nav-link" to="/teams">
                             Teams
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/staff" :class="path === '/staff' ? 'active' : ''">
+                        <router-link class="nav-link" to="/staff">
                             Staff
                         </router-link>
                     </li>
 
-                    <li v-if="user && user.roleId === 4" class="nav-item.dropdown">
+                    <li v-if="user && user.isStaff" class="nav-item.dropdown">
                         <a
                             class="nav-link dropdown-toggle"
                             href="#"
@@ -86,7 +86,12 @@
                     </li>
                 </ul>
 
-                <form action="/login" method="get" class="form-inline my-2 my-lg-0 ml-3">
+                <form
+                    v-if="!user"
+                    action="/login"
+                    method="get"
+                    class="form-inline my-2 my-lg-0 ml-3"
+                >
                     <button class="btn btn-primary" type="submit">
                         Verify your osu! account
                     </button>
@@ -101,15 +106,15 @@
 <script lang="ts">
 import Vue from 'vue';
 import Axios from 'axios';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
-    data () {
-        return {
-            path: '/',
-        };
-    },
+    computed: mapState({
+        'user': (state: any) => state.main.user,
+    }),
     async mounted () {
         const res = await Axios.get('/api/');
+        this.$store.commit('setData', res.data);
         console.log(res.data);
     },
 });

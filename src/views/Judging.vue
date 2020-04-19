@@ -102,27 +102,27 @@
 <script lang="ts">
 import Vue from 'vue';
 import axios from 'axios';
-import { Judging, JudgingCriteria, Submission } from '../interfaces';
+import { Judging, Criteria, Submission } from '../interfaces';
 
 export default Vue.extend({
     props: {
         currentRoundProp: Object,
         judgingDoneProp: Array as () => Judging[],
-        criterias: Array as () => JudgingCriteria[],
+        criterias: Array as () => Criteria[],
     },
     data () {
         return {
             currentRound: this.currentRoundProp || {},
             judgingDone: this.judgingDoneProp || [],
             selectedSubmission: {} as Submission,
-            selectedCriteria: {} as JudgingCriteria,
+            selectedCriteria: {} as Criteria,
             editingJudging: {} as Judging,
             initialEditingJudging: {} as Judging,
             info: null,
         };
     },
     methods: {
-        selectToEdit (submission: Submission, criteria: JudgingCriteria) {
+        selectToEdit (submission: Submission, criteria: Criteria) {
             this.selectedSubmission = submission;
             this.selectedCriteria = criteria;
 

@@ -12,18 +12,6 @@ export class User extends BaseEntity {
         return this.findOneOrFail({ where: { id: userId }, relations: ['team'] });
     }
 
-    static isStaff(user: User) {
-        return user.roleId === ROLE.Staff;
-    }
-
-    static isCaptain(user: User) {
-        return user.roleId === ROLE.Captain;
-    }
-
-    static isJudge(user: User) {
-        return user.roleId === ROLE.Judge;
-    }
-
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -68,4 +56,11 @@ export class User extends BaseEntity {
 
     @UpdateDateColumn()
     updatedAt!: Date;
+
+    isBasicUser = this.roleId === ROLE.BasicUser;
+    isElevatedUser = this.roleId === ROLE.ElevatedUser;
+    isRestricted = this.roleId === ROLE.Restricted;
+    isCaptain = this.roleId === ROLE.Captain;
+    isJudge = this.roleId === ROLE.Judge;
+    isStaff = this.roleId === ROLE.Staff;
 }

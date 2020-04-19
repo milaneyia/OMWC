@@ -11,14 +11,14 @@ interface Judging {
     comment?: string;
 }
 
-interface JudgingCriteria {
+interface Criteria {
     id: number;
     name: string;
     maxScore: number;
 }
 
-export { 
+export {
     Submission,
     Judging,
-    JudgingCriteria,
-}
+    Criteria,
+};

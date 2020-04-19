@@ -1,8 +1,8 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum ROLE {
-    User = 1,
-    UserElevated = 2,
+    BasicUser = 1,
+    ElevatedUser = 2,
     Restricted = 3,
     Contestant = 4,
     Captain = 5,

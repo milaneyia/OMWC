@@ -1,7 +1,6 @@
 import { ParameterizedContext } from 'koa';
 import { CaptainApplication } from '../models/applications/CaptainApplication';
 import { MapperApplication } from '../models/applications/MapperApplication';
-import { ROLE } from '../models/Role';
 import { User } from '../models/User';
 
 export async function authenticate(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
@@ -10,7 +9,7 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
         where: { osuId: ctx.session.osuId },
     });
 
-    if (user && user.roleId !== ROLE.Restricted) {
+    if (user && !user.isRestricted) {
         ctx.state.user = user;
 
         return await next();
@@ -24,7 +23,7 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
 }
 
 export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    if (User.isStaff(ctx.state.user)) {
+    if (ctx.state.user.isStaff) {
         return await next();
     } else {
         return ctx.redirect('back');
@@ -32,7 +31,7 @@ export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any
 }
 
 export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    if (User.isCaptain(ctx.state.user)) {
+    if (ctx.state.user.isCaptain) {
         return await next();
     } else {
         return ctx.redirect('back');
@@ -40,7 +39,7 @@ export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<a
 }
 
 export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    if (User.isJudge(ctx.state.user)) {
+    if (ctx.state.user.isJudge) {
         return await next();
     } else {
         return ctx.redirect('back');
@@ -48,16 +47,15 @@ export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any
 }
 
 export async function isElevatedUser(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    if (ctx.state.user.roleId === ROLE.UserElevated) {
+    if (ctx.state.user.isElevatedUser) {
         return await next();
     } else {
         return ctx.redirect('back');
     }
 }
 
-
 export async function isBasicUser(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    if (ctx.state.user.roleId === ROLE.User) {
+    if (ctx.state.user.isBasicUser) {
         return await next();
     } else {
         return ctx.redirect('back');
@@ -68,7 +66,7 @@ export async function canVoteForCaptain(ctx: ParameterizedContext, next: () => P
     const mapperApplication = await MapperApplication.findOne({ where: { userId: ctx.state.user.id } });
     const captainApplication = await CaptainApplication.findOne({ where: { userId: ctx.state.user.id } });
 
-    if (mapperApplication || captainApplication) {
+    if (ctx.state.user.isElevatedUser && (mapperApplication || captainApplication)) {
         return await next();
     } else {
         return ctx.redirect('back');

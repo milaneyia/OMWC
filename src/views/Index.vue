@@ -3,10 +3,14 @@
         <div class="row mb-2">
             <div class="col-sm">
                 <div v-if="user" class="header">
-                    <img src="/img/logo.png" width="60" heigth="60">
+                    <img
+                        src="/img/logo.png"
+                        width="60"
+                        heigth="60"
+                    >
                     <div>
                         <h3 class="ml-2">
-                            {{ user.roleId === 2 ? 'you did something bad ' : 'Welcome ' }}
+                            Welcome
                             <b>{{ user.username }}</b>
                         </h3>
                         <div class="d-flex ml-2 align-items-center">
@@ -19,18 +23,26 @@
                 <div v-else>
                     <h2>osu! Mapping World Cup</h2>
                     <h5>xx january to xx something</h5>
-                    <img src="/img/logo.png" width="350" height="350">
+                    <img
+                        src="/img/logo.png"
+                        width="350"
+                        height="350"
+                    >
                 </div>
             </div>
         </div>
 
-        <div v-if="user && user.roleId !== 2 && schedule" class="row mb-2">
+        <div v-if="user && !user.isRestricted && schedule" class="row mb-2">
             <div class="col-sm">
                 <div class="card">
                     <div class="card-body">
-                        <div v-if="schedule.captainApplicationsEndedAt && new Date(schedule.captainApplicationsEndedAt) > new Date()">
+                        <div v-if="isBasicUser">
+                            Request Access
+                        </div>
+
+                        <div v-if="isElevatedUser && schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
                             <router-link to="/applications/captains/edit" class="btn btn-primary btn-block btn-lg">
-                                {{ captainApplication ? 'Edit your team captain application' : 'Apply for team captain' }}
+                                {{ user.captainApplication ? 'Edit your team captain application' : 'Apply for team captain' }}
                             </router-link>
 
                             <p class="small">
@@ -39,8 +51,12 @@
                             </p>
                         </div>
 
-                        <div v-if="schedule.mapperApplicationsEndedAt && new Date(schedule.mapperApplicationsEndedAt) > new Date()">
-                            <a v-if="mapperApplication" href="#" class="btn btn-secondary disabled btn-block btn-lg">
+                        <div v-if="schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
+                            <a
+                                v-if="user.mapperApplication"
+                                href="#"
+                                class="btn btn-secondary disabled btn-block btn-lg"
+                            >
                                 You've applied as a mapper
                             </a>
 
@@ -58,8 +74,12 @@
 
                         <hr>
 
-                        <div v-if="schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()">
-                            <a v-if="new Date(schedule.captainVotingStartedAt) > new Date()" href="#" class="btn btn-secondary disabled btn-block btn-lg">
+                        <div v-if="isElevatedUser && schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()">
+                            <a
+                                v-if="new Date(schedule.captainVotingStartedAt) > new Date()"
+                                href="#"
+                                class="btn btn-secondary disabled btn-block btn-lg"
+                            >
                                 Captain Voting
                             </a>
 
@@ -86,18 +106,30 @@
                             </p>
                         </div>
 
-                        <router-link v-if="isCaptain" to="/submissions" class="btn btn-primary btn-block btn-lg">
+                        <router-link
+                            v-if="user.isCaptain"
+                            to="/submissions"
+                            class="btn btn-primary btn-block btn-lg"
+                        >
                             .osz submissions
                         </router-link>
 
-                        <template v-if="user.roleId === 3">
+                        <template v-if="user.isJudge">
                             <hr>
 
-                            <a v-if="judgingRound" href="#" class="btn btn-secondary disabled btn-block btn-lg">
+                            <a
+                                v-if="judgingRound"
+                                href="#"
+                                class="btn btn-secondary disabled btn-block btn-lg"
+                            >
                                 Judging
                             </a>
 
-                            <router-link v-if="isCaptain" to="/judging" class="btn btn-primary btn-block btn-lg">
+                            <router-link
+                                v-if="user.isCaptain"
+                                to="/judging"
+                                class="btn btn-primary btn-block btn-lg"
+                            >
                                 Judging
                             </router-link>
                         </template>
@@ -111,11 +143,19 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-around">
-                            <a class="d-flex align-items-center" href="#" target="__blank">
+                            <a
+                                class="d-flex align-items-center"
+                                href="#"
+                                target="__blank"
+                            >
                                 <i class="fab fa-discord fa-3x text-white" />
                                 <h4 class="ml-3">Join us!</h4>
                             </a>
-                            <a class="d-flex align-items-center" href="#" target="__blank">
+                            <a
+                                class="d-flex align-items-center"
+                                href="#"
+                                target="__blank"
+                            >
                                 <span class="country-flag" style="background-image: url('/img/osu.png'); height: 50px; width: 50px;" />
                                 <h4 class="ml-3">
                                     Forum Post
@@ -190,3 +230,21 @@
         </div>
     </div>
 </template>
+
+<script lang="ts">
+import Vue from 'vue';
+import Axios from 'axios';
+import { mapState } from 'vuex';
+
+export default Vue.extend({
+    computed: mapState({
+        'user': (state: any) => state.main.user,
+        'schedule': (state: any) => state.main.schedule,
+    }),
+    async mounted () {
+        const res = await Axios.get('/api/');
+        this.$store.commit('setData', res.data);
+        console.log(res.data);
+    },
+});
+</script>
