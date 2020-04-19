@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { authenticate, canVoteForCaptain } from '../middlewares/authentication';
+import { authenticate, canVoteForCaptain, isElevatedUser } from '../middlewares/authentication';
 import { onGoingCaptainVoting } from '../middlewares/scheduleCheck';
 import { CaptainApplication } from '../models/applications/CaptainApplication';
 
@@ -7,6 +7,7 @@ const captainVotingRouter = new Router();
 
 captainVotingRouter.prefix('/api/captainVoting');
 captainVotingRouter.use(authenticate);
+captainVotingRouter.use(isElevatedUser);
 captainVotingRouter.use(onGoingCaptainVoting);
 captainVotingRouter.use(canVoteForCaptain);
 

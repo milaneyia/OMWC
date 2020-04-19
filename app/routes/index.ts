@@ -84,10 +84,11 @@ indexRouter.get('/callback', async (ctx) => {
         const user = await User.findOne({ where: { osuId: response.id } });
 
         if (!user) {
+            const hasRankedMap = response.ranked_and_approved_beatmapset_count > 0;
             const newUser = await User.create({
                 country,
                 osuId: response.id,
-                roleId: ROLE.User,
+                roleId: hasRankedMap ? ROLE.UserElevated : ROLE.User,
                 username: response.username,
             }).save();
 

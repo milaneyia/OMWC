@@ -24,6 +24,8 @@ import leaderboardRouter from './routes/leaderboard';
 import mappersChoiceRouter from './routes/mappersChoice';
 import submissionsRouter from './routes/submissions';
 import teamsRouter from './routes/teams';
+import usersAdminRouter from './routes/admin/users';
+import usersRouter from './routes/users';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -72,6 +74,8 @@ app.use(teamsRouter.routes());
 app.use(teamsRouter.allowedMethods());
 
 // Applications & Choices routes
+app.use(usersRouter.routes());
+app.use(usersRouter.allowedMethods());
 app.use(captainApplicationsRouter.routes());
 app.use(captainApplicationsRouter.allowedMethods());
 app.use(mapperApplicationsRouter.routes());
@@ -90,6 +94,8 @@ app.use(judgingRouter.routes());
 app.use(judgingRouter.allowedMethods());
 
 // Admin routes - pre start
+app.use(usersAdminRouter.routes());
+app.use(usersAdminRouter.allowedMethods());
 app.use(scheduleAdminRouter.routes());
 app.use(scheduleAdminRouter.allowedMethods());
 app.use(captainChoiceAdminRouter.routes());

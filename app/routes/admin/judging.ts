@@ -3,6 +3,7 @@ import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
 import { Criteria } from '../../models/judging/Criteria';
+import { Country } from '../../models/Country';
 
 interface IFinalScore {
     finalScore: number;
@@ -34,39 +35,42 @@ judgingAdminRouter.get('/', async (ctx) => {
     const criterias = await Criteria.find({});
 
     const finalScores: IFinalScore[] = [];
-    rounds.forEach((r) => {
-        r.submissions.forEach((s) => {
-            const finalScore = s.judging.map((j) => j.score).reduce((total, score) => total + score, 0);
+    // rounds.forEach((r) => {
+    //     r.submissions.forEach((s) => {
+    //         const finalScore = s.judging.map((j) => j.score).reduce((total, score) => total + score, 0);
 
-            finalScores.push({
-                finalScore,
-                roundId: r.id,
-                submissionId: s.id,
-            });
-        });
-    });
+    //         finalScores.push({
+    //             finalScore,
+    //             roundId: r.id,
+    //             submissionId: s.id,
+    //         });
+    //     });
+    // });
 
-    return ctx.render('admin/judging/index', {
+    ctx.body = {
         criterias,
         finalScores,
         rounds,
-    });
+    };
 });
 
 judgingAdminRouter.post('/eliminateTeam', async (ctx) => {
     const currentRound = await Round.findCurrentRound();
 
     if (!currentRound) {
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'Not a valid round',
+        };
     }
 
     const eliminatedTeamId = convertToIntOrThrow(ctx.request.body.eliminatedTeamId);
-    const team = await Team.findOneOrFail({ id: eliminatedTeamId });
-    team.isCompeting = false;
-    team.eliminationRoundId = currentRound.id;
-    team.save();
+    const team = await Country.findOneOrFail({ id: eliminatedTeamId });
+    team.eliminationRound = currentRound;
+    await team.save();
 
-    return ctx.redirect('back');
+    ctx.body = {
+        success: 'ok',
+    };
 });
 
 export default judgingAdminRouter;

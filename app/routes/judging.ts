@@ -25,7 +25,9 @@ judgingRouter.get('/', async (ctx) => {
         .getOne();
 
     if (!currentRound) {
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'Not a round in progress',
+        };
     }
 
     const criterias = await Criteria.find({});

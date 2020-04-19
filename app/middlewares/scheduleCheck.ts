@@ -86,8 +86,8 @@ export async function onGoingContest(ctx: ParameterizedContext, next: () => Prom
         return ctx.render('error');
     }
 
-    const hasStarted = (schedule.constestStartedAt && new Date() >= new Date(schedule.constestStartedAt));
-    const hasEnded = (schedule.constestEndedAt && new Date() >= new Date(schedule.constestEndedAt));
+    const hasStarted = (schedule.contestStartedAt && new Date() >= new Date(schedule.contestStartedAt));
+    const hasEnded = (schedule.contestEndedAt && new Date() >= new Date(schedule.contestEndedAt));
 
     const onGoing = (
         hasStarted &&

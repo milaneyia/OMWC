@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { authenticate } from '../../middlewares/authentication';
+import { authenticate, isElevatedUser } from '../../middlewares/authentication';
 import { onGoingApplications } from '../../middlewares/scheduleCheck';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 
@@ -7,6 +7,7 @@ const captainApplicationsRouter = new Router();
 
 captainApplicationsRouter.prefix('/api/applications/captains');
 captainApplicationsRouter.use(authenticate);
+captainApplicationsRouter.use(isElevatedUser);
 captainApplicationsRouter.use(onGoingApplications);
 
 captainApplicationsRouter.post('/save', async (ctx) => {

@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { User } from './User';
 
 @Entity()
 export class RequestAccess extends BaseEntity {
@@ -11,6 +12,9 @@ export class RequestAccess extends BaseEntity {
 
     @Column()
     wasAccepted!: boolean;
+
+    @OneToOne((type) => User, (user) => user.requestAccess, { nullable: false })
+    user!: User;
 
     @CreateDateColumn()
     createdAt!: Date;

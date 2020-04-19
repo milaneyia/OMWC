@@ -33,9 +33,6 @@ export class User extends BaseEntity {
     @Column({ unique: true })
     username!: string;
 
-    @Column({ default: false })
-    hasRankedMap!: boolean;
-
     @Column()
     roleId!: number;
 
@@ -45,7 +42,10 @@ export class User extends BaseEntity {
     @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
     country!: Country;
 
-    @OneToOne((type) => RequestAccess)
+    @Column({ nullable: true })
+    requestAccessId?: number
+
+    @OneToOne((type) => RequestAccess, (requestAccess) => requestAccess.user)
     @JoinColumn()
     requestAccess?: RequestAccess;
 
@@ -57,10 +57,10 @@ export class User extends BaseEntity {
     @JoinColumn()
     captainApplication?: CaptainApplication;
 
-    @Column()
+    @Column({ nullable: true })
     captainVoteId?: number;
 
-    @ManyToOne((type) => CaptainApplication)
+    @ManyToOne((type) => CaptainApplication, (captainApplication) => captainApplication.userVotes)
     captainVote?: CaptainApplication;
 
     @CreateDateColumn()
