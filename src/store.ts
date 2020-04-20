@@ -1,21 +1,28 @@
 import { StoreOptions } from 'vuex';
+import { User } from './interfaces';
 
 export interface MainState {
-    user?: object;
-    schedule?: object;
+    initialized: boolean;
+    user: User | null;
+    schedule: object | null;
 }
 
-const mainModule: StoreOptions<MainState> = {
+const store: StoreOptions<MainState> = {
     state: {
-        user: undefined,
-        schedule: undefined,
+        initialized: false,
+        user: null,
+        schedule: null,
     },
     mutations: {
         setData (state, payload): void {
             state.user = payload.user;
             state.schedule = payload.schedule;
+            state.initialized = true;
+        },
+        updateUser (state, payload): void {
+            state.user = payload;
         },
     },
 };
 
-export default mainModule;
+export default store;

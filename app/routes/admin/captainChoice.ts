@@ -54,7 +54,7 @@ captainChoiceAdminRouter.post('/destroy', async (ctx) => {
     const applicationId = convertToIntOrThrow(ctx.request.body.applicationId);
     const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
     const user = await User.findOneOrFail({ id: application.user.id });
-    user.roleId = ROLE.UserElevated;
+    user.roleId = ROLE.ElevatedUser;
     await user.save();
 
     ctx.body = {

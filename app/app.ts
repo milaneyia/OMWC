@@ -54,7 +54,7 @@ app.use(async (ctx, next) => {
         await next();
 
         if (ctx.status === 404) {
-            ctx.redirect('/');
+            await ctx.render('index');
         }
     } catch (err) {
         ctx.status = err.status || 500;

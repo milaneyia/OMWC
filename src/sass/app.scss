@@ -136,3 +136,7 @@ $default-shadow: 0px 0px 10px 0px #333;
     @extend .py-3;
     @extend .justify-content-center;
 }
+
+[v-cloak] {
+    display: none;
+}

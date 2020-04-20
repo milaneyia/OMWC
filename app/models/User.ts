@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne, JoinColumn, AfterInsert, AfterLoad } from 'typeorm';
 import { CaptainApplication } from './applications/CaptainApplication';
 import { Country } from './Country';
 import { RequestAccess } from './RequestAccess';
@@ -57,10 +57,21 @@ export class User extends BaseEntity {
     @UpdateDateColumn()
     updatedAt!: Date;
 
-    isBasicUser = this.roleId === ROLE.BasicUser;
-    isElevatedUser = this.roleId === ROLE.ElevatedUser;
-    isRestricted = this.roleId === ROLE.Restricted;
-    isCaptain = this.roleId === ROLE.Captain;
-    isJudge = this.roleId === ROLE.Judge;
-    isStaff = this.roleId === ROLE.Staff;
+    isBasicUser!: boolean;
+    isElevatedUser!: boolean;
+    isRestricted!: boolean;
+    isCaptain!: boolean;
+    isJudge!: boolean;
+    isStaff!: boolean;
+
+    @AfterLoad()
+    getVirtuals (): void {
+        this.isBasicUser = this.roleId === ROLE.BasicUser;
+        this.isElevatedUser = this.roleId === ROLE.ElevatedUser;
+        this.isRestricted = this.roleId === ROLE.Restricted;
+        this.isCaptain = this.roleId === ROLE.Captain;
+        this.isJudge = this.roleId === ROLE.Judge;
+        this.isStaff = this.roleId === ROLE.Staff;
+    }
+
 }

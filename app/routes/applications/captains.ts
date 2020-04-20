@@ -21,15 +21,17 @@ captainApplicationsRouter.post('/save', async (ctx) => {
     app.user = ctx.state.user;
     await app.save();
 
+    let body: object = {
+        error: `Couldn't create the application`,
+    };
+
     if (app) {
-        ctx.body = {
+        body = {
             success: 'ok',
         };
     }
 
-    ctx.body = {
-        error: `Couldn't create the application`,
-    };
+    ctx.body = body;
 });
 
 export default captainApplicationsRouter;

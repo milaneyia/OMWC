@@ -1,3 +1,15 @@
+interface User {
+    username: string;
+
+    captainApplication: {
+        reason: string;
+    };
+
+    mapperApplication: {
+        id: number;
+    };
+}
+
 interface Submission {
     id: number;
     anonymisedAs: string;
@@ -18,6 +30,7 @@ interface Criteria {
 }
 
 export {
+    User,
     Submission,
     Judging,
     Criteria,

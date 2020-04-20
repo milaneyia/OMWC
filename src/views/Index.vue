@@ -36,12 +36,12 @@
             <div class="col-sm">
                 <div class="card">
                     <div class="card-body">
-                        <div v-if="isBasicUser">
+                        <div v-if="user.isBasicUser">
                             Request Access
                         </div>
 
-                        <div v-if="isElevatedUser && schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
-                            <router-link to="/applications/captains/edit" class="btn btn-primary btn-block btn-lg">
+                        <div v-if="user.isElevatedUser && schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
+                            <router-link to="/applications/captains" class="btn btn-primary btn-block btn-lg">
                                 {{ user.captainApplication ? 'Edit your team captain application' : 'Apply for team captain' }}
                             </router-link>
 
@@ -61,7 +61,7 @@
                             </a>
 
                             <template v-else>
-                                <router-link to="/applications/mappers/edit" class="btn btn-primary btn-block btn-lg">
+                                <router-link to="/applications/mappers/" class="btn btn-primary btn-block btn-lg">
                                     Apply as a mapper
                                 </router-link>
 
@@ -74,7 +74,7 @@
 
                         <hr>
 
-                        <div v-if="isElevatedUser && schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()">
+                        <div v-if="user.isElevatedUser && schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()">
                             <a
                                 v-if="new Date(schedule.captainVotingStartedAt) > new Date()"
                                 href="#"
@@ -83,19 +83,21 @@
                                 Captain Voting
                             </a>
 
-                            <template v-else>
-                                <router-link to="/captainVoting" class="btn btn-primary btn-block btn-lg">
-                                    captainVoting
-                                </router-link>
+                            <router-link
+                                v-else
+                                to="/captainVoting"
+                                class="btn btn-primary btn-block btn-lg"
+                            >
+                                Captain Voting
+                            </router-link>
 
-                                <p class="small">
-                                    from {{ new Date(schedule.captainVotingStartedAt).toLocaleString() }}
-                                    to {{ new Date(schedule.captainVotingEndedAt).toLocaleString() }}
-                                </p>
-                            </template>
+                            <p class="small">
+                                from {{ new Date(schedule.captainVotingStartedAt).toLocaleString() }}
+                                to {{ new Date(schedule.captainVotingEndedAt).toLocaleString() }}
+                            </p>
                         </div>
 
-                        <div v-if="schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && isCaptain">
+                        <div v-if="schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && user.isCaptain">
                             <router-link to="/mappersChoice" class="btn btn-primary btn-block btn-lg">
                                 Mappers Choice
                             </router-link>
@@ -233,18 +235,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Axios from 'axios';
-import { mapState } from 'vuex';
+import Component from 'vue-class-component';
+import { State } from 'vuex-class';
 
-export default Vue.extend({
-    computed: mapState({
-        'user': (state: any) => state.main.user,
-        'schedule': (state: any) => state.main.schedule,
-    }),
-    async mounted () {
-        const res = await Axios.get('/api/');
-        this.$store.commit('setData', res.data);
-        console.log(res.data);
-    },
-});
+@Component
+export default class Index extends Vue {
+
+    @State user!: object;
+    @State schedule!: object;
+
+}
 </script>

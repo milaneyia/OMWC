@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div v-cloak id="app">
         <nav class="nav navbar navbar-expand-lg navbar-dark bg-dark">
             <router-link to="/" class="navbar-brand p-0">
                 <img
@@ -99,23 +99,30 @@
             </div>
         </nav>
 
-        <router-view />
+        <transition name="route-transition" mode="out-in">
+            <router-view />
+        </transition>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Axios from 'axios';
-import { mapState } from 'vuex';
+import Component from 'vue-class-component';
+import { State } from 'vuex-class';
 
-export default Vue.extend({
-    computed: mapState({
-        'user': (state: any) => state.main.user,
-    }),
-    async mounted () {
-        const res = await Axios.get('/api/');
-        this.$store.commit('setData', res.data);
-        console.log(res.data);
-    },
-});
+@Component
+export default class App extends Vue {
+
+    @State user!: object;
+
+}
 </script>
+
+<style lang="scss">
+.route-transition-enter-active, .route-transition-leave-active {
+  transition: opacity .2s;
+}
+.route-transition-enter, .route-transition-leave-to {
+  opacity: 0;
+}
+</style>
