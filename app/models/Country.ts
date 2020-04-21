@@ -37,9 +37,6 @@ export class Country extends BaseEntity {
     // Used for the leaderboard
     finalScore!: number;
     criteriaScores!: ICriteriaScore[];
-
-    // Used for mapping
-    captainApplications!: CaptainApplication[];
 }
 
 export interface ICriteriaScore {

@@ -1,5 +1,6 @@
 interface User {
     username: string;
+    isStaff: boolean;
 
     captainApplication: {
         reason: string;
@@ -8,6 +9,17 @@ interface User {
     mapperApplication: {
         id: number;
     };
+}
+
+interface Schedule {
+    applicationsStartedAt: Date;
+    applicationsEndedAt: Date;
+    captainVotingStartedAt: Date;
+    captainVotingEndedAt: Date;
+    mappersChoiceStartedAt: Date;
+    mappersChoiceEndedAt: Date;
+    contestStartedAt: Date;
+    contestEndedAt: Date;
 }
 
 interface Submission {
@@ -31,6 +43,7 @@ interface Criteria {
 
 export {
     User,
+    Schedule,
     Submission,
     Judging,
     Criteria,

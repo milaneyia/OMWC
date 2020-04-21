@@ -48,7 +48,7 @@
                         </router-link>
                     </li>
 
-                    <li v-if="user && user.isStaff" class="nav-item.dropdown">
+                    <li v-if="user && user.isStaff" class="nav-item dropdown">
                         <a
                             class="nav-link dropdown-toggle"
                             href="#"

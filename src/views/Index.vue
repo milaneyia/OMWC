@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div v-if="user && !user.isRestricted && schedule" class="row mb-2">
+        <div v-if="user && !user.isRestricted && !user.isStaff && schedule" class="row mb-2">
             <div class="col-sm">
                 <div class="card">
                     <div class="card-body">

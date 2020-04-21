@@ -22,6 +22,9 @@ const store: StoreOptions<MainState> = {
         updateUser (state, payload): void {
             state.user = payload;
         },
+        updateSchedule (state, payload): void {
+            state.schedule = payload;
+        },
     },
 };
 

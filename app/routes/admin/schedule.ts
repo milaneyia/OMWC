@@ -4,32 +4,23 @@ import { Schedule } from '../../models/Schedule';
 
 const scheduleAdminRouter = new Router();
 
-scheduleAdminRouter.prefix('/admin/schedule');
+scheduleAdminRouter.prefix('/api/admin/schedule');
 scheduleAdminRouter.use(authenticate);
 scheduleAdminRouter.use(isStaff);
 
-scheduleAdminRouter.get('/', async (ctx) => {
-    const schedule = await Schedule.findOne();
-
-    ctx.body = {
-        schedule,
-        user: ctx.state.user,
-    };
-});
-
 scheduleAdminRouter.post('/save', async (ctx) => {
-    if (!ctx.request.body.applicationsStartedAt ||
-        !ctx.request.body.applicationsEndedAt ||
-        !ctx.request.body.captainVotingStartedAt ||
-        !ctx.request.body.captainVotingEndedAt ||
-        !ctx.request.body.mappersChoiceStartedAt ||
-        !ctx.request.body.mappersChoiceEndedAt ||
-        !ctx.request.body.constestStartedAt ||
-        !ctx.request.body.constestEndedAt ||
-        ctx.request.body.applicationsStartedAt > ctx.request.body.applicationsEndedAt ||
-        ctx.request.body.captainVotingStartedAt > ctx.request.body.captainVotingEndedAt ||
-        ctx.request.body.mappersChoiceStartedAt > ctx.request.body.mappersChoiceEndedAt ||
-        ctx.request.body.constestStartedAt > ctx.request.body.constestEndedAt
+    if (!ctx.request.body.applicationsStartedAt.date ||
+        !ctx.request.body.applicationsEndedAt.date ||
+        !ctx.request.body.captainVotingStartedAt.date ||
+        !ctx.request.body.captainVotingEndedAt.date ||
+        !ctx.request.body.mappersChoiceStartedAt.date ||
+        !ctx.request.body.mappersChoiceEndedAt.date ||
+        !ctx.request.body.contestStartedAt.date ||
+        !ctx.request.body.contestEndedAt.date ||
+        ctx.request.body.applicationsStartedAt.date > ctx.request.body.applicationsEndedAt.date ||
+        ctx.request.body.captainVotingStartedAt.date > ctx.request.body.captainVotingEndedAt.date ||
+        ctx.request.body.mappersChoiceStartedAt.date > ctx.request.body.mappersChoiceEndedAt.date ||
+        ctx.request.body.contestStartedAt.date > ctx.request.body.contestEndedAt.date
     ) {
 
         return ctx.body = {
@@ -43,19 +34,17 @@ scheduleAdminRouter.post('/save', async (ctx) => {
         schedule = new Schedule();
     }
 
-    schedule.applicationsStartedAt = ctx.request.body.applicationsStartedAt;
-    schedule.applicationsEndedAt = ctx.request.body.applicationsEndedAt;
-    schedule.captainVotingStartedAt = ctx.request.body.captainVotingStartedAt;
-    schedule.captainVotingEndedAt = ctx.request.body.captainVotingEndedAt;
-    schedule.mappersChoiceStartedAt = ctx.request.body.mappersChoiceStartedAt;
-    schedule.mappersChoiceEndedAt = ctx.request.body.mappersChoiceEndedAt;
-    schedule.contestStartedAt = ctx.request.body.contestStartedAt;
-    schedule.contestEndedAt = ctx.request.body.contestEndedAt;
+    schedule.applicationsStartedAt = ctx.request.body.applicationsStartedAt.date;
+    schedule.applicationsEndedAt = ctx.request.body.applicationsEndedAt.date;
+    schedule.captainVotingStartedAt = ctx.request.body.captainVotingStartedAt.date;
+    schedule.captainVotingEndedAt = ctx.request.body.captainVotingEndedAt.date;
+    schedule.mappersChoiceStartedAt = ctx.request.body.mappersChoiceStartedAt.date;
+    schedule.mappersChoiceEndedAt = ctx.request.body.mappersChoiceEndedAt.date;
+    schedule.contestStartedAt = ctx.request.body.contestStartedAt.date;
+    schedule.contestEndedAt = ctx.request.body.contestEndedAt.date;
     await schedule.save();
 
-    ctx.body = {
-        success: 'ok',
-    };
+    ctx.body = schedule;
 });
 
 export default scheduleAdminRouter;

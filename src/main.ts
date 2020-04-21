@@ -23,7 +23,10 @@ router.beforeEach(async (to, from, next) => {
     if (!store.state.initialized) {
         const res = await Axios.get('/api/');
         store.commit('setData', res.data);
-        next();
+    }
+
+    if (to.path.startsWith('/admin') && !store.state.user?.isStaff) {
+        next({ path: '/' });
     } else {
         next();
     }

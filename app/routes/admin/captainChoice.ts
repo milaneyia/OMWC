@@ -14,31 +14,30 @@ captainChoiceAdminRouter.use(authenticate);
 captainChoiceAdminRouter.use(isStaff);
 
 captainChoiceAdminRouter.get('/', async (ctx) => {
-    const schedule = await Schedule.findOne();
     const applicationsByCountry = await Country
         .createQueryBuilder('country')
         .innerJoin('country.users', 'user')
-        .innerJoinAndMapMany('country.captainApplications', CaptainApplication, 'captainApplication', 'user.id = captainApplication.userId')
-        .leftJoin('captainApplication.user', 'captainApplicationUser')
-        .leftJoin('captainApplication.captainVotes', 'captainVote')
-        .leftJoin('captainVote.user', 'captainVoteUser')
+        .innerJoin('user.captainApplication', 'captainApplication')
+        .leftJoin('captainApplication.userVotes', 'userVote')
         .select([
             'country.name',
             'country.code',
+            'user.osuId',
+            'user.username',
+            'user.roleId',
             'captainApplication.id',
-            'captainApplicationUser.id',
-            'captainApplicationUser.username',
-            'captainVote.id',
-            'captainVoteUser.username',
-        ]).getMany();
+            'captainApplication.reason',
+            'userVote.osuId',
+            'userVote.username',
+        ])
+        .getMany();
 
     ctx.body = {
         applicationsByCountry,
-        schedule,
     };
 });
 
-captainChoiceAdminRouter.post('/store', async (ctx) => {
+captainChoiceAdminRouter.post('/choose', async (ctx) => {
     const applicationId = convertToIntOrThrow(ctx.request.body.applicationId);
     const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
     const user = await User.findOneOrFail({ id: application.user.id });
@@ -50,7 +49,7 @@ captainChoiceAdminRouter.post('/store', async (ctx) => {
     };
 });
 
-captainChoiceAdminRouter.post('/destroy', async (ctx) => {
+captainChoiceAdminRouter.post('/remove', async (ctx) => {
     const applicationId = convertToIntOrThrow(ctx.request.body.applicationId);
     const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
     const user = await User.findOneOrFail({ id: application.user.id });

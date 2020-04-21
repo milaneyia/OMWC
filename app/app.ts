@@ -58,7 +58,13 @@ app.use(async (ctx, next) => {
         }
     } catch (err) {
         ctx.status = err.status || 500;
-        await ctx.render('error');
+
+        if (ctx.request.type === 'application/json') {
+            ctx.body = { error: 'Something went wrong!' };
+        } else {
+            await ctx.render('error');
+        }
+
         ctx.app.emit('error', err, ctx);
     }
 });
