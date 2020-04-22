@@ -2,19 +2,13 @@ import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDa
 import { Round } from '../rounds/Round';
 import { Submission } from '../rounds/Submission';
 import { User } from '../User';
-import { JudgingToCriteria } from './JudgingToCriteria';
+import { QualifierJudgingToCriteria } from './QualifierJudgingToCriteria';
 
 @Entity()
-export class Judging extends BaseEntity {
+export class QualifierJudging extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id!: number;
-
-    @Column('double')
-    score!: number;
-
-    @Column()
-    comment!: string;
 
     @Column()
     judgeId!: number;
@@ -23,22 +17,13 @@ export class Judging extends BaseEntity {
     judge!: User;
 
     @Column()
-    roundId!: number;
-
-    @ManyToOne((type) => Round, { nullable: false })
-    round!: Round;
-
-    @Column()
     submissionId!: number;
 
-    @ManyToOne((type) => Submission, (submission) => submission.judging, { nullable: false })
+    @ManyToOne((type) => Submission, (submission) => submission.qualifierJudging, { nullable: false })
     submission!: Submission;
 
-    @Column()
-    vote!: boolean;
-
-    @OneToMany(type => JudgingToCriteria, judgingToCriteria => judgingToCriteria.judging)
-    judgingToCriterias!: JudgingToCriteria[];
+    @OneToMany(type => QualifierJudgingToCriteria, qualifierJudgingToCriteria => qualifierJudgingToCriteria.qualifierJudging)
+    qualifierJudgingToCriterias!: QualifierJudgingToCriteria[];
 
     @CreateDateColumn()
     createdAt!: Date;

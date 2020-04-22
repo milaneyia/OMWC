@@ -4,7 +4,7 @@ import { Match } from './Match';
 @Entity()
 export class Round extends BaseEntity {
 
-    static findCurrentSubmissionRound() {
+    static findCurrentSubmissionRound(): Promise<Round | undefined> {
         const today = new Date();
 
         return this.findOne({
@@ -15,7 +15,7 @@ export class Round extends BaseEntity {
         });
     }
 
-    static findCurrentJudgingRound() {
+    static findCurrentJudgingRound(): Promise<Round | undefined> {
         const today = new Date();
 
         return this.findOne({
@@ -26,7 +26,7 @@ export class Round extends BaseEntity {
         });
     }
 
-    static findCurrentRound() {
+    static findCurrentRound(): Promise<Round | undefined> {
         const today = new Date();
 
         return this.findOne({
@@ -67,8 +67,8 @@ export class Round extends BaseEntity {
     @OneToMany((type) => Match, (match) => match.round)
     matches!: Match[];
 
-    // @Column()
-    // type!: Group | Elimination
+    @Column({ default: false })
+    isQualifier!: boolean
 
     @CreateDateColumn()
     createdAt!: Date;

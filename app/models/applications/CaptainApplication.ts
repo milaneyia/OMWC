@@ -4,11 +4,11 @@ import { User } from '../User';
 @Entity()
 export class CaptainApplication extends BaseEntity {
 
-    static findUserApplication(userId: number) {
+    static findUserApplication(userId: number): Promise<CaptainApplication | undefined> {
         return this.findOne({ where: { userId } });
     }
 
-    static findOneOrFailWithUser(captainApplicationId: number) {
+    static findOneOrFailWithUser(captainApplicationId: number): Promise<CaptainApplication> {
         return this.findOneOrFail({
             relations: ['user'],
             where: { id: captainApplicationId },

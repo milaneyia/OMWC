@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { JudgingToCriteria } from './JudgingToCriteria';
+import { QualifierJudgingToCriteria } from './QualifierJudgingToCriteria';
 
 @Entity()
 export class Criteria extends BaseEntity {
@@ -13,6 +13,6 @@ export class Criteria extends BaseEntity {
     @Column('double')
     maxScore!: number;
 
-    @OneToMany(type => JudgingToCriteria, judgingToCriteria => judgingToCriteria.criteria)
-    judgingToCriterias!: JudgingToCriteria[];
+    @OneToMany(type => QualifierJudgingToCriteria, qualifierJudgingToCriteria => qualifierJudgingToCriteria.criteria)
+    qualifierJudgingToCriterias!: QualifierJudgingToCriteria[];
 }

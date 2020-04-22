@@ -1,6 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Submission } from './Submission';
 import { Round } from './Round';
+import { EliminationJudging } from '../judging/EliminationJudging';
 
 @Entity()
 export class Match extends BaseEntity {
@@ -19,6 +20,9 @@ export class Match extends BaseEntity {
 
     @OneToMany((type) => Submission, (submission) => submission.match)
     submissions!: Submission[];
+
+    @OneToMany((type) => EliminationJudging, (eliminationJudging) => eliminationJudging.match)
+    eliminationJudging!: EliminationJudging[];
 
     @CreateDateColumn()
     createdAt!: Date;

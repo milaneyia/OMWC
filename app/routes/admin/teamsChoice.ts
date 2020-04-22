@@ -1,8 +1,8 @@
 import Router from '@koa/router';
 import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
-import { MapperApplication } from '../../models/applications/MapperApplication';
 import { Country } from '../../models/Country';
+import { ROLE } from '../../models/Role';
 
 const teamsChoiceAdminRouter = new Router();
 
@@ -11,11 +11,15 @@ teamsChoiceAdminRouter.use(authenticate);
 teamsChoiceAdminRouter.use(isStaff);
 
 teamsChoiceAdminRouter.get('/', async (ctx) => {
-    const applications = await MapperApplication.find({ relations: ['user'] });
-    const countries = await Country.find({});
+    const countries = await Country
+        .createQueryBuilder('country')
+        .innerJoinAndSelect('country.users', 'user')
+        .leftJoinAndSelect('user.mapperApplication', 'mapperApplication')
+        .where('user.mapperApplication IS NOT NULL')
+        .orWhere('user.roleId = :captain', { captain: ROLE.Captain })
+        .getMany();
 
     ctx.body = {
-        applications,
         countries,
     };
 });
@@ -31,7 +35,7 @@ teamsChoiceAdminRouter.post('/confirm', async (ctx) => {
     };
 });
 
-teamsChoiceAdminRouter.post('/deny', async (ctx) => {
+teamsChoiceAdminRouter.post('/remove', async (ctx) => {
     const countryId = convertToIntOrThrow(ctx.request.body.countryId);
     const country = await Country.findOneOrFail({ id: countryId });
     country.wasConfirmed = false;
