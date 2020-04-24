@@ -8,8 +8,17 @@ import { MapperApplication } from './applications/MapperApplication';
 @Entity()
 export class User extends BaseEntity {
 
-    static findOneOrFailWithTeam(userId: number): Promise<User> {
-        return this.findOneOrFail({ where: { id: userId }, relations: ['team'] });
+    static findOneOrFailWithRelevantInfo(osuId: number): Promise<User> {
+        return User.findOneOrFail({
+            where: { osuId },
+            relations: [
+                'country',
+                'requestAccess',
+                'mapperApplication',
+                'captainApplication',
+                'captainVote',
+            ],
+        });
     }
 
     @PrimaryGeneratedColumn()

@@ -37,7 +37,39 @@
                 <div class="card">
                     <div class="card-body">
                         <div v-if="user.isBasicUser">
-                            Request Access
+                            <button
+                                v-if="!requestingAccess && !user.requestAccess"
+                                class="btn btn-primary btn-block btn-lg"
+                                @click="requestingAccess = true"
+                            >
+                                Request elevated access
+                            </button>
+
+                            <a
+                                v-else-if="!requestingAccess && user.requestAccess"
+                                href="#"
+                                class="btn btn-secondary btn-block btn-lg disabled"
+                            >
+                                {{ user.requestAccess.status == 'Rejected' ? 'Your request was rejected' : `You've requested access (${user.requestAccess.mapLink})` }}
+                            </a>
+
+                            <template v-else>
+                                <input
+                                    v-model="requestAccessLink"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Link a ranked GD"
+                                >
+
+                                <button class="btn btn-primary btn-block" @click="requestAccess">
+                                    Request
+                                </button>
+
+                                <hr>
+                            </template>
+                            <p class="small">
+                                You require this to apply as a captain and for voting the team captain
+                            </p>
                         </div>
 
                         <div v-if="user.isElevatedUser && schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
@@ -237,12 +269,31 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
+import Axios from 'axios';
 
 @Component
 export default class Index extends Vue {
 
     @State user!: object;
     @State schedule!: object;
+
+    requestingAccess = false;
+    requestAccessLink = null;
+
+    async requestAccess(): Promise<void> {
+        const res = await Axios.post('/api/users/requestAccess', {
+            mapLink: this.requestAccessLink,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            this.requestingAccess = false;
+            this.requestAccessLink = null;
+            this.$store.commit('updateUser', res.data.user);
+            alert('Request submitted! An admin will evaluate it soon');
+        }
+    }
 
 }
 </script>

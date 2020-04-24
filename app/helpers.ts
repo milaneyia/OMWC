@@ -1,4 +1,4 @@
-function convertToNumber(input: string|undefined, type: string) {
+function convertToNumber(input: string|undefined, type: string): number | undefined {
     let parsedInput: number|undefined;
 
     if (input) {
@@ -12,7 +12,7 @@ function convertToNumber(input: string|undefined, type: string) {
     return parsedInput;
 }
 
-function shouldThrow(parsedInput: number|undefined) {
+function shouldThrow(parsedInput: number|undefined): number {
     if (!parsedInput || isNaN(parsedInput)) {
         throw new Error('Not a number');
     } else {
@@ -20,27 +20,27 @@ function shouldThrow(parsedInput: number|undefined) {
     }
 }
 
-export function convertToInt(input: string|undefined) {
+export function convertToInt(input: string|undefined): number | undefined {
     return convertToNumber(input, 'int');
 }
 
-export function convertToIntOrThrow(input: string|undefined) {
+export function convertToIntOrThrow(input: string|undefined): number {
     const parsedInput = convertToNumber(input, 'int');
 
     return shouldThrow(parsedInput);
 }
 
-export function convertToFloat(input: string) {
+export function convertToFloat(input: string): number | undefined {
     return convertToNumber(input, 'float');
 }
 
-export function convertToFloatOrThrow(input: string) {
+export function convertToFloatOrThrow(input: string): number {
     const parsedInput = convertToNumber(input, 'float');
 
     return shouldThrow(parsedInput);
 }
 
-export function convertToArray(input: any) {
+export function convertToArray<T>(input: T): T[] {
     if (Array.isArray(input)) {
         return input;
     }
@@ -48,12 +48,22 @@ export function convertToArray(input: any) {
     return [input];
 }
 
-export function isUrl(input: string) {
+export function isUrl(input: string): boolean {
     if (typeof input !== 'string') {
-        return undefined;
+        return false;
     }
 
-    const pattern = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    const pattern = /^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
 
     return pattern.test(input.trim());
+}
+
+export function isOsuUrl(input: string): boolean {
+    if (!isUrl(input)) {
+        return false;
+    }
+
+    const url = new URL(input);
+
+    return url.host === 'osu.ppy.sh';
 }

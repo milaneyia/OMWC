@@ -58,6 +58,9 @@
                         </a>
 
                         <div class="dropdown-menu">
+                            <router-link to="/admin/users/access" class="dropdown-item">
+                                GD Requests
+                            </router-link>
                             <router-link to="/admin/schedule" class="dropdown-item">
                                 Schedule
                             </router-link>

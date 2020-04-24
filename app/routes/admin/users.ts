@@ -1,7 +1,9 @@
 import Router from '@koa/router';
 import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
-import { RequestAccess } from '../../models/RequestAccess';
+import { RequestAccess, STATUS } from '../../models/RequestAccess';
+import { User } from '../../models/User';
+import { ROLE } from '../../models/Role';
 
 const usersAdminRouter = new Router();
 
@@ -18,13 +20,28 @@ usersAdminRouter.get('/access/', async (ctx) => {
 });
 
 usersAdminRouter.post('/access/:id/save', async (ctx) => {
+    const status = ctx.request.body.status;
     const id = convertToIntOrThrow(ctx.params.id);
-    const request = await RequestAccess.findOneOrFail({ id });
-    request.wasAccepted = !request.wasAccepted;
+    const request = await RequestAccess.findOneOrFail({
+        where: { id },
+        relations: ['user'],
+    });
+    request.status = status;
     await request.save();
 
+    const user = await User.findOneOrFail({ id: request.user.id });
+
+    if (status == STATUS.Accepted) {
+        user.roleId = ROLE.ElevatedUser;
+    } else if (status == STATUS.Rejected) {
+        user.roleId = ROLE.BasicUser;
+    }
+
+    await user.save();
+    const requests = await RequestAccess.find({ relations: ['user'] });
+
     ctx.body = {
-        request,
+        requests,
     };
 });
 

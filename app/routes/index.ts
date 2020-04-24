@@ -17,15 +17,7 @@ indexRouter.get('/api/', async (ctx) => {
     let user;
 
     if (osuId) {
-        user = await User.findOne({
-            where: { osuId },
-            relations: [
-                'country',
-                'mapperApplication',
-                'captainApplication',
-                'captainVote',
-            ],
-        });
+        user = await User.findOneOrFailWithRelevantInfo(osuId);
     }
 
     ctx.body = {

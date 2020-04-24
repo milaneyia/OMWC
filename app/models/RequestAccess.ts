@@ -1,6 +1,12 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 import { User } from './User';
 
+export enum STATUS {
+    Pending = 'Pending',
+    Accepted = 'Accepted',
+    Rejected = 'Rejected',
+}
+
 @Entity()
 export class RequestAccess extends BaseEntity {
 
@@ -10,8 +16,8 @@ export class RequestAccess extends BaseEntity {
     @Column()
     mapLink!: string;
 
-    @Column()
-    wasAccepted!: boolean;
+    @Column({ type: 'enum', enum: STATUS, default: STATUS.Pending })
+    status!: STATUS;
 
     @OneToOne((type) => User, (user) => user.requestAccess, { nullable: false })
     user!: User;
