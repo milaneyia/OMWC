@@ -1,14 +1,9 @@
 <template>
     <div class="container text-center">
-        <page-header-extended>
-            <template #title>
-                Confirm Teams
-            </template>
-
-            <template #subtitle>
-                When you set a captain, their team/country will appear here + the members he's or not chosen
-            </template>
-        </page-header-extended>
+        <page-header
+            title="Confirm Teams"
+            subtitle="When you set a captain, their team/country will appear here + the members he's or not chosen"
+        />
 
         <div class="row">
             <div class="col-sm">
@@ -73,12 +68,12 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import Axios from 'axios';
-import PageHeaderExtended from '../../components/PageHeaderExtended.vue';
+import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 
 @Component({
     components: {
-        PageHeaderExtended,
+        PageHeader,
         DataTable,
     },
 })

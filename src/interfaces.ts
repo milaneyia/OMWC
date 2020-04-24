@@ -1,4 +1,4 @@
-interface User {
+export interface User {
     username: string;
     isStaff: boolean;
 
@@ -11,7 +11,7 @@ interface User {
     };
 }
 
-interface Schedule {
+export interface Schedule {
     applicationsStartedAt: Date;
     applicationsEndedAt: Date;
     captainVotingStartedAt: Date;
@@ -22,12 +22,23 @@ interface Schedule {
     contestEndedAt: Date;
 }
 
-interface Submission {
+export interface Country {
+    id: number;
+}
+
+export interface Match {
+    id?: number;
+    roundId: number;
+    teamAId?: number;
+    teamBId?: number;
+}
+
+export interface Submission {
     id: number;
     anonymisedAs: string;
 }
 
-interface Judging {
+export interface Judging {
     id?: number;
     submissionId?: number;
     judgingCriteriaId?: number;
@@ -35,16 +46,8 @@ interface Judging {
     comment?: string;
 }
 
-interface Criteria {
+export interface Criteria {
     id: number;
     name: string;
     maxScore: number;
 }
-
-export {
-    User,
-    Schedule,
-    Submission,
-    Judging,
-    Criteria,
-};

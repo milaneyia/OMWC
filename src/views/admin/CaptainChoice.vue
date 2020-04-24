@@ -1,14 +1,9 @@
 <template>
     <div class="container text-center">
-        <page-header-extended>
-            <template #title>
-                Captain Choice
-            </template>
-
-            <template #subtitle>
-                People who has opt-in to become captain will appear here + the votes they have recieved from people that applied to become mapper (and actually voted)
-            </template>
-        </page-header-extended>
+        <page-header
+            title="Captain Choice"
+            subtitle="People who has opt-in to become captain will appear here + the votes they have recieved from people that applied to become mapper (and actually voted)"
+        />
 
         <div class="row">
             <div v-if="applicationsByCountry && applicationsByCountry.length" class="col-sm">
@@ -72,12 +67,12 @@ import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { Schedule } from '../../interfaces';
 import Axios from 'axios';
-import PageHeaderExtended from '../../components/PageHeaderExtended.vue';
+import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 
 @Component({
     components: {
-        PageHeaderExtended,
+        PageHeader,
         DataTable,
     },
 })

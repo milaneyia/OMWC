@@ -2,9 +2,17 @@ import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGenerat
 import { Submission } from './Submission';
 import { Round } from './Round';
 import { EliminationJudging } from '../judging/EliminationJudging';
+import { Country } from '../Country';
 
 @Entity()
 export class Match extends BaseEntity {
+
+    static findByRoundWithSubmissions(roundId: number): Promise<Match[]> {
+        return Match.find({
+            where: { roundId },
+            relations: ['submissions'],
+        });
+    }
 
     @PrimaryGeneratedColumn()
     id!: number;
@@ -15,6 +23,15 @@ export class Match extends BaseEntity {
     @Column({ nullable: true, length: 3000 })
     anonymisedLink?: string;
 
+    @Column()
+    roundId!: number;
+
+    @Column({ nullable: true })
+    teamAId?: number;
+
+    @Column({ nullable: true })
+    teamBId?: number;
+
     @ManyToOne((type) => Round, { nullable: false })
     round!: Round;
 
@@ -23,6 +40,12 @@ export class Match extends BaseEntity {
 
     @OneToMany((type) => EliminationJudging, (eliminationJudging) => eliminationJudging.match)
     eliminationJudging!: EliminationJudging[];
+
+    @ManyToOne((type) => Country, (country) => country.matchesA)
+    teamA?: Country;
+
+    @ManyToOne((type) => Country, (country) => country.matchesB)
+    teamB?: Country;
 
     @CreateDateColumn()
     createdAt!: Date;

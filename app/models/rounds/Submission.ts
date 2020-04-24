@@ -21,7 +21,7 @@ export class Submission extends BaseEntity {
     country!: Country;
 
     @ManyToOne((type) => Match, (match) => match.submissions, { nullable: false })
-    match!: Round;
+    match!: Match;
 
     @OneToMany((type) => QualifierJudging, (qualifierJudging) => qualifierJudging.submission)
     qualifierJudging!: QualifierJudging[];

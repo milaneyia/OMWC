@@ -1,8 +1,8 @@
 <template>
     <div class="container text-center">
-        <page-header>
-            Schedule to follow
-        </page-header>
+        <page-header
+            title="Schedule to follow"
+        />
 
         <div class="row mb-2 box py-2">
             <div class="col-sm-12">

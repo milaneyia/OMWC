@@ -24,7 +24,7 @@
                     <h2>osu! Mapping World Cup</h2>
                     <h5>xx january to xx something</h5>
                     <img
-                        src="/img/logo.png"
+                        src="/img/logo_large.png"
                         width="350"
                         height="350"
                     >

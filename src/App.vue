@@ -69,9 +69,6 @@
                                 Teams Choice
                             </router-link>
                             <div class="dropdown-divider" />
-                            <router-link to="/admin/judging/criterias" class="dropdown-item">
-                                Criterias
-                            </router-link>
                             <router-link to="/admin/judging" class="dropdown-item">
                                 Judging List
                             </router-link>

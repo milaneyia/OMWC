@@ -1,8 +1,8 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { CaptainApplication } from './applications/CaptainApplication';
 import { User } from './User';
 import { Round } from './rounds/Round';
 import { Submission } from './rounds/Submission';
+import { Match } from './rounds/Match';
 
 @Entity()
 export class Country extends BaseEntity {
@@ -22,11 +22,11 @@ export class Country extends BaseEntity {
     @OneToMany((type) => User, (user) => user.country)
     users!: User[];
 
-    // @Column({ nullable: true })
-    // captainId?: number | null;
+    @OneToMany((type) => Match, (match) => match.teamA)
+    matchesA!: Match[];
 
-    // @ManyToOne((type) => User)
-    // captain!: User;
+    @OneToMany((type) => Match, (match) => match.teamB)
+    matchesB!: Match[];
 
     @ManyToOne((type) => Round)
     eliminationRound!: Round;
