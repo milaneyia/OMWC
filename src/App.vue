@@ -79,7 +79,7 @@
                             <router-link to="/admin/rounds" class="dropdown-item">
                                 Rounds
                             </router-link>
-                            <router-link to="/admin/manageSubmissions" class="dropdown-item">
+                            <router-link to="/admin/submissions" class="dropdown-item">
                                 Submissions
                             </router-link>
                         </div>

@@ -6,32 +6,29 @@ import { Submission } from '../../models/rounds/Submission';
 
 const submissionsAdminRouter = new Router();
 
-submissionsAdminRouter.prefix('/api/admin/manageSubmissions');
+submissionsAdminRouter.prefix('/api/admin/submissions');
 submissionsAdminRouter.use(authenticate);
 submissionsAdminRouter.use(isStaff);
 
 submissionsAdminRouter.get('/', async (ctx) => {
-    const rounds = await Round.find({ relations: ['matches', 'matches.submissions', 'matches.submissions.country'] });
-    const currentRound = await Round.findCurrentSubmissionRound();
+    const rounds = await Round.find({
+        relations: [
+            'matches',
+            'matches.submissions',
+            'matches.submissions.country',
+        ],
+    });
 
     ctx.body = {
         rounds,
-        currentRound,
     };
 });
 
-submissionsAdminRouter.post('/save', async (ctx) => {
-    const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
+submissionsAdminRouter.post('/:id/save', async (ctx) => {
+    const submissionId = convertToIntOrThrow(ctx.params.id);
     const submission = await Submission.findOneOrFail({ id: submissionId });
-
-    if (!ctx.request.body.originalLink) {
-        return ctx.body = {
-            error: 'Not a valid link',
-        };
-    }
-
-    submission.originalLink = ctx.request.body.originalLink.trim();
-    submission.anonymisedAs = ctx.request.body.anonymisedAs.trim() || null;
+    submission.anonymisedAs = ctx.request.body.anonymisedAs?.trim() || null;
+    submission.anonymisedLink = ctx.request.body.anonymisedLink?.trim() || null;
     await submission.save();
 
     ctx.body = {

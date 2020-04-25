@@ -2,15 +2,10 @@
     <div class="container text-center">
         <page-header
             title="Schedule to follow"
+            subtitle="All dates should be set at once, but you can edit later in case of changes"
         />
 
         <div class="row mb-2 box py-2">
-            <div class="col-sm-12">
-                <p>All dates should be set at once, but you can edit later in case of changes</p>
-            </div>
-
-            <hr>
-
             <div
                 v-for="[key, value] in Object.entries(editSchedule)"
                 :key="key"

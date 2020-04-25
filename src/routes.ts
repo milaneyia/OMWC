@@ -13,6 +13,7 @@ import RoundListing from './views/admin/rounds/RoundListing.vue';
 import ManageRound from './views/admin/rounds/ManageRound.vue';
 import ManageMatch from './views/admin/rounds/ManageMatch.vue';
 import RequestAccess from './views/admin/RequestAccess.vue';
+import SubmissionListing from './views/admin/SubmissionListing.vue';
 
 const routes: RouteConfig[] = [
     { path: '*', component: NotFound },
@@ -34,6 +35,7 @@ const routes: RouteConfig[] = [
     { path: '/admin/rounds/create', component: ManageRound },
     { path: '/admin/rounds/:id(\\d+)', component: ManageRound },
     { path: '/admin/rounds/:id(\\d+)/matches', component: ManageMatch },
+    { path: '/admin/submissions', component: SubmissionListing },
 ];
 
 export default routes;

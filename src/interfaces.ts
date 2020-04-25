@@ -47,6 +47,7 @@ export interface Submission {
     matchId: number;
     originalLink: string;
     anonymisedAs: string;
+    anonymisedLink: string;
 
     match: {
         id: number;
