@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne, Brackets } from 'typeorm';
 import { Submission } from './Submission';
 import { Round } from './Round';
 import { EliminationJudging } from '../judging/EliminationJudging';
@@ -12,6 +12,21 @@ export class Match extends BaseEntity {
             where: { roundId },
             relations: ['submissions'],
         });
+    }
+
+    static findRelatedCountryMatch(round: Round, countryId: number): Promise<Match | undefined> {
+        if (round.isQualifier) {
+            return Match.findOne({ roundId: round.id });
+        } else {
+            return Match
+                .createQueryBuilder('match')
+                .where('match.roundId = :roundId', { roundId: round.id })
+                .andWhere(new Brackets(qb => {
+                    qb.where('match.teamAId = :teamAId', { teamAId: countryId })
+                        .orWhere('match.teamBId = :teamBId', { teamBId: countryId });
+                }))
+                .getOne();
+        }
     }
 
     @PrimaryGeneratedColumn()

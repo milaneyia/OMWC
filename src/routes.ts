@@ -5,6 +5,7 @@ import Captain from './views/applications/Captain.vue';
 import Mapper from './views/applications/Mapper.vue';
 import Voting from './views/applications/Voting.vue';
 import MapperChoice from './views/applications/MapperChoice.vue';
+import Submission from './views/Submission.vue';
 import ManageSchedule from './views/admin/ManageSchedule.vue';
 import CaptainChoice from './views/admin/CaptainChoice.vue';
 import TeamChoice from './views/admin/TeamChoice.vue';
@@ -22,6 +23,8 @@ const routes: RouteConfig[] = [
     { path: '/applications/mappers', component: Mapper },
     { path: '/applications/voting', component: Voting },
     { path: '/applications/mappersChoice', component: MapperChoice },
+
+    { path: '/submissions', component: Submission },
 
     { path: '/admin/users/access', component: RequestAccess },
     { path: '/admin/schedule', component: ManageSchedule },

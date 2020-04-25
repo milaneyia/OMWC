@@ -3,6 +3,7 @@ import { isUrl } from '../helpers';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
+import { Match } from '../models/rounds/Match';
 
 const submissionsRouter = new Router();
 
@@ -20,55 +21,61 @@ submissionsRouter.use(async (ctx, next) => {
 });
 
 submissionsRouter.get('/', async (ctx) => {
-    // TODO: link to currentround
     const submissions = await Submission.find({
-        relations: ['round'],
         where: { country: ctx.state.user.country },
+        relations: ['match', 'match.round'],
     });
-
     const currentRound = await Round.findCurrentSubmissionRound();
-    let currentSubmission: Submission | undefined;
+    let currentMatch;
 
     if (currentRound) {
-        // currentSubmission = await Submission.findOne({
-        //     match: currentRound.id,
-        //     teamId: ctx.state.user.team.id,
-        // });
+        currentMatch = await Match.findRelatedCountryMatch(currentRound, ctx.state.user.country.id);
     }
 
     ctx.body = {
         currentRound,
-        currentSubmission,
+        currentMatch,
         submissions,
     };
 });
 
 submissionsRouter.post('/save', async (ctx) => {
-    // TODO: link to currentround
     const currentRound = await Round.findCurrentSubmissionRound();
+    const oszLink: string = ctx.request.body.oszLink;
 
     if (!currentRound) {
-        return ctx.throw(500, 'No round in progress');
+        return ctx.body = {
+            error: 'No round in progress',
+        };
     }
 
-    if (!isUrl(ctx.request.body.oszFile)) {
+    if (!isUrl(oszLink)) {
         return ctx.body = {
             error: 'Not a valid link',
         };
     }
 
+    const captainCountry = ctx.state.user.country;
+    const match = await Match.findRelatedCountryMatch(currentRound, captainCountry.id);
+
+    if (!match) {
+        return ctx.body = {
+            error: `Your team isn't competeting`,
+        };
+    }
+
     let submission = await Submission.findOne({
-        // roundId: currentRound.id,
-        country: ctx.state.user.country,
+        country: captainCountry,
+        match,
     });
 
     if (!submission) {
         submission = new Submission();
+        submission.match = match;
+        submission.country = ctx.state.user.country;
     }
 
-    // submission.roundId = currentRound.id;
-    submission.country = ctx.state.user.country;
-    submission.originalLink = ctx.request.body.oszFile;
+    submission.originalLink = oszLink;
     await submission.save();
 
     ctx.body = {

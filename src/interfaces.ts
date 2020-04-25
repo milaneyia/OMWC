@@ -44,7 +44,13 @@ export interface Match {
 
 export interface Submission {
     id: number;
+    matchId: number;
+    originalLink: string;
     anonymisedAs: string;
+
+    match: {
+        id: number;
+    };
 }
 
 export interface Judging {

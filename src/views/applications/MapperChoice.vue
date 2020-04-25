@@ -63,11 +63,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Axios from 'axios';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import { User } from '../../interfaces';
-import Axios from 'axios';
-import { MapperApplication } from '../../interfaces';
+import { User, MapperApplication } from '../../interfaces';
 
 @Component
 export default class MapperChoice extends Vue {
