@@ -21,7 +21,7 @@ import captainVotingRouter from './routes/applications/voting';
 import judgingRouter from './routes/judging';
 import judgingResultsRouter from './routes/judgingResults';
 import leaderboardRouter from './routes/leaderboard';
-import mappersChoiceRouter from './routes/mappersChoice';
+import mappersChoiceRouter from './routes/applications/mappersChoice';
 import submissionsRouter from './routes/submissions';
 import teamsRouter from './routes/teams';
 import usersAdminRouter from './routes/admin/users';

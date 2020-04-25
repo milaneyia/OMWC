@@ -4,6 +4,7 @@ import NotFound from './views/NotFound.vue';
 import Captain from './views/applications/Captain.vue';
 import Mapper from './views/applications/Mapper.vue';
 import Voting from './views/applications/Voting.vue';
+import MapperChoice from './views/applications/MapperChoice.vue';
 import ManageSchedule from './views/admin/ManageSchedule.vue';
 import CaptainChoice from './views/admin/CaptainChoice.vue';
 import TeamChoice from './views/admin/TeamChoice.vue';
@@ -20,6 +21,7 @@ const routes: RouteConfig[] = [
     { path: '/applications/captains', component: Captain },
     { path: '/applications/mappers', component: Mapper },
     { path: '/applications/voting', component: Voting },
+    { path: '/applications/mappersChoice', component: MapperChoice },
 
     { path: '/admin/users/access', component: RequestAccess },
     { path: '/admin/schedule', component: ManageSchedule },

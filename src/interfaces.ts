@@ -2,18 +2,22 @@ export interface User {
     username: string;
     isStaff: boolean;
     captainVoteId?: number;
+    isContestant: boolean;
 
     captainApplication: {
         reason: string;
     };
 
-    mapperApplication: {
-        id: number;
-    };
+    mapperApplication: MapperApplication;
 
     captainVote: {
         id: number;
     };
+}
+
+export interface MapperApplication {
+    id: number;
+    user: User;
 }
 
 export interface Schedule {

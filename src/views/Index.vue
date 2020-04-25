@@ -130,7 +130,7 @@
                         </div>
 
                         <div v-if="schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && user.isCaptain">
-                            <router-link to="/mappersChoice" class="btn btn-primary btn-block btn-lg">
+                            <router-link to="/applications/mappersChoice" class="btn btn-primary btn-block btn-lg">
                                 Mappers Choice
                             </router-link>
 

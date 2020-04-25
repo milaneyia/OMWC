@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne, JoinColumn, AfterInsert, AfterLoad } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne, JoinColumn, AfterLoad } from 'typeorm';
 import { CaptainApplication } from './applications/CaptainApplication';
 import { Country } from './Country';
 import { RequestAccess } from './RequestAccess';
@@ -69,6 +69,7 @@ export class User extends BaseEntity {
     isBasicUser!: boolean;
     isElevatedUser!: boolean;
     isRestricted!: boolean;
+    isContestant!: boolean;
     isCaptain!: boolean;
     isJudge!: boolean;
     isStaff!: boolean;
@@ -78,6 +79,7 @@ export class User extends BaseEntity {
         this.isBasicUser = this.roleId === ROLE.BasicUser;
         this.isElevatedUser = this.roleId === ROLE.ElevatedUser;
         this.isRestricted = this.roleId === ROLE.Restricted;
+        this.isContestant = this.roleId === ROLE.Contestant;
         this.isCaptain = this.roleId === ROLE.Captain;
         this.isJudge = this.roleId === ROLE.Judge;
         this.isStaff = this.roleId === ROLE.Staff;
