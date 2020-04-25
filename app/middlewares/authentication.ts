@@ -1,6 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParameterizedContext } from 'koa';
-import { CaptainApplication } from '../models/applications/CaptainApplication';
-import { MapperApplication } from '../models/applications/MapperApplication';
 import { User } from '../models/User';
 
 export async function authenticate(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
@@ -56,17 +55,6 @@ export async function isElevatedUser(ctx: ParameterizedContext, next: () => Prom
 
 export async function isBasicUser(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     if (ctx.state.user.isBasicUser) {
-        return await next();
-    } else {
-        return ctx.redirect('back');
-    }
-}
-
-export async function canVoteForCaptain(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    const mapperApplication = await MapperApplication.findOne({ where: { userId: ctx.state.user.id } });
-    const captainApplication = await CaptainApplication.findOne({ where: { userId: ctx.state.user.id } });
-
-    if (ctx.state.user.isElevatedUser && (mapperApplication || captainApplication)) {
         return await next();
     } else {
         return ctx.redirect('back');

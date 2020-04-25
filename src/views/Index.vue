@@ -117,7 +117,7 @@
 
                             <router-link
                                 v-else
-                                to="/captainVoting"
+                                to="/applications/voting"
                                 class="btn btn-primary btn-block btn-lg"
                             >
                                 Captain Voting

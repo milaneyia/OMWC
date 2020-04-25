@@ -17,7 +17,7 @@ import scheduleAdminRouter from './routes/admin/schedule';
 import teamsChoiceAdminRouter from './routes/admin/teamsChoice';
 import captainApplicationsRouter from './routes/applications/captains';
 import mapperApplicationsRouter from './routes/applications/mappers';
-import captainVotingRouter from './routes/captainVoting';
+import captainVotingRouter from './routes/applications/voting';
 import judgingRouter from './routes/judging';
 import judgingResultsRouter from './routes/judgingResults';
 import leaderboardRouter from './routes/leaderboard';
