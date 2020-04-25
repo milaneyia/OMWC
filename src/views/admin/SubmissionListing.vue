@@ -54,6 +54,7 @@
                                     v-model="submission.anonymisedAs"
                                     type="text"
                                     class="form-control form-control-sm"
+                                    maxlength="255"
                                 >
 
                                 <span v-else>{{ submission.anonymisedAs }}</span>
@@ -64,6 +65,7 @@
                                     v-model="submission.anonymisedLink"
                                     type="text"
                                     class="form-control form-control-sm"
+                                    maxlength="255"
                                 >
 
                                 <a v-else :href="submission.anonymisedLink">
