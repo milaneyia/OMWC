@@ -1,5 +1,7 @@
 import { RouteConfig } from 'vue-router';
 import Index from './views/Index.vue';
+import StaffListing from './views/StaffListing.vue';
+import TeamListing from './views/TeamListing.vue';
 import NotFound from './views/NotFound.vue';
 import Captain from './views/applications/Captain.vue';
 import Mapper from './views/applications/Mapper.vue';
@@ -19,13 +21,15 @@ const routes: RouteConfig[] = [
     { path: '*', component: NotFound },
     // { path: '*', redirect: '/' },
     { path: '/', component: Index },
+    { path: '/staff', component: StaffListing },
+    { path: '/teams', component: TeamListing },
+
+    { path: '/submissions', component: Submission },
 
     { path: '/applications/captains', component: Captain },
     { path: '/applications/mappers', component: Mapper },
     { path: '/applications/voting', component: Voting },
     { path: '/applications/mappersChoice', component: MapperChoice },
-
-    { path: '/submissions', component: Submission },
 
     { path: '/admin/users/access', component: RequestAccess },
     { path: '/admin/schedule', component: ManageSchedule },

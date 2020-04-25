@@ -9,11 +9,8 @@ teamsRouter.get('/', async (ctx) => {
     const teams = await Country.find({
         where: {
             wasConfirmed: true,
-            // TODO: or eliminatedRound
         },
-        relations: [
-            'users',
-        ],
+        relations: ['users'],
     });
 
     ctx.body = {
