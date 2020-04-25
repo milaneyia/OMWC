@@ -20,9 +20,6 @@ export class Match extends BaseEntity {
     @Column({ nullable: true, length: 3000 })
     information?: string;
 
-    @Column({ nullable: true, length: 3000 })
-    anonymisedLink?: string;
-
     @Column()
     roundId!: number;
 

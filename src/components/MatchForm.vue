@@ -9,15 +9,6 @@
             :disabled="editing"
         >
 
-        <input
-            v-model="match.anonymisedLink"
-            type="text"
-            class="form-control mb-2 mr-sm-2"
-            maxlength="3000"
-            placeholder="Anonymised Link"
-            :disabled="editing"
-        >
-
         <div class="form-group mb-2 mr-sm-2">
             <label class="mr-2">Team A</label>
 

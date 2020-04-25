@@ -121,7 +121,6 @@ roundsAdminRouter.post('/:id/matches/store', async (ctx) => {
     const match = new Match();
     match.round = round;
     match.information = newMatch.information?.trim() || null;
-    match.anonymisedLink = newMatch.anonymisedLink?.trim() || null;
 
     if (!round.isQualifier) {
         const [teamA, teamB] = await Promise.all([
@@ -160,7 +159,6 @@ roundsAdminRouter.post('/:id/matches/:matchId/save', async (ctx) => {
     });
 
     match.information = editingMatch.information?.trim() || null;
-    match.anonymisedLink = editingMatch.anonymisedLink?.trim() || null;
 
     if (!round.isQualifier) {
         const [teamA, teamB] = await Promise.all([

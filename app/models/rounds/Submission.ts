@@ -1,6 +1,5 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { QualifierJudging } from '../judging/QualifierJudging';
-import { Round } from './Round';
 import { Country } from '../Country';
 import { Match } from './Match';
 import { EliminationJudging } from '../judging/EliminationJudging';
@@ -16,6 +15,9 @@ export class Submission extends BaseEntity {
 
     @Column({ nullable: true })
     anonymisedAs!: string;
+
+    @Column({ nullable: true, length: 3000 })
+    anonymisedLink?: string;
 
     @ManyToOne((type) => Country, (country) => country.submissions, { nullable: false })
     country!: Country;
