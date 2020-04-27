@@ -2,6 +2,7 @@ import { RouteConfig } from 'vue-router';
 import Index from './views/Index.vue';
 import StaffListing from './views/StaffListing.vue';
 import TeamListing from './views/TeamListing.vue';
+import QualifierResult from './views/QualifierResult.vue';
 import NotFound from './views/NotFound.vue';
 import Captain from './views/applications/Captain.vue';
 import Mapper from './views/applications/Mapper.vue';
@@ -23,6 +24,7 @@ const routes: RouteConfig[] = [
     { path: '/', component: Index },
     { path: '/staff', component: StaffListing },
     { path: '/teams', component: TeamListing },
+    { path: '/results/qualifiers', component: QualifierResult },
 
     { path: '/submissions', component: Submission },
 

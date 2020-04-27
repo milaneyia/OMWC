@@ -35,11 +35,17 @@ export interface Country {
     id: number;
 }
 
+export interface Round {
+    matches: Match[];
+}
+
 export interface Match {
     id?: number;
     roundId: number;
     teamAId?: number;
     teamBId?: number;
+
+    submissions?: Submission[];
 }
 
 export interface Submission {
@@ -52,14 +58,18 @@ export interface Submission {
     match: {
         id: number;
     };
+
+    qualifierJudging: QualifierJudging[];
 }
 
-export interface Judging {
+export interface QualifierJudging {
     id?: number;
     submissionId?: number;
-    judgingCriteriaId?: number;
-    score?: number;
-    comment?: string;
+
+    qualifierJudgingToCriterias: {
+        score: number;
+        comment: string;
+    };
 }
 
 export interface Criteria {

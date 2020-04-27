@@ -20,7 +20,7 @@ import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/applications/voting';
 import judgingRouter from './routes/judging';
 import judgingResultsRouter from './routes/judgingResults';
-import leaderboardRouter from './routes/leaderboard';
+import leaderboardRouter from './routes/results';
 import mappersChoiceRouter from './routes/applications/mappersChoice';
 import submissionsRouter from './routes/submissions';
 import teamsRouter from './routes/teams';
@@ -117,6 +117,7 @@ app.use(submissionsAdminRouter.allowedMethods());
 app.use(judgingAdminRouter.routes());
 app.use(judgingAdminRouter.allowedMethods());
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.on('error', (err, ctx) => {
     console.log(err);
 });

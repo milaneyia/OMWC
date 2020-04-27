@@ -1,21 +1,39 @@
 import Router from '@koa/router';
-import { Brackets } from 'typeorm';
-import { User } from '../models/User';
-import { Country } from '../models/Country';
+import { MoreThanOrEqual } from 'typeorm';
 import { Criteria } from '../models/judging/Criteria';
+import { Round } from '../models/rounds/Round';
 
 const leaderboardRouter = new Router();
 
-leaderboardRouter.prefix('/api/leaderboard');
+leaderboardRouter.prefix('/api/results');
 
-leaderboardRouter.get('/', async (ctx) => {
-    const countries = await Country
-        .createQueryBuilder('country')
-        .leftJoin('country.eliminationRound', 'eliminationRound')
-        .select(['country.id', 'country.code', 'country.name', 'eliminationRound.title'])
-        .where('country.wasConfirmed = true')
-        .orWhere('country.eliminationRound is not null')
-        .getMany();
+leaderboardRouter.get('/qualifiers', async (ctx) => {
+    const round = await Round.findOne({
+        where: {
+            isQualifier: true,
+            resultsAt: MoreThanOrEqual(new Date()),
+        },
+        relations: [
+            'matches',
+            'matches.submissions',
+            'matches.submissions.qualifierJudging',
+            'matches.submissions.qualifierJudging.qualifierJudgingToCriterias',
+        ],
+    });
+
+    // let submissions: Submission = [];
+
+    // if (round?.matches.length) {
+    //     submissions = round.matches[0].submissions;
+    // }
+
+    // const countries = await Country
+    //     .createQueryBuilder('country')
+    //     .leftJoin('country.eliminationRound', 'eliminationRound')
+    //     .select(['country.id', 'country.code', 'country.name', 'eliminationRound.title'])
+    //     .where('country.wasConfirmed = true')
+    //     .orWhere('country.eliminationRound is not null')
+    //     .getMany();
 
     // const scores = await Country
     //     .createQueryBuilder('country')
@@ -58,8 +76,7 @@ leaderboardRouter.get('/', async (ctx) => {
 
     return ctx.body = {
         criterias,
-        path: '/leaderboard',
-        countries,
+        round,
     };
 });
 

@@ -28,7 +28,7 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/leaderboard">
+                        <router-link class="nav-link" to="/results/qualifiers">
                             Leaderboard
                         </router-link>
                     </li>
