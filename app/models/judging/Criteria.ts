@@ -13,6 +13,6 @@ export class Criteria extends BaseEntity {
     @Column('double')
     maxScore!: number;
 
-    @OneToMany(type => QualifierJudgingToCriteria, qualifierJudgingToCriteria => qualifierJudgingToCriteria.criteria)
+    @OneToMany(() => QualifierJudgingToCriteria, qualifierJudgingToCriteria => qualifierJudgingToCriteria.criteria)
     qualifierJudgingToCriterias!: QualifierJudgingToCriteria[];
 }

@@ -1,5 +1,5 @@
 import './hooks';
-import Vue from 'vue';
+import Vue, { VNode } from 'vue';
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
 import App from './App.vue';
@@ -32,8 +32,8 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
-const app = new Vue({
+new Vue({
     store,
     router,
-    render: h => h(App),
+    render: (h): VNode => h(App),
 }).$mount('#app');

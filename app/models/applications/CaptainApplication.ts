@@ -21,10 +21,10 @@ export class CaptainApplication extends BaseEntity {
     @Column({ length: 3000 })
     reason!: string;
 
-    @OneToOne(type => User, user => user.captainApplication)
+    @OneToOne(() => User, user => user.captainApplication)
     user!: User;
 
-    @OneToMany((type) => User, user => user.captainVote)
+    @OneToMany(() => User, user => user.captainVote)
     userVotes!: User[];
 
     @CreateDateColumn()

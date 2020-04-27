@@ -44,19 +44,19 @@ export class Match extends BaseEntity {
     @Column({ nullable: true })
     teamBId?: number;
 
-    @ManyToOne((type) => Round, { nullable: false })
+    @ManyToOne(() => Round, { nullable: false })
     round!: Round;
 
-    @OneToMany((type) => Submission, (submission) => submission.match)
+    @OneToMany(() => Submission, (submission) => submission.match)
     submissions!: Submission[];
 
-    @OneToMany((type) => EliminationJudging, (eliminationJudging) => eliminationJudging.match)
+    @OneToMany(() => EliminationJudging, (eliminationJudging) => eliminationJudging.match)
     eliminationJudging!: EliminationJudging[];
 
-    @ManyToOne((type) => Country, (country) => country.matchesA)
+    @ManyToOne(() => Country, (country) => country.matchesA)
     teamA?: Country;
 
-    @ManyToOne((type) => Country, (country) => country.matchesB)
+    @ManyToOne(() => Country, (country) => country.matchesB)
     teamB?: Country;
 
     @CreateDateColumn()

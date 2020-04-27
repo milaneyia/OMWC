@@ -3,7 +3,6 @@ import { convertToIntOrThrow } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 import { Country } from '../../models/Country';
-import { Schedule } from '../../models/Schedule';
 import { User } from '../../models/User';
 import { ROLE } from '../../models/Role';
 

@@ -19,27 +19,27 @@ export class Country extends BaseEntity {
     @Column({ default: false })
     wasConfirmed!: boolean;
 
-    @OneToMany((type) => User, (user) => user.country)
+    @OneToMany(() => User, (user) => user.country)
     users!: User[];
 
-    @OneToMany((type) => Match, (match) => match.teamA)
+    @OneToMany(() => Match, (match) => match.teamA)
     matchesA!: Match[];
 
-    @OneToMany((type) => Match, (match) => match.teamB)
+    @OneToMany(() => Match, (match) => match.teamB)
     matchesB!: Match[];
 
-    @ManyToOne((type) => Round)
+    @ManyToOne(() => Round)
     eliminationRound!: Round;
 
-    @OneToMany((type) => Submission, (submissions) => submissions.country)
+    @OneToMany(() => Submission, (submissions) => submissions.country)
     submissions!: Submission[];
 
     // Used for the leaderboard
     finalScore!: number;
-    criteriaScores!: ICriteriaScore[];
+    criteriaScores!: CriteriaScore[];
 }
 
-export interface ICriteriaScore {
+export interface CriteriaScore {
     criteria: string;
     score: number;
 }

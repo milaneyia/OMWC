@@ -4,6 +4,27 @@ import Crypto from 'crypto';
 import querystring from 'querystring';
 import config from '../../config.json';
 
+interface TokenResponse {
+    'token_type': 'Bearer';
+    'expires_in': 86400;
+    'access_token': string;
+    'refresh_token': string;
+}
+
+interface RequestError {
+    error: string;
+}
+
+interface OsuAuthResponse {
+    id: number;
+    username: string;
+    ranked_and_approved_beatmapset_count: number;
+    country: {
+        code: string;
+        name: string;
+    };
+}
+
 export function generateState(): string {
     return Crypto.randomBytes(48).toString('hex');
 }
@@ -22,7 +43,7 @@ export function decodeState(hashedState: string): string {
     return Buffer.from(hashedState, 'base64').toString('ascii');
 }
 
-export async function getToken(code: string): Promise<any> {
+export async function getToken(code: string): Promise<TokenResponse | RequestError> {
     const data = querystring.stringify({
         client_id: config.osuv2.id,
         client_secret: config.osuv2.secret,
@@ -49,7 +70,7 @@ export async function getToken(code: string): Promise<any> {
     }
 }
 
-export async function refreshToken(token: string): Promise<any> {
+export async function refreshToken(token: string): Promise<TokenResponse | RequestError> {
     const data = querystring.stringify({
         client_id: config.osuv2.id,
         client_secret: config.osuv2.secret,
@@ -75,7 +96,7 @@ export async function refreshToken(token: string): Promise<any> {
     }
 }
 
-export async function getUserInfo(token: string): Promise<any> {
+export async function getUserInfo(token: string): Promise<OsuAuthResponse | RequestError> {
     const options: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -91,4 +112,8 @@ export async function getUserInfo(token: string): Promise<any> {
     } catch (error) {
         return { error };
     }
+}
+
+export function isRequestError<T>(errorRequest: T | RequestError): errorRequest is RequestError {
+    return (errorRequest as RequestError).error !== undefined;
 }

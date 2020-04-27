@@ -19,16 +19,16 @@ export class Submission extends BaseEntity {
     @Column({ nullable: true, length: 3000 })
     anonymisedLink?: string;
 
-    @ManyToOne((type) => Country, (country) => country.submissions, { nullable: false })
+    @ManyToOne(() => Country, (country) => country.submissions, { nullable: false })
     country!: Country;
 
-    @ManyToOne((type) => Match, (match) => match.submissions, { nullable: false })
+    @ManyToOne(() => Match, (match) => match.submissions, { nullable: false })
     match!: Match;
 
-    @OneToMany((type) => QualifierJudging, (qualifierJudging) => qualifierJudging.submission)
+    @OneToMany(() => QualifierJudging, (qualifierJudging) => qualifierJudging.submission)
     qualifierJudging!: QualifierJudging[];
 
-    @OneToMany((type) => EliminationJudging, (eliminationJudging) => eliminationJudging.submissionChosen)
+    @OneToMany(() => EliminationJudging, (eliminationJudging) => eliminationJudging.submissionChosen)
     eliminationJudging!: EliminationJudging[];
 
     @CreateDateColumn()

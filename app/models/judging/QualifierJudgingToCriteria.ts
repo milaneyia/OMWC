@@ -14,10 +14,10 @@ export class QualifierJudgingToCriteria extends BaseEntity {
     // @Column()
     // criteriaId!: number;
 
-    @ManyToOne(type => QualifierJudging, qualifierJudging => qualifierJudging.qualifierJudgingToCriterias)
+    @ManyToOne(() => QualifierJudging, qualifierJudging => qualifierJudging.qualifierJudgingToCriterias)
     qualifierJudging!: QualifierJudging;
 
-    @ManyToOne(type => Criteria, criteria => criteria.qualifierJudgingToCriterias)
+    @ManyToOne(() => Criteria, criteria => criteria.qualifierJudgingToCriterias)
     criteria!: Criteria;
 
     @Column('double')

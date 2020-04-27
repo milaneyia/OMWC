@@ -47,41 +47,41 @@ indexRouter.get('/callback', async (ctx) => {
         return ctx.render('error');
     }
 
-    let response = await osuApi.getToken(ctx.query.code);
+    const response = await osuApi.getToken(ctx.query.code);
 
-    if (response.error) {
+    if (osuApi.isRequestError(response)) {
         return ctx.render('error');
     } else {
         ctx.session!.accessToken = response.access_token;
         ctx.session!.refreshToken = response.refresh_token;
 
-        response = await osuApi.getUserInfo(response.access_token);
+        const userResponse = await osuApi.getUserInfo(response.access_token);
 
-        if (response.error) {
+        if (osuApi.isRequestError(userResponse)) {
             return ctx.render('error');
         }
 
-        ctx.session!.osuId = response.id;
-        ctx.session!.username = response.username;
+        ctx.session!.osuId = userResponse.id;
+        ctx.session!.username = userResponse.username;
 
-        let country = await Country.findOne({ where: { name: response.country.name } });
+        let country = await Country.findOne({ where: { name: userResponse.country.name } });
 
         if (!country) {
             country = await Country.create({
-                code: response.country.code,
-                name: response.country.name,
+                code: userResponse.country.code,
+                name: userResponse.country.name,
             }).save();
         }
 
-        const user = await User.findOne({ where: { osuId: response.id } });
+        const user = await User.findOne({ where: { osuId: userResponse.id } });
 
         if (!user) {
-            const hasRankedMap = response.ranked_and_approved_beatmapset_count > 0;
+            const hasRankedMap = userResponse.ranked_and_approved_beatmapset_count > 0;
             const newUser = await User.create({
                 country,
-                osuId: response.id,
+                osuId: userResponse.id,
                 roleId: hasRankedMap ? ROLE.ElevatedUser : ROLE.BasicUser,
-                username: response.username,
+                username: userResponse.username,
             }).save();
 
             if (newUser) {

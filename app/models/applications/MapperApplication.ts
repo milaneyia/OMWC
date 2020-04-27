@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { BaseEntity, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 import { User } from '../User';
 
 @Entity()
@@ -15,7 +15,7 @@ export class MapperApplication extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @OneToOne(type => User, user => user.mapperApplication)
+    @OneToOne(() => User, user => user.mapperApplication)
     user!: User;
 
     @CreateDateColumn()

@@ -33,31 +33,31 @@ export class User extends BaseEntity {
     @Column()
     roleId!: number;
 
-    @ManyToOne((type) => Role, { nullable: false })
+    @ManyToOne(() => Role, { nullable: false })
     role!: Role;
 
-    @ManyToOne((type) => Country, (country) => country.users, { nullable: false, eager: true })
+    @ManyToOne(() => Country, (country) => country.users, { nullable: false, eager: true })
     country!: Country;
 
     @Column({ nullable: true })
     requestAccessId?: number
 
-    @OneToOne((type) => RequestAccess, (requestAccess) => requestAccess.user)
+    @OneToOne(() => RequestAccess, (requestAccess) => requestAccess.user)
     @JoinColumn()
     requestAccess?: RequestAccess;
 
-    @OneToOne((type) => MapperApplication)
+    @OneToOne(() => MapperApplication)
     @JoinColumn()
     mapperApplication?: MapperApplication;
 
-    @OneToOne((type) => CaptainApplication)
+    @OneToOne(() => CaptainApplication)
     @JoinColumn()
     captainApplication?: CaptainApplication;
 
     @Column({ nullable: true })
     captainVoteId?: number;
 
-    @ManyToOne((type) => CaptainApplication, (captainApplication) => captainApplication.userVotes)
+    @ManyToOne(() => CaptainApplication, (captainApplication) => captainApplication.userVotes)
     captainVote?: CaptainApplication;
 
     @CreateDateColumn()

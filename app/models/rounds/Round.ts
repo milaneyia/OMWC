@@ -64,7 +64,7 @@ export class Round extends BaseEntity {
     @Column('date')
     resultsAt!: Date;
 
-    @OneToMany((type) => Match, (match) => match.round)
+    @OneToMany(() => Match, (match) => match.round)
     matches!: Match[];
 
     @Column({ default: false })

@@ -19,7 +19,7 @@ export class RequestAccess extends BaseEntity {
     @Column({ type: 'enum', enum: STATUS, default: STATUS.Pending })
     status!: STATUS;
 
-    @OneToOne((type) => User, (user) => user.requestAccess, { nullable: false })
+    @OneToOne(() => User, (user) => user.requestAccess, { nullable: false })
     user!: User;
 
     @CreateDateColumn()

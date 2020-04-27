@@ -1,5 +1,4 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Round } from '../rounds/Round';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Submission } from '../rounds/Submission';
 import { User } from '../User';
 import { Match } from '../rounds/Match';
@@ -16,19 +15,19 @@ export class EliminationJudging extends BaseEntity {
     @Column()
     judgeId!: number;
 
-    @ManyToOne((type) => User, { nullable: false })
+    @ManyToOne(() => User, { nullable: false })
     judge!: User;
 
     @Column()
     matchId!: number;
 
-    @ManyToOne((type) => Match, (match) => match.eliminationJudging, { nullable: false })
+    @ManyToOne(() => Match, (match) => match.eliminationJudging, { nullable: false })
     match!: Match;
 
     @Column()
     submissionChosenId!: number;
 
-    @ManyToOne((type) => Submission, (submission) => submission.eliminationJudging, { nullable: false })
+    @ManyToOne(() => Submission, (submission) => submission.eliminationJudging, { nullable: false })
     submissionChosen!: Submission;
 
     @CreateDateColumn()

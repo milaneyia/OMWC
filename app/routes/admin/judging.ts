@@ -5,7 +5,7 @@ import { Round } from '../../models/rounds/Round';
 import { Criteria } from '../../models/judging/Criteria';
 import { Country } from '../../models/Country';
 
-interface IFinalScore {
+interface FinalScore {
     finalScore: number;
     roundId: number;
     submissionId: number;
@@ -34,7 +34,7 @@ judgingAdminRouter.get('/', async (ctx) => {
 
     const criterias = await Criteria.find({});
 
-    const finalScores: IFinalScore[] = [];
+    const finalScores: FinalScore[] = [];
     // rounds.forEach((r) => {
     //     r.submissions.forEach((s) => {
     //         const finalScore = s.judging.map((j) => j.score).reduce((total, score) => total + score, 0);
