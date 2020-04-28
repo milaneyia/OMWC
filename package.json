@@ -4,10 +4,9 @@
     "dev": "run-p -rl watch-app watch-src",
     "watch-app": "ts-node-dev --respawn --transpileOnly app/app.ts",
     "watch-src": "webpack-dev-server",
-    "build-app": "tsc --project tsconfig.prod.json",
+    "build-app": "tsc --project tsconfig.app.json",
     "build-src": "webpack --config webpack.config.prod.js",
-    "prod": "node dist/app/app.js",
-    "seed": "ts-node database/seeder.ts"
+    "prod": "node ./dist/app/app.js"
   },
   "dependencies": {
     "@koa/router": "^8.0.8",

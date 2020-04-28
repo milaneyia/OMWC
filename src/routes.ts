@@ -1,26 +1,24 @@
 import { RouteConfig } from 'vue-router';
 import Index from './views/Index.vue';
-import StaffListing from './views/StaffListing.vue';
-import TeamListing from './views/TeamListing.vue';
-import QualifierResult from './views/QualifierResult.vue';
-import NotFound from './views/NotFound.vue';
-import Captain from './views/applications/Captain.vue';
-import Mapper from './views/applications/Mapper.vue';
-import Voting from './views/applications/Voting.vue';
-import MapperChoice from './views/applications/MapperChoice.vue';
-import Submission from './views/Submission.vue';
-import ManageSchedule from './views/admin/ManageSchedule.vue';
-import CaptainChoice from './views/admin/CaptainChoice.vue';
-import TeamChoice from './views/admin/TeamChoice.vue';
-import RoundListing from './views/admin/rounds/RoundListing.vue';
-import ManageRound from './views/admin/rounds/ManageRound.vue';
-import ManageMatch from './views/admin/rounds/ManageMatch.vue';
-import RequestAccess from './views/admin/RequestAccess.vue';
-import SubmissionListing from './views/admin/SubmissionListing.vue';
+const StaffListing = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/StaffListing.vue');
+const TeamListing = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/TeamListing.vue');
+const QualifierResult = () => import(/* webpackChunkName: "results" */ './views/QualifierResult.vue');
+const Captain = () => import(/* webpackChunkName: "apps" */ './views/applications/Captain.vue');
+const Mapper = () => import(/* webpackChunkName: "apps" */ './views/applications/Mapper.vue');
+const Voting = () => import(/* webpackChunkName: "apps" */ './views/applications/Voting.vue');
+const MapperChoice = () => import(/* webpackChunkName: "captain" */ './views/applications/MapperChoice.vue');
+const Submission = () => import(/* webpackChunkName: "captain" */ './views/Submission.vue');
+const ManageSchedule = () => import(/* webpackChunkName: "admin" */ './views/admin/ManageSchedule.vue');
+const CaptainChoice = () => import(/* webpackChunkName: "admin" */ './views/admin/CaptainChoice.vue');
+const TeamChoice = () => import(/* webpackChunkName: "admin" */ './views/admin/TeamChoice.vue');
+const ManageRound = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageRound.vue');
+const RoundListing = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/RoundListing.vue');
+const ManageMatch = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageMatch.vue');
+const RequestAccess = () => import(/* webpackChunkName: "admin" */ './views/admin/RequestAccess.vue');
+const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/admin/SubmissionListing.vue');
 
 const routes: RouteConfig[] = [
-    { path: '*', component: NotFound },
-    // { path: '*', redirect: '/' },
+    { path: '*', redirect: '/' },
     { path: '/', component: Index },
     { path: '/staff', component: StaffListing },
     { path: '/teams', component: TeamListing },

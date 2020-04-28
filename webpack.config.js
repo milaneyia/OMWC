@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
+const { entry, resolve, rules } = require('./webpack.config.base');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-    entry: {
-        main: './src/main.ts',
-    },
+    entry,
     output: {
         path: path.resolve(__dirname, './public/js/'),
         filename: '[name].js',
@@ -23,10 +22,7 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-            },
+            ...rules,
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
@@ -46,7 +42,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.ts', '.js', '.vue', '.json'],
+        extensions: resolve.extensions,
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
         },
