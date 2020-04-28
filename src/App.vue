@@ -1,6 +1,13 @@
 <template>
-    <div v-cloak id="app">
-        <nav class="nav navbar navbar-expand-lg navbar-dark bg-dark">
+    <div
+        v-cloak
+        id="app"
+        :class="$route.path === '/' && !user ? 'hero' : ''"
+    >
+        <nav
+            class="nav navbar navbar-expand-lg navbar-dark"
+            :class="$route.path !== '/' && !user ? 'navbar-triangles' : ''"
+        >
             <router-link to="/" class="navbar-brand p-0">
                 <img
                     src="/img/logo.png"
@@ -87,12 +94,12 @@
                 </ul>
 
                 <form
-                    v-if="!user"
+                    v-if="!user && initialized"
                     action="/login"
                     method="get"
                     class="form-inline my-2 my-lg-0 ml-3"
                 >
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-link" type="submit">
                         Verify your osu! account
                     </button>
                 </form>
@@ -113,6 +120,7 @@ import { State } from 'vuex-class';
 @Component
 export default class App extends Vue {
 
+    @State initialized!: object;
     @State user!: object;
 
 }

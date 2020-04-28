@@ -25,7 +25,7 @@ router.beforeEach(async (to, from, next) => {
         store.commit('setData', res.data);
     }
 
-    if (to.path.startsWith('/admin') && !store.state.user?.isStaff) {
+    if (to.matched.some(r => r.path.startsWith('/admin')) && !store.state.user?.isStaff) {
         next({ path: '/' });
     } else {
         next();

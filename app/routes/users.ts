@@ -16,20 +16,20 @@ usersRouter.post('/requestAccess', isBasicUser, async (ctx) => {
         };
     }
 
-    let request = await RequestAccess.findOne({ user: ctx.state.user });
+    let user: User = ctx.state.user;
 
-    if (request) {
+    if (user.requestAccessId) {
         return ctx.body = {
             error: `You've already requested access`,
         };
     }
 
-    request = new RequestAccess();
+    const request = new RequestAccess();
     request.mapLink = ctx.request.body.mapLink;
     request.user = ctx.state.user;
     await request.save();
 
-    const user = await User.findOneOrFailWithRelevantInfo(ctx.state.user.osuId);
+    user = await User.findOneOrFailWithRelevantInfo(ctx.state.user.osuId);
 
     ctx.body = {
         user,

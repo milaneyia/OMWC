@@ -18,7 +18,6 @@ const RequestAccess = () => import(/* webpackChunkName: "admin" */ './views/admi
 const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/admin/SubmissionListing.vue');
 
 const routes: RouteConfig[] = [
-    { path: '*', redirect: '/' },
     { path: '/', component: Index },
     { path: '/staff', component: StaffListing },
     { path: '/teams', component: TeamListing },
@@ -40,6 +39,8 @@ const routes: RouteConfig[] = [
     { path: '/admin/rounds/:id(\\d+)', component: ManageRound },
     { path: '/admin/rounds/:id(\\d+)/matches', component: ManageMatch },
     { path: '/admin/submissions', component: SubmissionListing },
+
+    { path: '*', redirect: '/' },
 ];
 
 export default routes;
