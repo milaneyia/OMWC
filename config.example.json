@@ -4,5 +4,9 @@
         "id": 0,
         "redirect": "http://localhost:8080/callback",
         "secret": ""
+    },
+    "discord": {
+        "id": "0",
+        "token": ""
     }
 }
