@@ -28,8 +28,6 @@ export interface Schedule {
     captainVotingEndedAt: Date;
     mappersChoiceStartedAt: Date;
     mappersChoiceEndedAt: Date;
-    contestStartedAt: Date;
-    contestEndedAt: Date;
 }
 
 export interface Country {

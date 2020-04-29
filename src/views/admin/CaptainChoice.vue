@@ -23,14 +23,20 @@
                             v-for="applicant in country.users"
                             :key="applicant.id"
                         >
-                            <td>{{ applicant.username }}</td>
+                            <td>
+                                <a :href="`https://osu.ppy.sh/users/${applicant.osuId}`" target="__blank">
+                                    {{ applicant.username }}
+                                </a>
+                            </td>
                             <td>{{ applicant.captainApplication.userVotes.length }}</td>
                             <td>
                                 <span
                                     v-for="voter in applicant.captainApplication.userVotes"
                                     :key="voter.id"
                                 >
-                                    {{ voter.username + ' ' }}
+                                    <a :href="`https://osu.ppy.sh/users/${voter.osuId}`" target="__blank">
+                                        {{ voter.username }}
+                                    </a>
                                 </span>
                             </td>
                             <td>

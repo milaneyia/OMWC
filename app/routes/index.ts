@@ -58,6 +58,8 @@ indexRouter.get('/callback', async (ctx) => {
         const userResponse = await osuApi.getUserInfo(response.access_token);
 
         if (osuApi.isRequestError(userResponse)) {
+            ctx.session = null;
+
             return ctx.render('error');
         }
 
@@ -73,23 +75,23 @@ indexRouter.get('/callback', async (ctx) => {
             }).save();
         }
 
-        const user = await User.findOne({ where: { osuId: userResponse.id } });
+        let user = await User.findOne({ where: { osuId: userResponse.id } });
 
         if (!user) {
             const hasRankedMap = userResponse.ranked_and_approved_beatmapset_count > 0;
-            const newUser = await User.create({
+            user = await User.create({
                 country,
                 osuId: userResponse.id,
                 roleId: hasRankedMap ? ROLE.ElevatedUser : ROLE.BasicUser,
                 username: userResponse.username,
             }).save();
+        }
 
-            if (newUser) {
-                return ctx.redirect('back');
-            }
-        } else {
+        if  (user) {
             return ctx.redirect('back');
         }
+
+        ctx.session = null;
 
         return ctx.render('error');
     }

@@ -24,12 +24,6 @@ export class Schedule extends BaseEntity {
     @Column('date')
     mappersChoiceEndedAt!: Date;
 
-    @Column('date')
-    contestStartedAt!: Date;
-
-    @Column('date')
-    contestEndedAt!: Date;
-
     @CreateDateColumn()
     createdAt!: Date;
 

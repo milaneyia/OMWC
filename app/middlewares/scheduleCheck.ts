@@ -18,7 +18,9 @@ export async function onGoingApplications(ctx: ParameterizedContext, next: () =>
     const schedule = await getSchedule();
 
     if (!schedule) {
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'No schedule available',
+        };
     }
 
     const hasStarted = hasApplicationsStarted(schedule);
@@ -32,7 +34,9 @@ export async function onGoingApplications(ctx: ParameterizedContext, next: () =>
     if (onGoing) {
         return await next();
     } else {
-        return ctx.render('error', { error: 'Applications ended' });
+        return ctx.body = {
+            error: 'Applications ended',
+        };
     }
 }
 
@@ -40,7 +44,9 @@ export async function onGoingCaptainVoting(ctx: ParameterizedContext, next: () =
     const schedule = await getSchedule();
 
     if (!schedule) {
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'No schedule available',
+        };
     }
 
     const hasStarted = (schedule.captainVotingStartedAt && new Date() >= new Date(schedule.captainVotingStartedAt));
@@ -54,7 +60,9 @@ export async function onGoingCaptainVoting(ctx: ParameterizedContext, next: () =
     if (onGoing) {
         return await next();
     } else {
-        return ctx.render('error', { error: `It's not the time for captain voting` });
+        return ctx.body = {
+            error: `It's not the time for captain voting`,
+        };
     }
 }
 
@@ -62,7 +70,9 @@ export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () =
     const schedule = await getSchedule();
 
     if (!schedule) {
-        return ctx.render('error');
+        return ctx.body = {
+            error: 'No schedule available',
+        };
     }
 
     const hasStarted = (schedule.mappersChoiceStartedAt && new Date() >= new Date(schedule.mappersChoiceStartedAt));
@@ -76,28 +86,8 @@ export async function onGoingMappersChoice(ctx: ParameterizedContext, next: () =
     if (onGoing) {
         return await next();
     } else {
-        return ctx.render('error', { error: `It's not the time for mappers choice` });
-    }
-}
-
-export async function onGoingContest(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
-    const schedule = await getSchedule();
-
-    if (!schedule) {
-        return ctx.render('error');
-    }
-
-    const hasStarted = (schedule.contestStartedAt && new Date() >= new Date(schedule.contestStartedAt));
-    const hasEnded = (schedule.contestEndedAt && new Date() >= new Date(schedule.contestEndedAt));
-
-    const onGoing = (
-        hasStarted &&
-        !hasEnded
-    );
-
-    if (onGoing) {
-        return await next();
-    } else {
-        return ctx.render('error', { error: `Contest hasn't started yet` });
+        return ctx.body = {
+            error: `It's not the time for mappers choice`,
+        };
     }
 }

@@ -13,12 +13,12 @@
                             heigth="60"
                         >
                         <div>
-                            <h3 class="ml-2">
+                            <h3 class="ml-2 mb-0">
                                 Welcome
                                 <b>{{ user.username }}</b>
                             </h3>
                             <div class="d-flex ml-2 align-items-center">
-                                <span class="mr-2">
+                                <span class="ml-2">
                                     you're participating for <b>{{ user.country.name }}</b>
                                 </span>
                             </div>
@@ -34,7 +34,9 @@
                             height="150"
                             class="mt-2"
                         >
-                        <h2>osu! Beatmapping World Cup</h2>
+                        <h2>
+                            osu! Beatmapping World Cup
+                        </h2>
                         <h5>
                             from may 02 to october 17
                         </h5>
@@ -162,221 +164,30 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-sm">
-                                        <h5>
-                                            <a
-                                                data-toggle="collapse"
-                                                href="#preparationCollapse"
-                                                @click="preparationCollapse = !preparationCollapse"
-                                            >
-                                                <small>
-                                                    <i
-                                                        class="fas mr-2"
-                                                        :class="preparationCollapse ? 'fa-chevron-down' : 'fa-chevron-right'"
-                                                    />
-                                                </small>
-                                                Preparation phase
-                                            </a>
-                                        </h5>
-
-                                        <p>
-                                            from may 02 to may 29
-                                        </p>
-
-                                        <div id="preparationCollapse" class="collapse">
-                                            <div class="card card-body">
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        05/02/2020 to 05/15/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Announcements and Registration phase (Team Captains and Contestants)
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        05/16/2020 to 05/22/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Voting phase for each country's Team Captain
-                                                    </div>
-                                                </div>
-
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm-3">
-                                                        05/23/2020 to 05/29/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Team Building phase
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <schedule-date
+                                            collapse="preparationCollapse"
+                                            group-title="Preparation phase"
+                                            date-summary="from may 02 to may 29"
+                                            :dates="preparationDates"
+                                        />
 
                                         <hr>
 
-                                        <h5>
-                                            <a
-                                                data-toggle="collapse"
-                                                href="#qualifiersCollapse"
-                                                @click="qualifiersCollapse = !qualifiersCollapse"
-                                            >
-                                                <small>
-                                                    <i
-                                                        class="fas mr-2"
-                                                        :class="qualifiersCollapse ? 'fa-chevron-down' : 'fa-chevron-right'"
-                                                    />
-                                                </small>
-                                                Qualifiers
-                                            </a>
-                                        </h5>
-
-                                        <p>
-                                            from may 30 to june 27
-                                        </p>
-
-                                        <div id="qualifiersCollapse" class="collapse">
-                                            <div class="card card-body">
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        05/30/2020 to 06/12/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Mapping Phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm-3">
-                                                        06/14/2020 to 06/27/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Judging Phase
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <schedule-date
+                                            collapse="qualifiersCollapse"
+                                            group-title="Qualifiers"
+                                            date-summary="from may 30 to june 27"
+                                            :dates="qualifiersDates"
+                                        />
 
                                         <hr>
 
-                                        <h5>
-                                            <a
-                                                data-toggle="collapse"
-                                                href="#eliminationCollapse"
-                                                @click="eliminationCollapse = !eliminationCollapse"
-                                            >
-                                                <small>
-                                                    <i
-                                                        class="fas mr-2"
-                                                        :class="eliminationCollapse ? 'fa-chevron-down' : 'fa-chevron-right'"
-                                                    />
-                                                </small>
-                                                Head-to-head elimination
-                                            </a>
-                                        </h5>
-
-                                        <p>
-                                            from june 30 to october 08
-                                        </p>
-
-                                        <div id="eliminationCollapse" class="collapse">
-                                            <div class="card card-body">
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        06/30/2020 to 07/12/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Round of 16 - Mapping phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        07/14/2020 to 07/21/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Round of 16 - Judging phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        07/24/2020 to 08/07/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Quarter finals - Mapping phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        08/09/2020 to 08/16/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Quarter finals - Judging phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        08/19/2020 to 09/02/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Semi finals - Mapping phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        09/04/2020 to 09/12/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Semi finals - Judging phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        09/15/2020 to 09/29/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Finals - Mapping phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mb-3 align-items-center">
-                                                    <div class="col-sm-3">
-                                                        10/01/2020 to 10/08/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Finals - Judging phase
-                                                    </div>
-                                                </div>
-
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm-3">
-                                                        10/17/2020
-                                                    </div>
-
-                                                    <div class="col-sm-9">
-                                                        Finals livestream
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <schedule-date
+                                            collapse="eliminationCollapse"
+                                            group-title="Head-to-head elimination"
+                                            date-summary="from june 30 to october 08"
+                                            :dates="eliminationDates"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -393,10 +204,12 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import HomeNav from '../components/HomeNav.vue';
+import ScheduleDate from '../components/ScheduleDate.vue';
 
 @Component({
     components: {
         HomeNav,
+        ScheduleDate,
     },
 })
 export default class Index extends Vue {
@@ -407,6 +220,84 @@ export default class Index extends Vue {
     preparationCollapse = false;
     qualifiersCollapse = false;
     eliminationCollapse = false;
+
+    preparationDates = [
+        {
+            from: new Date('05/02/2020 UTC'),
+            to: new Date('05/16/2020 UTC'),
+            text: 'Announcements and Registration phase (Team Captains and Contestants)',
+        },
+        {
+            from: new Date('05/16/2020 UTC'),
+            to: new Date('05/23/2020 UTC'),
+            text: `Voting phase for each country's Team Captain`,
+        },
+        {
+            from: new Date('05/23/2020 UTC'),
+            to: new Date('05/30/2020 UTC'),
+            text: 'Team Building phase',
+        },
+    ];
+
+    qualifiersDates = [
+        {
+            from: new Date('05/30/2020 UTC'),
+            to: new Date('06/13/2020 UTC'),
+            text: 'Mapping Phase',
+        },
+        {
+            from: new Date('06/14/2020 UTC'),
+            to: new Date('06/28/2020 UTC'),
+            text: `Judging Phase`,
+        },
+    ];
+
+    eliminationDates = [
+        {
+            from: new Date('06/30/2020 UTC'),
+            to: new Date('07/13/2020 UTC'),
+            text: 'Round of 16 - Mapping phase',
+        },
+        {
+            from: new Date('07/14/2020 UTC'),
+            to: new Date('07/22/2020 UTC'),
+            text: `Round of 16 - Judging phase`,
+        },
+        {
+            from: new Date('07/24/2020 UTC'),
+            to: new Date('08/08/2020 UTC'),
+            text: 'Quarter finals - Mapping phase',
+        },
+        {
+            from: new Date('08/09/2020 UTC'),
+            to: new Date('08/17/2020 UTC'),
+            text: `Quarter finals - Judging phase`,
+        },
+        {
+            from: new Date('08/19/2020 UTC'),
+            to: new Date('09/03/2020 UTC'),
+            text: 'Semi finals - Mapping phase',
+        },
+        {
+            from: new Date('09/04/2020 UTC'),
+            to: new Date('09/13/2020 UTC'),
+            text: `Semi finals - Judging phase`,
+        },
+        {
+            from: new Date('09/15/2020 UTC'),
+            to: new Date('09/30/2020 UTC'),
+            text: 'Finals - Mapping phase',
+        },
+        {
+            from: new Date('10/01/2020 UTC'),
+            to: new Date('10/09/2020 UTC'),
+            text: `Finals - Judging phase`,
+        },
+        {
+            from: new Date('10/17/2020 UTC'),
+            text: `Finals livestream`,
+        },
+    ];
 
 }
 </script>

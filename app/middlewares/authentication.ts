@@ -25,7 +25,11 @@ export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any
     if (ctx.state.user.isStaff) {
         return await next();
     } else {
-        return ctx.redirect('back');
+        if (ctx.request.type === 'application/json') {
+            return ctx.body = { error: 'Unathorized' };
+        } else {
+            return ctx.redirect('back');
+        }
     }
 }
 
@@ -33,7 +37,11 @@ export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<a
     if (ctx.state.user.isCaptain) {
         return await next();
     } else {
-        return ctx.redirect('back');
+        if (ctx.request.type === 'application/json') {
+            return ctx.body = { error: 'Unathorized' };
+        } else {
+            return ctx.redirect('back');
+        }
     }
 }
 
@@ -41,7 +49,11 @@ export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any
     if (ctx.state.user.isJudge) {
         return await next();
     } else {
-        return ctx.redirect('back');
+        if (ctx.request.type === 'application/json') {
+            return ctx.body = { error: 'Unathorized' };
+        } else {
+            return ctx.redirect('back');
+        }
     }
 }
 
@@ -49,7 +61,11 @@ export async function isElevatedUser(ctx: ParameterizedContext, next: () => Prom
     if (ctx.state.user.isElevatedUser) {
         return await next();
     } else {
-        return ctx.redirect('back');
+        if (ctx.request.type === 'application/json') {
+            return ctx.body = { error: 'Unathorized' };
+        } else {
+            return ctx.redirect('back');
+        }
     }
 }
 
@@ -57,6 +73,10 @@ export async function isBasicUser(ctx: ParameterizedContext, next: () => Promise
     if (ctx.state.user.isBasicUser) {
         return await next();
     } else {
-        return ctx.redirect('back');
+        if (ctx.request.type === 'application/json') {
+            return ctx.body = { error: 'Unathorized' };
+        } else {
+            return ctx.redirect('back');
+        }
     }
 }

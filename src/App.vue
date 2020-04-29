@@ -66,7 +66,7 @@
 
                         <div class="dropdown-menu">
                             <router-link to="/admin/users/access" class="dropdown-item">
-                                GD Requests
+                                Access Requests
                             </router-link>
                             <router-link to="/admin/schedule" class="dropdown-item">
                                 Schedule

@@ -16,7 +16,11 @@
                             v-for="request in requests"
                             :key="request.id"
                         >
-                            <td>{{ request.user.username }}</td>
+                            <td>
+                                <a :href="`https://osu.ppy.sh/users/${request.user.osuId}`" target="__blank">
+                                    {{ request.user.username }}
+                                </a>
+                            </td>
                             <td>
                                 <a :href="request.mapLink">
                                     {{ shortenLink(request.mapLink) }}

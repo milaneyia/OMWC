@@ -80,14 +80,6 @@ export default class ManageSchedule extends Vue {
                 title: 'Mappers Choice End Date',
                 date: this.schedule?.mappersChoiceEndedAt || new Date(),
             },
-            contestStartedAt: {
-                title: 'Contest Start Date',
-                date: this.schedule?.contestStartedAt || new Date(),
-            },
-            contestEndedAt: {
-                title: 'Contest End Date',
-                date: this.schedule?.contestEndedAt || new Date(),
-            },
         };
     }
 

@@ -15,12 +15,9 @@ scheduleAdminRouter.post('/save', async (ctx) => {
         !ctx.request.body.captainVotingEndedAt.date ||
         !ctx.request.body.mappersChoiceStartedAt.date ||
         !ctx.request.body.mappersChoiceEndedAt.date ||
-        !ctx.request.body.contestStartedAt.date ||
-        !ctx.request.body.contestEndedAt.date ||
         ctx.request.body.applicationsStartedAt.date > ctx.request.body.applicationsEndedAt.date ||
         ctx.request.body.captainVotingStartedAt.date > ctx.request.body.captainVotingEndedAt.date ||
-        ctx.request.body.mappersChoiceStartedAt.date > ctx.request.body.mappersChoiceEndedAt.date ||
-        ctx.request.body.contestStartedAt.date > ctx.request.body.contestEndedAt.date
+        ctx.request.body.mappersChoiceStartedAt.date > ctx.request.body.mappersChoiceEndedAt.date
     ) {
 
         return ctx.body = {
@@ -40,8 +37,6 @@ scheduleAdminRouter.post('/save', async (ctx) => {
     schedule.captainVotingEndedAt = ctx.request.body.captainVotingEndedAt.date;
     schedule.mappersChoiceStartedAt = ctx.request.body.mappersChoiceStartedAt.date;
     schedule.mappersChoiceEndedAt = ctx.request.body.mappersChoiceEndedAt.date;
-    schedule.contestStartedAt = ctx.request.body.contestStartedAt.date;
-    schedule.contestEndedAt = ctx.request.body.contestEndedAt.date;
     await schedule.save();
 
     ctx.body = schedule;
