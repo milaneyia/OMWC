@@ -19,21 +19,21 @@
                             <td>{{ request.user.username }}</td>
                             <td>
                                 <a :href="request.mapLink">
-                                    {{ request.mapLink }}
+                                    {{ shortenLink(request.mapLink) }}
                                 </a>
                             </td>
                             <td>{{ request.status }}</td>
-                            <td>{{ request.createdAt }}</td>
+                            <td>{{ new Date(request.createdAt).toLocaleString() }}</td>
                             <td>
                                 <template v-if="request.status == 'Pending'">
                                     <button
-                                        class="btn btn-sm btn-primary"
+                                        class="btn btn-sm btn-success mb-2"
                                         @click="setStatus(request.id, 'Accepted')"
                                     >
                                         Accept
                                     </button>
                                     <button
-                                        class="btn btn-sm btn-danger"
+                                        class="btn btn-sm btn-danger mb-2"
                                         @click="setStatus(request.id, 'Rejected')"
                                     >
                                         Reject
@@ -69,6 +69,14 @@ import DataTable from '../../components/DataTable.vue';
 export default class RequestAccess extends Vue {
 
     requests = [];
+
+    shortenLink(link: string): string {
+        if (link?.length > 60) {
+            return link.slice(0, 60) + '...';
+        }
+
+        return link || '';
+    }
 
     async setStatus(requestId: number, status: string): Promise<void> {
         const res = await Axios.post(`/api/admin/users/access/${requestId}/save`, {

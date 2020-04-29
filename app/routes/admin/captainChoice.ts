@@ -40,6 +40,17 @@ captainChoiceAdminRouter.post('/choose', async (ctx) => {
     const applicationId = convertToIntOrThrow(ctx.request.body.applicationId);
     const application = await CaptainApplication.findOneOrFailWithUser(applicationId);
     const user = await User.findOneOrFail({ id: application.user.id });
+    const currentCaptain = await User.findOne({
+        roleId: ROLE.Captain,
+        country: user.country,
+    });
+
+    if (currentCaptain) {
+        return ctx.body = {
+            error: `There's already a captain for the team`,
+        };
+    }
+
     user.roleId = ROLE.Captain;
     await user.save();
 

@@ -9,7 +9,7 @@
                         width="60"
                         heigth="60"
                     >
-                    <h3 class="ml-2">
+                    <h3 class="ml-2 mb-0">
                         {{ title }}
                     </h3>
                 </div>
@@ -21,6 +21,7 @@
                 <div class="card">
                     <div class="card-header">
                         {{ subtitle }}
+                        <slot />
                     </div>
                 </div>
             </div>

@@ -38,46 +38,48 @@
             </div>
         </div>
 
-        <div v-if="currentRound" class="row">
-            <div class="col-sm">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>
-                            {{ currentRound.title }}
-                        </h5>
-                    </div>
+        <template v-if="currentRound">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>
+                                {{ currentRound.title }}
+                            </h5>
+                        </div>
 
-                    <div class="card-body">
-                        <p class="card-title">
-                            {{ currentMatch.information }}
-                        </p>
-                        <p class="card-subtitle">
-                            You have from <b>{{ currentRound.submissionsStartedAt }}</b> to
-                            <b>{{ currentRound.submissionsEndedAt }}</b> to submit your entry
-                        </p>
+                        <div class="card-body">
+                            <p class="card-title">
+                                {{ currentMatch.information }}
+                            </p>
+                            <p class="card-subtitle">
+                                You have from <b>{{ currentRound.submissionsStartedAt }}</b> to
+                                <b>{{ currentRound.submissionsEndedAt }}</b> to submit your entry
+                            </p>
 
-                        <hr>
+                            <hr>
 
-                        <label>
-                            .osz Link
-                        </label>
-                        <input
-                            v-model="oszLink"
-                            type="text"
-                            class="form-control"
-                        >
+                            <label>
+                                .osz Link
+                            </label>
+                            <input
+                                v-model="oszLink"
+                                type="text"
+                                class="form-control"
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-sm">
-                <button class="btn btn-primary btn-block" @click="save">
-                    Save
-                </button>
+            <div class="row">
+                <div class="col-sm">
+                    <button class="btn btn-primary btn-block" @click="save">
+                        Save
+                    </button>
+                </div>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 
@@ -105,7 +107,7 @@ export default class Submission extends Vue {
 
     async created (): Promise<void> {
         await this.getData();
-        this.oszLink = this.submissions.find(s => s.match.id === this.currentMatch?.id)?.originalLink || '';
+        this.oszLink = this.submissions?.find(s => s.match.id === this.currentMatch?.id)?.originalLink || '';
     }
 
     async getData (): Promise<void> {

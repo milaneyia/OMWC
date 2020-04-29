@@ -2,7 +2,7 @@
     <div class="container text-center">
         <page-header
             title="Captain Choice"
-            subtitle="People who has opt-in to become captain will appear here + the votes they have recieved from people that applied to become mapper (and actually voted)"
+            subtitle="People who has opt-in to become captain will appear here + the votes they have recieved"
         />
 
         <div class="row">
@@ -35,15 +35,23 @@
                             </td>
                             <td>
                                 <button
+                                    class="btn btn-sm btn-primary mb-2"
+                                    data-toggle="modal"
+                                    data-target="#reasonModal"
+                                    @click="selectedReason = applicant.captainApplication.reason"
+                                >
+                                    View reason
+                                </button>
+                                <button
                                     v-if="applicant.isCaptain"
-                                    class="btn btn-sm btn-danger"
+                                    class="btn btn-sm btn-danger mb-2"
                                     @click="remove(applicant.captainApplication.id)"
                                 >
                                     Remove
                                 </button>
                                 <button
                                     v-else-if="!(country.users.find(u => u.isCaptain))"
-                                    class="btn btn-sm btn-primary"
+                                    class="btn btn-sm btn-success mb-2"
                                     @click="choose(applicant.captainApplication.id)"
                                 >
                                     Choose
@@ -57,6 +65,35 @@
             <p v-else class="card-body">
                 No applications yet
             </p>
+        </div>
+
+        <div
+            id="reasonModal"
+            class="modal fade"
+            tabindex="-1"
+        >
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Reason
+                        </h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-left" style="white-space: pre-line;">
+                            {{ selectedReason }}
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -80,6 +117,7 @@ export default class CaptainChoice extends Vue {
 
     @State schedule!: Schedule;
     applicationsByCountry = [];
+    selectedReason = '';
 
     async created (): Promise<void> {
         await this.getData();

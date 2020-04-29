@@ -1,8 +1,5 @@
-@import url(https://fonts.googleapis.com/css?family=Exo+2&display=swap);
-$font-family-base: 'Exo 2', sans-serif;
-
-// $body-bg: #2e2f32; #121212
-// $body-color: #c2c2c2;
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700;800&display=swap');
+$font-family-base: 'Baloo Tamma 2', sans-serif;
 
 // $primary:#fff;
 // $secondary:#666666;
@@ -15,7 +12,7 @@ $font-family-base: 'Exo 2', sans-serif;
 
 // $white:#191c20;
 
-$enable-rounded: false;
+$enable-rounded: true;
 
 //
 // Color system
@@ -33,7 +30,8 @@ $gray-800: #303030 !default;
 $gray-900: #222 !default;
 $black:    #000 !default;
 
-$blue:    #375a7f !default;
+$dark-blue:    #406d9e !default;
+$blue:    #5195dd !default;
 $indigo:  #6610f2 !default;
 $purple:  #6f42c1 !default;
 $pink:    #e83e8c !default;
@@ -44,7 +42,7 @@ $green:   #00bc8c !default;
 $teal:    #20c997 !default;
 $cyan:    #3498DB !default;
 
-$primary:       $blue !default;
+$primary:       $dark-blue !default;
 $secondary:     $gray-700 !default;
 $success:       $green !default;
 $info:          $cyan !default;
@@ -57,12 +55,13 @@ $yiq-contrasted-threshold:  175 !default;
 
 // Body
 
-$body-bg:                   $gray-900 !default;
+$body-bg:                   rgb(23, 26, 28) !default;
 $body-color:                $white !default;
 
 // Links
 
-$link-color:                $success !default;
+$link-color:                $blue !default;
+$link-hover-decoration:     none !default;
 
 // Fonts
 

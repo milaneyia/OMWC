@@ -18,13 +18,19 @@
                         >
                             <template v-if="country.users">
                                 <td>{{ country.name }}</td>
-                                <td>{{ country.users.find(u => u.isCaptain) && country.users.find(u => u.isCaptain).username }}</td>
+                                <td>
+                                    <a :href="`https://osu.ppy.sh/users/${getCaptain(country).osuId}`" target="__blank">
+                                        {{ getCaptain(country).username }}
+                                    </a>
+                                </td>
                                 <td>
                                     <span
                                         v-for="contestant in country.users.filter(u => u.isContestant)"
                                         :key="contestant.id"
                                     >
-                                        {{ contestant.username + ' ' }}
+                                        <a :href="`https://osu.ppy.sh/users/${contestant.osuId}`" target="__blank">
+                                            {{ contestant.username }}
+                                        </a>
                                     </span>
                                 </td>
                                 <td>
@@ -32,7 +38,9 @@
                                         v-for="user in country.users.filter(u => !u.isContestant && !u.isCaptain)"
                                         :key="user.id"
                                     >
-                                        {{ user.username + ' ' }}
+                                        <a :href="`https://osu.ppy.sh/users/${user.osuId}`" target="__blank">
+                                            {{ user.username }}
+                                        </a>
                                     </span>
                                 </td>
                                 <td>
@@ -70,6 +78,7 @@ import Component from 'vue-class-component';
 import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
+import { Country } from '../../interfaces';
 
 @Component({
     components: {
@@ -114,6 +123,10 @@ export default class TeamChoice extends Vue {
             await this.getData();
             alert('ok');
         }
+    }
+
+    getCaptain (country: Country): object {
+        return country.users.find(u => u.isCaptain) || {};
     }
 
 }

@@ -3,6 +3,7 @@ export interface User {
     isStaff: boolean;
     captainVoteId?: number;
     isContestant: boolean;
+    isCaptain: boolean;
 
     captainApplication: {
         reason: string;
@@ -33,6 +34,7 @@ export interface Schedule {
 
 export interface Country {
     id: number;
+    users: User[];
 }
 
 export interface Round {

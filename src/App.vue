@@ -5,8 +5,8 @@
         :class="$route.path === '/' && !user ? 'hero' : ''"
     >
         <nav
-            class="nav navbar navbar-expand-lg navbar-dark"
-            :class="$route.path !== '/' && !user ? 'navbar-triangles' : ''"
+            class="nav navbar navbar-expand-md navbar-dark"
+            :class="$route.path !== '/' || ($route.path === '/' && user) ? 'navbar-triangles' : ''"
         >
             <router-link to="/" class="navbar-brand p-0">
                 <img
@@ -22,12 +22,12 @@
                 class="navbar-toggler"
                 type="button"
                 data-toggle="collapse"
-                data-target="#navbar"
+                data-target="#obwcNavbar"
             >
                 <span class="navbar-toggler-icon" />
             </button>
 
-            <div id="#navbar" class="collapse navbar-collapse">
+            <div id="obwcNavbar" class="collapse navbar-collapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <router-link class="nav-link" to="/">

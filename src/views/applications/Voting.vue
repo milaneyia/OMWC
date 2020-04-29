@@ -1,20 +1,17 @@
 <template>
     <div v-if="user" class="container text-center">
-        <div class="row mb-2">
-            <div class="col-sm">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            Hi {{ user.username }}, vote for the person who best fits the captain role for your country!
-                        </h4>
+        <page-header
+            title="Captain Voting"
+            subtitle=" "
+        >
+            <h5>
+                Vote for the person who best fits the captain role for your country!
+            </h5>
 
-                        <p>
-                            You can only vote for 1 person
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <p>
+                You can only vote for 1 person
+            </p>
+        </page-header>
 
         <div
             v-for="application in applications"
@@ -53,6 +50,18 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="!applications.length && wasLoaded">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card">
+                        <div class="card-body">
+                            Noone applied :(
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -62,17 +71,24 @@ import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { User } from '../../interfaces';
 import Axios from 'axios';
+import PageHeader from '../../components/PageHeader.vue';
 
-@Component
+@Component({
+    components: {
+        PageHeader,
+    },
+})
 export default class Voting extends Vue {
 
     @State user!: User;
 
+    wasLoaded = false;
     applications = [];
 
     async created (): Promise<void> {
         const res = await Axios.get('/api/applications/voting');
         this.applications = res.data.applications;
+        this.wasLoaded = true;
     }
 
     async vote (applicationId: number): Promise<void> {

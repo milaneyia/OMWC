@@ -40,11 +40,11 @@
                             <td>{{ round.resultsAt }}</td>
                             <td>{{ round.isQualifier ? 'Qualifier' : 'Elimination' }}</td>
                             <td>
-                                <router-link :to="`/admin/rounds/${round.id}`" class="btn btn-sm btn-primary">
+                                <router-link :to="`/admin/rounds/${round.id}`" class="btn btn-sm btn-primary mb-2">
                                     Edit Round
                                 </router-link>
 
-                                <router-link :to="`/admin/rounds/${round.id}/matches`" class="btn btn-sm btn-primary">
+                                <router-link :to="`/admin/rounds/${round.id}/matches`" class="btn btn-sm btn-primary mb-2">
                                     Edit Matches
                                 </router-link>
                             </td>

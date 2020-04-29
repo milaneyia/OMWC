@@ -61,7 +61,7 @@
                                         target="__blank"
                                     >
                                         <i class="fab fa-discord fa-3x text-white" />
-                                        <h4 class="ml-3">Join us!</h4>
+                                        <h4 class="mx-3 mb-0">Join us!</h4>
                                     </a>
                                     <a
                                         class="d-flex align-items-center mb-3 mb-sm-0"
@@ -69,7 +69,7 @@
                                         target="__blank"
                                     >
                                         <span class="country-flag" style="background-image: url('/img/osu.png'); height: 50px; width: 50px;" />
-                                        <h4 class="ml-3">
+                                        <h4 class="mx-3 mb-0">
                                             Forum Post
                                         </h4>
                                     </a>
@@ -79,7 +79,7 @@
                                         target="__blank"
                                     >
                                         <span class="country-flag" style="background-image: url('/img/pickem.png'); height: 50px; width: 50px;" />
-                                        <h4 class="ml-3">
+                                        <h4 class="ml-3 mb-0">
                                             Pick'em
                                         </h4>
                                     </a>
@@ -109,18 +109,17 @@
                                         </h5>
 
                                         <div>
-                                            <p>
-                                                <img class="mr-2" src="https://assets.ppy.sh/profile-badges/oimc2-2018.jpg">
+                                            <img
+                                                class="mr-2"
+                                                src="/img/badge.png"
+                                                width="180"
+                                            >
+                                            <p class="mt-1">
                                                 Profile badge
                                             </p>
                                             <p>
                                                 <i class="fas fa-heart mr-2" />
                                                 8 months of osu!supporter
-                                            </p>
-
-                                            <p>
-                                                <i class="fas fa-check mr-2" />
-                                                compilation of all the team entries in qualified section
                                             </p>
                                         </div>
 
@@ -156,44 +155,228 @@
                 <div class="row mb-2">
                     <div class="col-sm">
                         <div class="card">
-                            <div class="card-header">
-                                <h3>Schedule</h3>
-                            </div>
+                            <h3 class="card-header">
+                                Schedule
+                            </h3>
 
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-sm">
                                         <h5>
-                                            <i class="fas fa-clock mr-2" />
-                                            Preparation phase
+                                            <a
+                                                data-toggle="collapse"
+                                                href="#preparationCollapse"
+                                                @click="preparationCollapse = !preparationCollapse"
+                                            >
+                                                <small>
+                                                    <i
+                                                        class="fas mr-2"
+                                                        :class="preparationCollapse ? 'fa-chevron-down' : 'fa-chevron-right'"
+                                                    />
+                                                </small>
+                                                Preparation phase
+                                            </a>
                                         </h5>
 
-                                        <div>
-                                            <p>
-                                                from may 02 to may 29
-                                            </p>
+                                        <p>
+                                            from may 02 to may 29
+                                        </p>
+
+                                        <div id="preparationCollapse" class="collapse">
+                                            <div class="card card-body">
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        05/02/2020 to 05/15/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Announcements and Registration phase (Team Captains and Contestants)
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        05/16/2020 to 05/22/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Voting phase for each country's Team Captain
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-3">
+                                                        05/23/2020 to 05/29/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Team Building phase
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <hr>
 
                                         <h5>
-                                            <i class="fas fa-clock mr-2" />
-                                            Qualifiers
+                                            <a
+                                                data-toggle="collapse"
+                                                href="#qualifiersCollapse"
+                                                @click="qualifiersCollapse = !qualifiersCollapse"
+                                            >
+                                                <small>
+                                                    <i
+                                                        class="fas mr-2"
+                                                        :class="qualifiersCollapse ? 'fa-chevron-down' : 'fa-chevron-right'"
+                                                    />
+                                                </small>
+                                                Qualifiers
+                                            </a>
                                         </h5>
+
                                         <p>
                                             from may 30 to june 27
                                         </p>
 
+                                        <div id="qualifiersCollapse" class="collapse">
+                                            <div class="card card-body">
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        05/30/2020 to 06/12/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Mapping Phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-3">
+                                                        06/14/2020 to 06/27/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Judging Phase
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <hr>
 
                                         <h5>
-                                            <i class="fas fa-clock mr-2" />
-                                            Head-to-head elimination
+                                            <a
+                                                data-toggle="collapse"
+                                                href="#eliminationCollapse"
+                                                @click="eliminationCollapse = !eliminationCollapse"
+                                            >
+                                                <small>
+                                                    <i
+                                                        class="fas mr-2"
+                                                        :class="eliminationCollapse ? 'fa-chevron-down' : 'fa-chevron-right'"
+                                                    />
+                                                </small>
+                                                Head-to-head elimination
+                                            </a>
                                         </h5>
 
                                         <p>
                                             from june 30 to october 08
                                         </p>
+
+                                        <div id="eliminationCollapse" class="collapse">
+                                            <div class="card card-body">
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        06/30/2020 to 07/12/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Round of 16 - Mapping phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        07/14/2020 to 07/21/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Round of 16 - Judging phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        07/24/2020 to 08/07/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Quarter finals - Mapping phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        08/09/2020 to 08/16/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Quarter finals - Judging phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        08/19/2020 to 09/02/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Semi finals - Mapping phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        09/04/2020 to 09/12/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Semi finals - Judging phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        09/15/2020 to 09/29/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Finals - Mapping phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3 align-items-center">
+                                                    <div class="col-sm-3">
+                                                        10/01/2020 to 10/08/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Finals - Judging phase
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-3">
+                                                        10/17/2020
+                                                    </div>
+
+                                                    <div class="col-sm-9">
+                                                        Finals livestream
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -220,6 +403,10 @@ export default class Index extends Vue {
 
     @State user!: object;
     @State schedule!: object;
+
+    preparationCollapse = false;
+    qualifiersCollapse = false;
+    eliminationCollapse = false;
 
 }
 </script>

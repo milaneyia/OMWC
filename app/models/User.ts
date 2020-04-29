@@ -21,6 +21,19 @@ export class User extends BaseEntity {
         });
     }
 
+    static findOneWithRelevantInfo(osuId: number): Promise<User | undefined> {
+        return User.findOne({
+            where: { osuId },
+            relations: [
+                'country',
+                'requestAccess',
+                'mapperApplication',
+                'captainApplication',
+                'captainVote',
+            ],
+        });
+    }
+
     @PrimaryGeneratedColumn()
     id!: number;
 

@@ -1,6 +1,6 @@
 <template>
     <div class="card-body p-0">
-        <table class="table table-hover">
+        <table class="table table-hover table-responsive-lg">
             <thead>
                 <tr>
                     <th v-for="header in headers" :key="header">

@@ -34,7 +34,7 @@
 
                             <hr>
                         </template>
-                        <p class="small">
+                        <p class="small mt-1">
                             You require this to apply as a captain and for voting the team captain
                         </p>
                     </div>
@@ -64,7 +64,7 @@
                                 Apply as a mapper
                             </router-link>
 
-                            <p class="small">
+                            <p class="small mt-1">
                                 from {{ new Date(schedule.applicationsStartedAt).toLocaleString() }}
                                 to {{ new Date(schedule.applicationsEndedAt).toLocaleString() }}
                             </p>
@@ -90,7 +90,7 @@
                             Captain Voting
                         </router-link>
 
-                        <p class="small">
+                        <p class="small mt-1">
                             from {{ new Date(schedule.captainVotingStartedAt).toLocaleString() }}
                             to {{ new Date(schedule.captainVotingEndedAt).toLocaleString() }}
                         </p>
@@ -101,7 +101,7 @@
                             Mappers Choice
                         </router-link>
 
-                        <p class="small">
+                        <p class="small mt-1">
                             from {{ new Date(schedule.mappersChoiceStartedAt).toLocaleString() }}
                             to {{ new Date(schedule.mappersChoiceEndedAt).toLocaleString() }}
                         </p>

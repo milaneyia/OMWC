@@ -58,35 +58,35 @@ export default class ManageSchedule extends Vue {
         this.editSchedule = {
             applicationsStartedAt: {
                 title: 'Applications Start Date',
-                date: this.schedule.applicationsStartedAt,
+                date: this.schedule?.applicationsStartedAt || new Date(),
             },
             applicationsEndedAt: {
                 title: 'Applications End Date',
-                date: this.schedule.applicationsEndedAt,
+                date: this.schedule?.applicationsEndedAt || new Date(),
             },
             captainVotingStartedAt: {
                 title: 'Captain Voting Start Date',
-                date: this.schedule.captainVotingStartedAt,
+                date: this.schedule?.captainVotingStartedAt || new Date(),
             },
             captainVotingEndedAt: {
                 title: 'Captain Voting End Date',
-                date: this.schedule.captainVotingEndedAt,
+                date: this.schedule?.captainVotingEndedAt || new Date(),
             },
             mappersChoiceStartedAt: {
                 title: 'Mappers Choice Start Date',
-                date: this.schedule.mappersChoiceStartedAt,
+                date: this.schedule?.mappersChoiceStartedAt || new Date(),
             },
             mappersChoiceEndedAt: {
                 title: 'Mappers Choice End Date',
-                date: this.schedule.mappersChoiceEndedAt,
+                date: this.schedule?.mappersChoiceEndedAt || new Date(),
             },
             contestStartedAt: {
                 title: 'Contest Start Date',
-                date: this.schedule.contestStartedAt,
+                date: this.schedule?.contestStartedAt || new Date(),
             },
             contestEndedAt: {
                 title: 'Contest End Date',
-                date: this.schedule.contestEndedAt,
+                date: this.schedule?.contestEndedAt || new Date(),
             },
         };
     }

@@ -17,7 +17,7 @@ indexRouter.get('/api/', async (ctx) => {
     let user;
 
     if (osuId) {
-        user = await User.findOneOrFailWithRelevantInfo(osuId);
+        user = await User.findOneWithRelevantInfo(osuId);
     }
 
     ctx.body = {
