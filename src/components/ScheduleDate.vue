@@ -29,11 +29,13 @@
                     :class="getRowClasses(i, date.from, date.to)"
                 >
                     <div class="col-sm-3">
-                        {{ date.from.toLocaleString() }}
+                        <div>
+                            {{ date.from.toLocaleString() }}
+                        </div>
 
-                        <span v-if="date.to">
-                            - {{ date.to.toLocaleString() }}
-                        </span>
+                        <div v-if="date.to">
+                            {{ date.to.toLocaleString() }}
+                        </div>
                     </div>
 
                     <div class="col-sm-9">
@@ -97,7 +99,7 @@ export default class ScheduleDate extends Vue {
 .current-date {
     border: {
         left: var(--info) solid 3px;
-        bottom:  var(--info) solid 2px;
+        bottom:  var(--info) solid 3px;
         radius: 3px;
     }
 }
