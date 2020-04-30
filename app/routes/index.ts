@@ -88,7 +88,7 @@ indexRouter.get('/callback', async (ctx) => {
         }
 
         if  (user) {
-            return ctx.redirect('back');
+            return ctx.render('index');
         }
 
         ctx.session = null;

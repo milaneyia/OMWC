@@ -16,7 +16,7 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
         if (ctx.request.type === 'application/json') {
             return ctx.body = { error: 'Unathorized' };
         } else {
-            return ctx.redirect('back');
+            return ctx.render('error');
         }
     }
 }
@@ -28,7 +28,7 @@ export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any
         if (ctx.request.type === 'application/json') {
             return ctx.body = { error: 'Unathorized' };
         } else {
-            return ctx.redirect('back');
+            return ctx.render('error');
         }
     }
 }
@@ -40,7 +40,7 @@ export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<a
         if (ctx.request.type === 'application/json') {
             return ctx.body = { error: 'Unathorized' };
         } else {
-            return ctx.redirect('back');
+            return ctx.render('error');
         }
     }
 }
@@ -52,7 +52,7 @@ export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any
         if (ctx.request.type === 'application/json') {
             return ctx.body = { error: 'Unathorized' };
         } else {
-            return ctx.redirect('back');
+            return ctx.render('error');
         }
     }
 }
@@ -64,7 +64,7 @@ export async function isElevatedUser(ctx: ParameterizedContext, next: () => Prom
         if (ctx.request.type === 'application/json') {
             return ctx.body = { error: 'Unathorized' };
         } else {
-            return ctx.redirect('back');
+            return ctx.render('error');
         }
     }
 }
@@ -76,7 +76,7 @@ export async function isBasicUser(ctx: ParameterizedContext, next: () => Promise
         if (ctx.request.type === 'application/json') {
             return ctx.body = { error: 'Unathorized' };
         } else {
-            return ctx.redirect('back');
+            return ctx.render('error');
         }
     }
 }
