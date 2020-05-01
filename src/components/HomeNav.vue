@@ -3,7 +3,7 @@
         <div class="col-sm">
             <div class="card">
                 <div class="card-body">
-                    <div v-if="user.isBasicUser">
+                    <div v-if="user.isBasicUser && !hasApplicationsEnded">
                         <button
                             v-if="!requestingAccess && !user.requestAccess"
                             class="btn btn-primary btn-block btn-lg"
@@ -39,18 +39,21 @@
                         </p>
                     </div>
 
-                    <div v-if="user.isElevatedUser && schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
-                        <router-link to="/applications/captains" class="btn btn-primary btn-block btn-lg">
+                    <div v-if="user.isElevatedUser && !hasApplicationsEnded">
+                        <router-link
+                            to="/applications/captains"
+                            class="btn btn-block btn-lg"
+                            :class="getStateClassButton(schedule.applicationsStartedAt)"
+                        >
                             {{ user.captainApplication ? 'Edit your team captain application' : 'Apply for team captain' }}
                         </router-link>
 
                         <p class="small">
-                            from {{ new Date(schedule.applicationsStartedAt).toLocaleString() }}
-                            to {{ new Date(schedule.applicationsEndedAt).toLocaleString() }}
+                            {{ applicationsDateText }}
                         </p>
                     </div>
 
-                    <div v-if="schedule.applicationsEndedAt && new Date(schedule.applicationsEndedAt) > new Date()">
+                    <div v-if="!hasApplicationsEnded">
                         <a
                             v-if="user.mapperApplication"
                             href="#"
@@ -60,55 +63,52 @@
                         </a>
 
                         <template v-else>
-                            <router-link to="/applications/mappers/" class="btn btn-primary btn-block btn-lg">
+                            <router-link
+                                to="/applications/mappers/"
+                                class="btn btn-block btn-lg"
+                                :class="getStateClassButton(schedule.applicationsStartedAt)"
+                            >
                                 Apply as a mapper
                             </router-link>
 
                             <p class="small mt-1">
-                                from {{ new Date(schedule.applicationsStartedAt).toLocaleString() }}
-                                to {{ new Date(schedule.applicationsEndedAt).toLocaleString() }}
+                                {{ applicationsDateText }}
                             </p>
                         </template>
                     </div>
 
                     <hr>
 
-                    <div v-if="user.isElevatedUser && schedule.captainVotingEndedAt && new Date(schedule.captainVotingEndedAt) > new Date()">
-                        <a
-                            v-if="new Date(schedule.captainVotingStartedAt) > new Date()"
-                            href="#"
-                            class="btn btn-secondary disabled btn-block btn-lg"
-                        >
-                            Captain Voting
-                        </a>
-
+                    <div v-if="user.isElevatedUser && !hasCaptainVotingEnded">
                         <router-link
-                            v-else
                             to="/applications/voting"
-                            class="btn btn-primary btn-block btn-lg"
+                            class="btn btn-block btn-lg"
+                            :class="getStateClassButton(schedule.captainVotingStartedAt)"
                         >
                             Captain Voting
                         </router-link>
 
                         <p class="small mt-1">
-                            from {{ new Date(schedule.captainVotingStartedAt).toLocaleString() }}
-                            to {{ new Date(schedule.captainVotingEndedAt).toLocaleString() }}
+                            {{ votingDateText }}
                         </p>
                     </div>
 
-                    <div v-if="schedule.mappersChoiceEndedAt && new Date(schedule.mappersChoiceEndedAt) > new Date() && user.isCaptain">
-                        <router-link to="/applications/mappersChoice" class="btn btn-primary btn-block btn-lg">
+                    <div v-if="!hasMappersChoiceEnded && user.isCaptain">
+                        <router-link
+                            to="/applications/mappersChoice"
+                            class="btn btn-block btn-lg"
+                            :class="getStateClassButton(schedule.mappersChoiceStartedAt)"
+                        >
                             Mappers Choice
                         </router-link>
 
                         <p class="small mt-1">
-                            from {{ new Date(schedule.mappersChoiceStartedAt).toLocaleString() }}
-                            to {{ new Date(schedule.mappersChoiceEndedAt).toLocaleString() }}
+                            {{ mappersChoiceDateText }}
                         </p>
                     </div>
 
                     <router-link
-                        v-if="user.isCaptain"
+                        v-if="user.isCaptain && hasApplicationsEnded"
                         to="/submissions"
                         class="btn btn-primary btn-block btn-lg"
                     >
@@ -144,6 +144,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import Axios from 'axios';
+import { Schedule } from '../interfaces';
 
 @Component({
     props: {
@@ -155,6 +156,34 @@ export default class HomeNav extends Vue {
 
     requestingAccess = false;
     requestAccessLink = null;
+    schedule!: Schedule;
+
+    get hasApplicationsEnded (): boolean {
+        return this.schedule.applicationsEndedAt && new Date(this.schedule.applicationsEndedAt) < new Date();
+    }
+
+    get hasCaptainVotingEnded (): boolean {
+        return this.schedule.captainVotingEndedAt && new Date(this.schedule.captainVotingEndedAt) < new Date();
+    }
+
+    get hasMappersChoiceEnded (): boolean {
+        return this.schedule.mappersChoiceEndedAt && new Date(this.schedule.mappersChoiceEndedAt) < new Date();
+    }
+
+    get applicationsDateText (): string {
+        return `from ${new Date(this.schedule.applicationsStartedAt).toLocaleString()}
+                to ${new Date(this.schedule.applicationsEndedAt).toLocaleString() }`;
+    }
+
+    get votingDateText (): string {
+        return `from ${new Date(this.schedule.captainVotingStartedAt).toLocaleString()}
+                to ${new Date(this.schedule.captainVotingEndedAt).toLocaleString() }`;
+    }
+
+    get mappersChoiceDateText (): string {
+        return `from ${new Date(this.schedule.mappersChoiceStartedAt).toLocaleString()}
+                to ${new Date(this.schedule.mappersChoiceEndedAt).toLocaleString() }`;
+    }
 
     async requestAccess(): Promise<void> {
         const res = await Axios.post('/api/users/requestAccess', {
@@ -169,6 +198,10 @@ export default class HomeNav extends Vue {
             this.$store.commit('updateUser', res.data.user);
             alert('Request submitted! An admin will evaluate it soon');
         }
+    }
+
+    getStateClassButton (startedAt: Date | undefined): string {
+        return !startedAt || (startedAt && new Date(startedAt) > new Date()) ? 'disabled btn-secondary' : 'btn-primary';
     }
 
 }

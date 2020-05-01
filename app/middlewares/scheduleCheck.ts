@@ -35,7 +35,7 @@ export async function onGoingApplications(ctx: ParameterizedContext, next: () =>
         return await next();
     } else {
         return ctx.body = {
-            error: 'Applications ended',
+            error: `It's not the time for applications`,
         };
     }
 }
