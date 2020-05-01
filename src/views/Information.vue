@@ -33,7 +33,7 @@
                     Captain voting
                 </li>
                 <li>
-                    Mappers' choice <small>(captain decides what mappers take part of the team)</small>
+                    Mappers' choice. Captain chooses 2-6 mappers for the team (for a total of 3-7 members)
                 </li>
             </ul>
 
@@ -41,42 +41,65 @@
 
             <p><b>Qualifier:</b></p>
 
-            Group stage to filter and seed the 16 teams competing
-            <p>
-                <small>if there're less than 16 teams, top 8 will advance</small>
-            </p>
+            <ul>
+                <li>Group stage to filter the 16 teams competing on the next phase</li>
+                <li>First will face the last of the group, second faces the penultimate and so on</li>
+                <li>If there're less than 16 teams, top 8 will advance</li>
+                <li>All teams will map the same song</li>
+                <li>Judges review and give score to each entry based specific criterias</li>
+                <li>
+                    Score is standandarize based on a formula, read the
+                    <a href="https://docs.google.com/document/d/1D76nZfKeOGd5PkImYJxGfyKqN8_ikeIlG9wgUsUYXng/edit?usp=sharing" target="__blank">
+                        <b>documentation</b>
+                    </a>
+                    for more info
+                </li>
+            </ul>
 
             <hr>
 
             <p><b>Head-to-head eliminations</b></p>
 
-            <p>There'll 3 genres to choose, each team bans 1 and the remaining will be chosen</p>
+            <ul>
+                <li>Clash rounds that involves a 1 versus 1 format</li>
+                <li>Teams choose 1 genre between 3 to 'ban' it. The remaining will be the chosen to map</li>
+                <li>Judges review each entry and decide what entry was the best</li>
+            </ul>
         </modal-text>
 
         <modal-text
-            header="Judging"
+            header="Criterias"
         >
-            <p>Judging processes difers from the qualifiers to the elimination phase</p>
-
-            <p><b>Qualifier:</b></p>
-
-            Judges'll review and give score to each entry and to each specific criteria
-
-            <hr>
-
-            <p><b>Head-to-head eliminations:</b></p>
-
-            Judges'll review each entry and decide what entry was the best
-
-            <hr>
-
-            <p><b>Criterias</b></p>
-
             <ul>
-                <li>30% - Expertise</li>
-                <li>30% - Cohesion</li>
-                <li>30% - Creativity</li>
-                <li>10% - Judge's Impression</li>
+                <li class="mb-3">
+                    30% - Expertise
+                    <div>
+                        How well does the submission demonstrate techniques regarding structure,
+                        music representation, flow, hitsounding, etc?
+                    </div>
+                </li>
+                <li class="mb-3">
+                    30% - Cohesion
+                    <div>
+                        How consistent is the submission regarding structure, music representation,
+                        flow, hitsounding etc especially between different sections, considering this
+                        contest is collaborative?
+                    </div>
+                </li>
+                <li class="mb-3">
+                    30% - Creativity
+                    <div>
+                        How well does the submission show originality and uniqueness compared with
+                        the other submissions with reasonable respect to the playability?
+                    </div>
+                </li>
+                <li class="mb-3">
+                    10% - Judge's Impression
+                    <div>
+                        This is the part of the score left to the Judges’ personal preferences on the
+                        submission
+                    </div>
+                </li>
             </ul>
         </modal-text>
     </div>
