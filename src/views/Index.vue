@@ -67,7 +67,7 @@
                                     </a>
                                     <a
                                         class="d-flex align-items-center mb-3 mb-sm-0"
-                                        href="#"
+                                        href="https://osu.ppy.sh/community/forums/topics/1060035"
                                         target="__blank"
                                     >
                                         <span class="country-flag" style="background-image: url('/img/osu.png'); height: 50px; width: 50px;" />
