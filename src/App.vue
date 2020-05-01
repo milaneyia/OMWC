@@ -35,6 +35,11 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link class="nav-link" to="/info">
+                            Information
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link class="nav-link" to="/results/qualifiers">
                             Leaderboard
                         </router-link>

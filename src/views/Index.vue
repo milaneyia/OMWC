@@ -35,7 +35,7 @@
                             class="mt-2"
                         >
                         <h2>
-                            osu! Beatmapping World Cup
+                            osu! Beatmapping World Championship
                         </h2>
                         <h5>
                             from may 02 to october 17
@@ -59,7 +59,7 @@
                                 <div class="d-flex justify-content-around flex-wrap">
                                     <a
                                         class="d-flex align-items-center mb-3 mb-sm-0"
-                                        href="#"
+                                        href="https://discord.gg/CZp4bNx"
                                         target="__blank"
                                     >
                                         <i class="fab fa-discord fa-3x text-white" />
@@ -73,6 +73,16 @@
                                         <span class="country-flag" style="background-image: url('/img/osu.png'); height: 50px; width: 50px;" />
                                         <h4 class="mx-3 mb-0">
                                             Forum Post
+                                        </h4>
+                                    </a>
+                                    <a
+                                        class="d-flex align-items-center mb-3 mb-sm-0"
+                                        href="https://twitter.com/osubwc"
+                                        target="__blank"
+                                    >
+                                        <i class="fab fa-twitter fa-3x text-white" />
+                                        <h4 class="mx-3 mb-0">
+                                            Follow us!
                                         </h4>
                                     </a>
                                     <a
@@ -114,7 +124,7 @@
                                             <img
                                                 class="mr-2"
                                                 src="/img/badge.png"
-                                                width="180"
+                                                width="100"
                                             >
                                             <p class="mt-1">
                                                 Profile badge

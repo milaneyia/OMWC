@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { RouteConfig } from 'vue-router';
 import Index from './views/Index.vue';
+const Information = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/Information.vue');
 const StaffListing = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/StaffListing.vue');
 const TeamListing = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/TeamListing.vue');
 const QualifierResult = () => import(/* webpackChunkName: "results" */ './views/QualifierResult.vue');
@@ -20,6 +21,7 @@ const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/
 
 const routes: RouteConfig[] = [
     { path: '/', component: Index },
+    { path: '/info', component: Information },
     { path: '/staff', component: StaffListing },
     { path: '/teams', component: TeamListing },
     { path: '/results/qualifiers', component: QualifierResult },

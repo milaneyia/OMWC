@@ -21,7 +21,7 @@
         </p>
 
         <div :id="collapse" class="collapse">
-            <div class="card card-body">
+            <div class="card card-body text-left">
                 <div
                     v-for="(date, i) in dates"
                     :key="i"
