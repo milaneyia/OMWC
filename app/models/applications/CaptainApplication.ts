@@ -5,7 +5,11 @@ import { User } from '../User';
 export class CaptainApplication extends BaseEntity {
 
     static findUserApplication(userId: number): Promise<CaptainApplication | undefined> {
-        return this.findOne({ where: { userId } });
+        return this
+            .createQueryBuilder('captainApplication')
+            .innerJoinAndSelect('captainApplication.user', 'user')
+            .where('user.id = :userId', { userId })
+            .getOne();
     }
 
     static findOneOrFailWithUser(captainApplicationId: number): Promise<CaptainApplication> {
