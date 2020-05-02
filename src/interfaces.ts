@@ -1,9 +1,12 @@
 export interface User {
     username: string;
-    isStaff: boolean;
     captainVoteId?: number;
+
+    isBasicUser: boolean;
+    isElevatedUser: boolean;
     isContestant: boolean;
     isCaptain: boolean;
+    isStaff: boolean;
 
     captainApplication: {
         reason: string;

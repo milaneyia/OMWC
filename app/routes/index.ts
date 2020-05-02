@@ -30,6 +30,7 @@ indexRouter.get('/api/', async (ctx) => {
 indexRouter.get('/login', (ctx) => {
     const state = osuApi.generateState();
     ctx.cookies.set('_state', state);
+    ctx.session!.redirectTo = ctx.request.header.referer;
 
     return ctx.redirect(osuApi.generateAuthorizeUrl(state));
 });
@@ -88,7 +89,10 @@ indexRouter.get('/callback', async (ctx) => {
         }
 
         if  (user) {
-            return ctx.redirect('/');
+            const redirectUrl = ctx.session?.redirectTo || '/';
+            ctx.session!.redirectUrl = null;
+
+            return ctx.redirect(redirectUrl);
         }
 
         ctx.session = null;

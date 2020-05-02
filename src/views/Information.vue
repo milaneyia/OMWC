@@ -43,7 +43,6 @@
 
             <ul>
                 <li>Group stage to filter the 16 teams competing on the next phase</li>
-                <li>First will face the last of the group, second faces the penultimate and so on</li>
                 <li>If there're less than 16 teams, top 8 will advance</li>
                 <li>All teams will map the same song</li>
                 <li>Judges review and give score to each entry based specific criterias</li>
@@ -62,6 +61,7 @@
 
             <ul>
                 <li>Clash rounds that involves a 1 versus 1 format</li>
+                <li>First will face the last of the group stage, second faces the penultimate and so on</li>
                 <li>Teams choose 1 genre between 3 to 'ban' it. The remaining will be the chosen to map</li>
                 <li>Judges review each entry and decide what entry was the best</li>
             </ul>

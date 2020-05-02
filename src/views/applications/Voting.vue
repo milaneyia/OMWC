@@ -1,67 +1,71 @@
 <template>
-    <div v-if="user" class="container text-center">
-        <page-header
-            title="Captain Voting"
-            subtitle=" "
-        >
-            <h5>
-                Vote for the person who best fits the captain role for your country!
-            </h5>
+    <div class="container text-center">
+        <template v-if="user && user.isElevatedUser">
+            <page-header
+                title="Captain Voting"
+                subtitle=" "
+            >
+                <h5>
+                    Vote for the person who best fits the captain role for your country!
+                </h5>
 
-            <p>
-                You can only vote for 1 person
-            </p>
-        </page-header>
+                <p>
+                    You can only vote for 1 person
+                </p>
+            </page-header>
 
-        <div
-            v-for="application in applications"
-            :key="application.id"
-            class="row"
-        >
-            <div class="col-sm">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-column">
-                            <div class="user-comment">
-                                <div class="user-comment__user-box">
-                                    <div
-                                        class="avatar"
-                                        :style="`background-image: url(https://a.ppy.sh/${application.user.osuId})`"
-                                    />
-                                    <div class="mt-1">
-                                        {{ application.user.username }}
+            <div
+                v-for="application in applications"
+                :key="application.id"
+                class="row"
+            >
+                <div class="col-sm">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column">
+                                <div class="user-comment">
+                                    <div class="user-comment__user-box">
+                                        <div
+                                            class="avatar"
+                                            :style="`background-image: url(https://a.ppy.sh/${application.user.osuId})`"
+                                        />
+                                        <div class="mt-1">
+                                            {{ application.user.username }}
+                                        </div>
+                                        <button
+                                            v-if="application.user.id !== user.id"
+                                            class="btn btn-sm btn-block mt-2"
+                                            :class="user.captainVoteId == application.id ? 'btn-danger' : 'btn-success'"
+                                            @click="vote(application.id)"
+                                        >
+                                            <i class="fas" :class="user.captainVoteId == application.id ? 'fa-thumbs-down' : 'fa-thumbs-up'" />
+                                        </button>
                                     </div>
-                                    <button
-                                        v-if="application.user.id !== user.id"
-                                        class="btn btn-sm btn-block mt-2"
-                                        :class="user.captainVoteId == application.id ? 'btn-danger' : 'btn-success'"
-                                        @click="vote(application.id)"
-                                    >
-                                        <i class="fas" :class="user.captainVoteId == application.id ? 'fa-thumbs-down' : 'fa-thumbs-up'" />
-                                    </button>
-                                </div>
-                                <div class="user-comment__divider" />
-                                <div class="user-comment__comment-box">
-                                    {{ application.reason }}
+                                    <div class="user-comment__divider" />
+                                    <div class="user-comment__comment-box">
+                                        {{ application.reason }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div v-if="!applications.length && wasLoaded">
-            <div class="row">
-                <div class="col-sm">
-                    <div class="card">
-                        <div class="card-body">
-                            Noone applied :(
+            <div v-if="!applications.length && wasLoaded">
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="card">
+                            <div class="card-body">
+                                Noone applied :(
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
+
+        <login-modal v-else-if="!user" />
     </div>
 </template>
 
@@ -72,10 +76,12 @@ import { State } from 'vuex-class';
 import { User } from '../../interfaces';
 import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
+import LoginModal from '../../components/LoginModal.vue';
 
 @Component({
     components: {
         PageHeader,
+        LoginModal,
     },
 })
 export default class Voting extends Vue {
@@ -86,6 +92,16 @@ export default class Voting extends Vue {
     applications = [];
 
     async created (): Promise<void> {
+        if (!this.user) {
+            return;
+        }
+
+        if (!this.user.isElevatedUser) {
+            this.$router.push('/');
+
+            return;
+        }
+
         const res = await Axios.get('/api/applications/voting');
         this.applications = res.data.applications;
         this.wasLoaded = true;
