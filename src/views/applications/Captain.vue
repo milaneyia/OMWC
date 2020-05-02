@@ -3,11 +3,12 @@
         <template v-if="user && user.isElevatedUser">
             <page-header
                 title="Captain Application"
-                subtitle="You can apply as a mapper too from the home page!"
+                subtitle=" "
             >
                 <h5 class="mb-0">
                     You're applying for team captain for {{ user.country.name }}
                 </h5>
+                <small>You can apply as a mapper too from the home page!</small>
             </page-header>
 
             <div class="row">
