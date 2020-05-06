@@ -3,7 +3,7 @@
         <div class="col-sm">
             <div class="card">
                 <div class="card-body">
-                    <div v-if="user.isBasicUser && !hasApplicationsEnded">
+                    <div v-if="user.isBasicUser && !hasCaptainVotingEnded">
                         <button
                             v-if="!requestingAccess && !user.requestAccess"
                             class="btn btn-primary btn-block btn-lg"

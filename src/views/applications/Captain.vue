@@ -22,10 +22,11 @@
 
                                 <textarea
                                     id="reason"
-                                    v-model="reason"
+                                    v-model.trim="reason"
                                     rows="10"
                                     class="form-control"
                                     maxlength="3000"
+                                    placeholder="Type your reasoning here"
                                 />
                             </div>
                         </div>
