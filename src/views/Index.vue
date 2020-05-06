@@ -116,21 +116,17 @@
                                 <div class="row">
                                     <div class="col-sm">
                                         <h5 class="text-warning">
-                                            <i class="fas fa-crown mr-2" />
+                                            <i class="fas fa-crown mr-1" />
                                             1st place
                                         </h5>
 
                                         <div>
                                             <img
-                                                class="mr-2"
-                                                src="/img/badge.png"
+                                                src="/img/badge_1.png"
                                                 width="100"
                                             >
                                             <p class="mt-1">
-                                                Profile badge
-                                            </p>
-                                            <p>
-                                                <i class="fas fa-heart mr-2" />
+                                                <small><i class="fas fa-heart mr-1" /></small>
                                                 8 months of osu!supporter
                                             </p>
                                         </div>
@@ -138,25 +134,40 @@
                                         <hr>
 
                                         <h5 class="text-info">
-                                            <i class="fas fa-crown mr-2" />
+                                            <i class="fas fa-crown mr-1" />
                                             2nd place
                                         </h5>
-                                        <p>
-                                            <i class="fas fa-heart mr-2" />
-                                            6 months of osu!supporter
-                                        </p>
+
+                                        <div>
+                                            <img
+                                                src="/img/badge_2.png"
+                                                width="100"
+                                            >
+                                            <p class="mt-1">
+                                                <small><i class="fas fa-heart mr-1" /></small>
+                                                6 months of osu!supporter
+                                            </p>
+                                        </div>
 
                                         <hr>
 
                                         <h5 class="text-white-50">
-                                            <i class="fas fa-crown mr-2" />
+                                            <i class="fas fa-crown mr-1" />
                                             3rd place
                                         </h5>
 
-                                        <p>
-                                            <i class="fas fa-heart mr-2" />
-                                            4 months of osu!supporter
-                                        </p>
+
+                                        <div>
+                                            <img
+                                                class="mr-2"
+                                                src="/img/badge_3.png"
+                                                width="100"
+                                            >
+                                            <p class="mt-1">
+                                                <small><i class="fas fa-heart mr-1" /></small>
+                                                4 months of osu!supporter
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
