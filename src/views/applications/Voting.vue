@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="user-comment__divider" />
                                     <div class="user-comment__comment-box">
-                                        {{ application.reason }}
+                                        <span>{{ application.reason }}</span>
                                     </div>
                                 </div>
                             </div>

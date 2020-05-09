@@ -94,8 +94,8 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p class="text-left" style="white-space: pre-line;">
-                            {{ selectedReason }}
+                        <p class="text-left">
+                            <span style="white-space: pre-line;">{{ selectedReason }}</span>
                         </p>
                     </div>
                 </div>
