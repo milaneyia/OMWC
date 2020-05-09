@@ -20,7 +20,7 @@ import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/applications/voting';
 import judgingRouter from './routes/judging';
 import judgingResultsRouter from './routes/judgingResults';
-import leaderboardRouter from './routes/results';
+import resultsRouter from './routes/results';
 import mappersChoiceRouter from './routes/applications/mappersChoice';
 import submissionsRouter from './routes/submissions';
 import teamsRouter from './routes/teams';
@@ -72,8 +72,8 @@ app.use(async (ctx, next) => {
 // Public routes
 app.use(indexRouter.routes());
 app.use(indexRouter.allowedMethods());
-app.use(leaderboardRouter.routes());
-app.use(leaderboardRouter.allowedMethods());
+app.use(resultsRouter.routes());
+app.use(resultsRouter.allowedMethods());
 app.use(judgingResultsRouter.routes());
 app.use(judgingResultsRouter.allowedMethods());
 app.use(teamsRouter.routes());

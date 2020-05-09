@@ -40,19 +40,27 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/results/qualifiers">
-                            Leaderboard
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link class="nav-link" to="/judgingResults">
-                            Results
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
                         <router-link class="nav-link" to="/teams">
                             Teams
                         </router-link>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            data-toggle="dropdown"
+                        >
+                            Results
+                        </a>
+
+                        <div class="dropdown-menu">
+                            <router-link to="/results/qualifiers" class="dropdown-item">
+                                Qualifiers
+                            </router-link>
+                            <router-link to="/results/elimination" class="dropdown-item">
+                                Eliminations
+                            </router-link>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <router-link class="nav-link" to="/staff">

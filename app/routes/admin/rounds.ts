@@ -70,31 +70,46 @@ roundsAdminRouter.post('/store', async (ctx) => {
     };
 });
 
-roundsAdminRouter.post('/save', async (ctx) => {
-    if (!ctx.request.body.title ||
-        !ctx.request.body.submissionsStartedAt ||
-        !ctx.request.body.submissionsEndedAt ||
-        !ctx.request.body.judgingStartedAt ||
-        !ctx.request.body.judgingEndedAt ||
-        !ctx.request.body.resultsAt
-    ) {
+roundsAdminRouter.post('/:id/save', async (ctx) => {
+    const roundInput: Round = ctx.request.body.round;
 
+    if (!roundInput.title ||
+        !roundInput.submissionsStartedAt ||
+        !roundInput.submissionsEndedAt ||
+        !roundInput.judgingStartedAt ||
+        !roundInput.judgingEndedAt ||
+        !roundInput.resultsAt
+    ) {
         return ctx.body = {
             error: 'Not valid inputs',
         };
     }
 
-    const roundId = convertToIntOrThrow(ctx.request.body.roundId);
+    const roundId = convertToIntOrThrow(ctx.params.id);
     const round = await Round.findOneOrFail({ id: roundId });
 
-    round.title = ctx.request.body.title.trim();
-    round.submissionsStartedAt = ctx.request.body.submissionsStartedAt;
-    round.submissionsEndedAt = ctx.request.body.submissionsEndedAt;
-    round.judgingStartedAt = ctx.request.body.judgingStartedAt;
-    round.judgingEndedAt = ctx.request.body.judgingEndedAt;
-    round.resultsAt = ctx.request.body.resultsAt;
-    round.isQualifier = ctx.request.body.isQualifier;
+    round.title = roundInput.title.trim();
+    round.submissionsStartedAt = roundInput.submissionsStartedAt;
+    round.submissionsEndedAt = roundInput.submissionsEndedAt;
+    round.judgingStartedAt = roundInput.judgingStartedAt;
+    round.judgingEndedAt = roundInput.judgingEndedAt;
+    round.resultsAt = roundInput.resultsAt;
+    round.isQualifier = roundInput.isQualifier;
     await round.save();
+
+    if (round.isQualifier) {
+        let match = await Match.findOne({
+            round,
+        });
+
+        if (!match) {
+            match = new Match();
+            match.round = round;
+        }
+
+        match.information = 'All vs All';
+        await match.save();
+    }
 
     ctx.body = {
         round,

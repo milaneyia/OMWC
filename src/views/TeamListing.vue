@@ -1,5 +1,5 @@
 <template>
-    <div class="container text-center">
+    <div class="container-lg text-center">
         <page-header
             title="Teams"
         />
@@ -9,7 +9,7 @@
             :key="team.id"
             class="row team"
         >
-            <div class="col-sm-3 team__country">
+            <div class="col-md-3 team__country">
                 <img :src="`https://osu.ppy.sh/images/flags/${team.code}.png`" :alt="team.code">
 
                 <h5 class="mb-0 ml-2">
@@ -17,21 +17,25 @@
                 </h5>
             </div>
 
-            <div class="col-sm-9 team__members">
+            <div class="col-md-9 team__members">
                 <div class="row">
                     <div
                         v-for="user in team.users"
                         :key="user.id"
-                        class="col-sm"
+                        class="col-sm my-2"
                     >
                         <div class="avatar" :style="`background-image: url(https://a.ppy.sh/${user.osuId});`" />
                         <div>
                             <a
                                 :href="`https://osu.ppy.sh/users/${user.osuId}`"
                                 target="_blank"
-                            > {{ user.username }}
+                            >
+                                {{ user.username }}
                             </a>
                         </div>
+                        <small v-if="user.isCaptain">
+                            Captain
+                        </small>
                     </div>
                 </div>
             </div>

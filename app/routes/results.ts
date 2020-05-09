@@ -1,22 +1,24 @@
 import Router from '@koa/router';
-import { MoreThanOrEqual } from 'typeorm';
+import { LessThanOrEqual } from 'typeorm';
 import { Criteria } from '../models/judging/Criteria';
 import { Round } from '../models/rounds/Round';
 
-const leaderboardRouter = new Router();
+const resultsRouter = new Router();
 
-leaderboardRouter.prefix('/api/results');
+resultsRouter.prefix('/api/results');
 
-leaderboardRouter.get('/qualifiers', async (ctx) => {
+resultsRouter.get('/qualifiers', async (ctx) => {
     const round = await Round.findOne({
         where: {
             isQualifier: true,
-            resultsAt: MoreThanOrEqual(new Date()),
+            resultsAt: LessThanOrEqual(new Date()),
         },
         relations: [
             'matches',
             'matches.submissions',
+            'matches.submissions.country',
             'matches.submissions.qualifierJudging',
+            'matches.submissions.qualifierJudging.judge',
             'matches.submissions.qualifierJudging.qualifierJudgingToCriterias',
         ],
     });
@@ -80,4 +82,4 @@ leaderboardRouter.get('/qualifiers', async (ctx) => {
     };
 });
 
-export default leaderboardRouter;
+export default resultsRouter;

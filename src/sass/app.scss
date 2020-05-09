@@ -106,29 +106,6 @@
     }
 }
 
-.team-eliminated {
-    opacity: 0.3;
-}
-
-@mixin leaderboard-highlight($color) {
-    & > td:first-child {
-        background: $color;
-        background: linear-gradient(67deg, $color 25%, #fff0 85%);
-    }
-}
-
-.first-place  {
-    @include leaderboard-highlight(rgba(201, 206, 50, 0.9));
-}
-
-.second-place  {
-    @include leaderboard-highlight(#959595);
-}
-
-.third-place  {
-    @include leaderboard-highlight(#cfb087);
-}
-
 $default-shadow: 0px 0px 1px 0px rgba(51, 51, 51, 0.01);
 
 .card {
@@ -155,6 +132,8 @@ $default-shadow: 0px 0px 1px 0px rgba(51, 51, 51, 0.01);
         @extend .d-flex;
         @extend .py-2;
         @extend .align-items-center;
+        @extend .justify-content-center;
+        @extend .justify-content-md-start;
     }
 
     &__members {
@@ -163,6 +142,9 @@ $default-shadow: 0px 0px 1px 0px rgba(51, 51, 51, 0.01);
         @extend .py-2;
         @extend .d-flex;
         @extend .align-items-center;
+        @extend .flex-wrap;
+        @extend .justify-content-center;
+        @extend .justify-content-md-start;
     }
 }
 

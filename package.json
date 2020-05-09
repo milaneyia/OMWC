@@ -6,7 +6,8 @@
     "watch-src": "webpack-dev-server",
     "build-app": "tsc --project tsconfig.app.json",
     "build-src": "webpack --config webpack.config.prod.js",
-    "prod": "node ./dist/app/app.js"
+    "prod": "node ./dist/app/app.js",
+    "lint": "eslint . --ext .ts,.vue"
   },
   "dependencies": {
     "@koa/router": "^8.0.8",

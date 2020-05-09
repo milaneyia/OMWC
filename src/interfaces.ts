@@ -1,4 +1,5 @@
 export interface User {
+    id: number;
     username: string;
     captainVoteId?: number;
 
@@ -57,6 +58,7 @@ export interface Submission {
     originalLink: string;
     anonymisedAs: string;
     anonymisedLink: string;
+    country: Country;
 
     match: {
         id: number;
@@ -65,14 +67,19 @@ export interface Submission {
     qualifierJudging: QualifierJudging[];
 }
 
+export interface QualifierJudgingToCriterias {
+    score: number;
+    comment: string;
+    criteriaId: number;
+}
+
 export interface QualifierJudging {
     id?: number;
     submissionId?: number;
+    judgeId: number;
+    judge: User;
 
-    qualifierJudgingToCriterias: {
-        score: number;
-        comment: string;
-    };
+    qualifierJudgingToCriterias: QualifierJudgingToCriterias[];
 }
 
 export interface Criteria {

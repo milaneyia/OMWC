@@ -8,11 +8,11 @@ export class QualifierJudgingToCriteria extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    // @Column()
-    // judgingId!: number;
+    @Column()
+    qualifierJudgingId!: number;
 
-    // @Column()
-    // criteriaId!: number;
+    @Column()
+    criteriaId!: number;
 
     @ManyToOne(() => QualifierJudging, qualifierJudging => qualifierJudging.qualifierJudgingToCriterias)
     qualifierJudging!: QualifierJudging;

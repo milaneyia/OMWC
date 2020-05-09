@@ -1,5 +1,5 @@
 <template>
-    <div class="container text-center">
+    <div class="container-lg text-center">
         <page-header
             title="Leaderboard"
         />
@@ -14,33 +14,30 @@
                             <th v-for="criteria in criterias" :key="criteria.id">
                                 {{ criteria.name }}
                             </th>
-                            <th>Final Score</th>
+                            <th>Final Score (raw)</th>
+                            <th>Final Score (standardized)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
-                            v-for="(team, i) in teams"
+                            v-for="(score, i) in scores"
                             :key="i"
-                            :class="[
-                                team.eliminationRound ? 'team-eliminated' : '',
-                                i == 0 ? 'first-place': '',
-                                i == 1 ? 'second-place' : '',
-                                i == 2 ? 'third-place' : '',
-                            ]"
                         >
                             <td>{{ i + 1 }}</td>
-                            <td class="d-flex justify-content-center align-items-center">
-                                <div class="country-flag" :style="`background-image: url(https://osu.ppy.sh/images/flags/${team.code}.png)`">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="country-flag" :style="`background-image: url(https://osu.ppy.sh/images/flags/${score.country.code}.png)`" />
                                     <div class="ml-2">
-                                        {{ team.name }}
+                                        {{ score.country.name }}
                                     </div>
                                 </div>
                             </td>
                             <td v-for="criteria in criterias" :key="criteria.id">
-                                {{ (team.criteriaScores && team.criteriaScores.find(s => s.criteriaId === criteria.Id).score) || 0 }}
+                                {{ getCriteriaScore(score, criteria.id) }}
                             </td>
 
-                            <td>{{ team.finalScore }}</td>
+                            <td>{{ score.rawFinalScore }}</td>
+                            <td>{{ score.standardizedFinalScore }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -54,7 +51,21 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import PageHeader from '../components/PageHeader.vue';
 import Axios from 'axios';
-import { Round } from '../interfaces';
+import { Round, Country } from '../interfaces';
+
+interface TeamScore {
+    country: Country;
+    criteriaSum: {
+        criteriaId: number;
+        sum: number;
+    }[];
+    judgingSum: {
+        judgeId: number;
+        sum: number;
+    }[];
+    rawFinalScore: number;
+    standardizedFinalScore: number;
+}
 
 @Component({
     components: {
@@ -76,23 +87,98 @@ export default class QualifierResult extends Vue {
         this.round = res.data.round;
     }
 
-    get teams (): [] {
+    get scores (): TeamScore[] {
+        const teamsScores: TeamScore[] = [];
+
         if (this.round?.matches.length) {
             const submissions = this.round.matches[0].submissions;
 
             if (submissions) {
                 for (const submission of submissions) {
-                    let sumScore = 0;
+                    const teamScore: TeamScore = {
+                        country: submission.country,
+                        criteriaSum: [],
+                        judgingSum: [],
+                        rawFinalScore: 0,
+                        standardizedFinalScore: 0,
+                    };
 
                     for (const qualifierJudging of submission.qualifierJudging) {
-                        sumScore += qualifierJudging.qualifierJudgingToCriterias.score;
+                        let judgeSum = 0;
+
+                        for (const judgingToCriteria of qualifierJudging.qualifierJudgingToCriterias) {
+                            judgeSum += judgingToCriteria.score;
+                            const i = teamScore.criteriaSum.findIndex(j => j.criteriaId === judgingToCriteria.criteriaId);
+
+                            if (i !== i) {
+                                teamScore.criteriaSum[i].sum += judgingToCriteria.score;
+                            } else {
+                                teamScore.criteriaSum.push({
+                                    criteriaId: judgingToCriteria.criteriaId,
+                                    sum: judgingToCriteria.score,
+                                });
+                            }
+                        }
+
+                        teamScore.judgingSum.push({
+                            judgeId: qualifierJudging.judgeId,
+                            sum: judgeSum,
+                        });
+                    }
+
+                    teamScore.rawFinalScore = teamScore.criteriaSum.reduce((acc, c) => acc + c.sum, 0);
+                    teamsScores.push(teamScore);
+                }
+
+            }
+        }
+
+        if (teamsScores.length) {
+            const judgesIds = teamsScores[0].judgingSum.map(j => j.judgeId);
+
+            for (const judgeId of judgesIds) {
+                let judgeSum = 0;
+                let judgeAvg = 0;
+                let judgeSd = 0;
+
+                for (const teamScore of teamsScores) {
+                    const judgingSum = teamScore.judgingSum.find(j => j.judgeId === judgeId);
+
+                    if (judgingSum) {
+                        judgeSum += judgingSum.sum;
+                    }
+                }
+
+                judgeAvg = judgeSum / teamsScores.length;
+
+                for (const teamScore of teamsScores) {
+                    const judgingSum = teamScore.judgingSum.find(j => j.judgeId === judgeId);
+
+                    if (judgingSum) {
+                        judgeSd += Math.pow(judgingSum.sum - judgeAvg, 2);
+                    }
+                }
+
+                judgeSd = Math.sqrt(judgeSd / teamsScores.length);
+
+                for (let i = 0; i < teamsScores.length; i++) {
+                    const judgingSum = teamsScores[i].judgingSum.find(j => j.judgeId === judgeId);
+
+                    if (judgingSum) {
+                        // S* = S - S(avg) / SD
+                        teamsScores[i].standardizedFinalScore = (judgingSum.sum - judgeAvg) / judgeSd;
                     }
                 }
             }
-
         }
 
-        return [];
+        teamsScores.sort((a, b) => b.standardizedFinalScore - a.standardizedFinalScore);
+
+        return teamsScores;
+    }
+
+    getCriteriaScore (score: TeamScore, criteriaId: number): number {
+        return score.criteriaSum.find(c => c.criteriaId === criteriaId)?.sum || 0;
     }
 
 }
