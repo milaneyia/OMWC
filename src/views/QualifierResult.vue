@@ -6,12 +6,29 @@
 
         <div class="row">
             <div class="col-sm">
-                <div class="my-1">
+                <div class="my-2">
                     <a
                         href="#"
-                        @click="showCriteriasScores = !showCriteriasScores"
+                        :class="displayMode === 'criterias' ? 'border-bottom border-secondary' : ''"
+                        @click="displayMode = 'criterias'"
                     >
-                        Change display mode
+                        Per criteria
+                    </a>
+                    |
+                    <a
+                        href="#"
+                        :class="displayMode === 'judges' ? 'border-bottom border-secondary' : ''"
+                        @click="displayMode = 'judges'"
+                    >
+                        Per judge
+                    </a>
+                    |
+                    <a
+                        href="#"
+                        :class="displayMode === 'detail' ? 'border-bottom border-secondary' : ''"
+                        @click="displayMode = 'detail'"
+                    >
+                        Std detail
                     </a>
                 </div>
 
@@ -20,7 +37,7 @@
                         <tr>
                             <th>#</th>
                             <th>Team</th>
-                            <template v-if="showCriteriasScores">
+                            <template v-if="displayMode === 'criterias'">
                                 <th v-for="criteria in criterias" :key="criteria.id">
                                     {{ criteria.name }}
                                 </th>
@@ -51,20 +68,50 @@
                                     </div>
                                 </div>
                             </td>
-                            <template v-if="showCriteriasScores">
+                            <template v-if="displayMode === 'criterias'">
                                 <td v-for="criteria in criterias" :key="criteria.id">
                                     {{ getCriteriaScore(score, criteria.id) }}
                                 </td>
                             </template>
                             <template v-else>
                                 <td v-for="judge in judges" :key="judge.id">
-                                    {{ getJudgeScore(score, judge.id) }}
+                                    {{ getJudgeScore(score, judge.id, displayMode === 'detail') }}
                                 </td>
                             </template>
 
                             <td>{{ score.rawFinalScore }}</td>
-                            <td>{{ score.standardizedFinalScore }}</td>
+                            <td>{{ score.standardizedFinalScore.toFixed(4) }}</td>
                         </tr>
+
+                        <template v-if="displayMode === 'detail'">
+                            <tr>
+                                <td />
+                                <td>AVG</td>
+                                <td v-for="judge in judges" :key="judge.id">
+                                    {{ getJudgeAvg(judge.id) }}
+                                </td>
+                                <td />
+                                <td />
+                            </tr>
+                            <tr>
+                                <td />
+                                <td>SD</td>
+                                <td v-for="judge in judges" :key="judge.id">
+                                    {{ getJudgeSd(judge.id) }}
+                                </td>
+                                <td />
+                                <td />
+                            </tr>
+                            <tr>
+                                <td />
+                                <td>COR</td>
+                                <td v-for="judge in judges" :key="judge.id">
+                                    {{ getJudgeCorrel(judge.id) }}
+                                </td>
+                                <td />
+                                <td />
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
@@ -158,6 +205,14 @@ interface TeamScore {
     standardizedFinalScore: number;
 }
 
+interface JudgeCorrel {
+    id: number;
+    rawAvg: number;
+    avg: number;
+    sd: number;
+    correl: number;
+}
+
 @Component({
     components: {
         PageHeader,
@@ -170,7 +225,8 @@ export default class QualifierResult extends Vue {
     round: Round | null = null;
     selectedScore: TeamScore | null = null;
     commentsExpanded: number[] = [];
-    showCriteriasScores = true;
+    displayMode = 'criterias';
+    judgesCorrel: JudgeCorrel[] = [];
 
     async created (): Promise<void> {
         await this.getData();
@@ -193,6 +249,7 @@ export default class QualifierResult extends Vue {
 
     get scores (): TeamScore[] {
         const teamsScores: TeamScore[] = [];
+        const judgesCorrel: JudgeCorrel[] = [];
 
         if (this.round?.matches.length) {
             const submissions = this.round.matches[0].submissions;
@@ -245,13 +302,16 @@ export default class QualifierResult extends Vue {
                 let judgeSum = 0;
                 let judgeAvg = 0;
                 let judgeSd = 0;
+                let judgeStdSum = 0;
 
+                // Get score avg for the current judge
                 for (const teamScore of teamsScores) {
                     judgeSum += teamScore.judgingSum.find(j => j.judgeId === judgeId)?.sum || 0;
                 }
 
                 judgeAvg = judgeSum / teamsScores.length;
 
+                // Get SD for the current judge
                 for (const teamScore of teamsScores) {
                     const judgingSum = teamScore.judgingSum.find(j => j.judgeId === judgeId);
 
@@ -262,6 +322,7 @@ export default class QualifierResult extends Vue {
 
                 judgeSd = Math.sqrt(judgeSd / teamsScores.length);
 
+                // Set standard score for each entry for the current judge
                 for (let i = 0; i < teamsScores.length; i++) {
                     const j = teamsScores[i].judgingSum.findIndex(j => j.judgeId === judgeId);
 
@@ -270,11 +331,49 @@ export default class QualifierResult extends Vue {
                         const stdScore = (teamsScores[i].judgingSum[j].sum - judgeAvg) / judgeSd;
                         teamsScores[i].standardizedFinalScore += stdScore;
                         teamsScores[i].judgingSum[j].standardized = stdScore;
+                        judgeStdSum += stdScore || 0;
                     }
                 }
+
+                // Set standard score average for the current judge
+                judgesCorrel.push({
+                    id: judgeId,
+                    rawAvg: judgeAvg,
+                    avg: judgeStdSum / teamsScores.length,
+                    sd: judgeSd,
+                    correl: 0,
+                });
+            }
+
+            // Get final standard scores average
+            const totalStdAvg = teamsScores.reduce((acc, s) => acc + s.standardizedFinalScore, 0) / teamsScores.length;
+
+            // Set correlation coefficient per judge
+            for (const judgeId of judgesIds) {
+                const i = judgesCorrel.findIndex(j => j.id === judgeId);
+                const judgeAvg = judgesCorrel[i]?.avg || 0;
+
+                let sum1 = 0;
+                let sum2 = 0;
+                let sum3 = 0;
+
+                for (const teamScore of teamsScores) {
+                    const judgingSum = teamScore.judgingSum.find(j => j.judgeId === judgeId);
+
+                    if (judgingSum) {
+                        const x = (judgingSum.standardized - judgeAvg);
+                        const y = (teamScore.standardizedFinalScore - totalStdAvg);
+                        sum1 += x * y;
+                        sum2 += Math.pow(x, 2);
+                        sum3 += Math.pow(y, 2);
+                    }
+                }
+
+                judgesCorrel[i].correl = sum1 / (Math.sqrt(sum2 * sum3));
             }
         }
 
+        this.judgesCorrel = judgesCorrel;
         teamsScores.sort((a, b) => b.standardizedFinalScore - a.standardizedFinalScore);
 
         return teamsScores;
@@ -284,10 +383,26 @@ export default class QualifierResult extends Vue {
         return score.criteriaSum.find(c => c.criteriaId === criteriaId)?.sum || 0;
     }
 
-    getJudgeScore (score: TeamScore, judgeId: number): string {
+    getJudgeScore (score: TeamScore, judgeId: number, std = false): number | string {
         const judgeScore = score.judgingSum.find(j => j.judgeId === judgeId);
 
-        return `${judgeScore?.sum || 0} (${judgeScore?.standardized.toFixed(3) || 0})`;
+        if (std) {
+            return `${judgeScore?.sum || 0} (${judgeScore?.standardized.toFixed(3) || 0})`;
+        }
+
+        return judgeScore?.sum || 0;
+    }
+
+    getJudgeAvg (id: number): number | string {
+        return this.judgesCorrel.find(j => j.id === id)?.rawAvg.toFixed(4) || 0;
+    }
+
+    getJudgeSd (id: number): number | string {
+        return this.judgesCorrel.find(j => j.id === id)?.sd.toFixed(4) || 0;
+    }
+
+    getJudgeCorrel (id: number): number | string {
+        return this.judgesCorrel.find(j => j.id === id)?.correl.toFixed(4) || 0;
     }
 
     showComment (id: number): void {
