@@ -185,10 +185,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
-import PageHeader from '../components/PageHeader.vue';
 import Axios from 'axios';
-import { Round, Country, User, Submission } from '../interfaces';
+import Component from 'vue-class-component';
+import PageHeader from '../../components/PageHeader.vue';
+import { Round, Country, User, Submission } from '../../interfaces';
 
 interface TeamScore {
     country: Country;

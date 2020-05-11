@@ -127,9 +127,9 @@
 import Vue from 'vue';
 import Axios from 'axios';
 import Component from 'vue-class-component';
-import { Round } from '../interfaces';
-import PageHeader from '../components/PageHeader.vue';
-import RoundMatch from '../components/RoundMatch.vue';
+import { Round } from '../../interfaces';
+import PageHeader from '../../components/PageHeader.vue';
+import RoundMatch from '../../components/RoundMatch.vue';
 
 @Component({
     components: {
