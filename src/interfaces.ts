@@ -40,6 +40,7 @@ export interface Country {
 }
 
 export interface Round {
+    id: number;
     matches: Match[];
 }
 
@@ -48,8 +49,13 @@ export interface Match {
     roundId: number;
     teamAId?: number;
     teamBId?: number;
+    teamA?: Country;
+    teamB?: Country;
 
     submissions?: Submission[];
+    eliminationJudging?: {
+        submissionChosen: Submission;
+    }[];
 }
 
 export interface Submission {

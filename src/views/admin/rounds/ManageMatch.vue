@@ -21,7 +21,7 @@
                         :editing="false"
                     />
 
-                    <button class="btn btn-primary btn-block my-2" @click="store">
+                    <button class="btn btn-success btn-block my-2" @click="store">
                         Save
                     </button>
 
@@ -46,9 +46,8 @@
                         :editing="editing !== match.id"
                     />
 
-                    <template v-if="!editing">
+                    <template v-if="!editing || editing != match.id">
                         <button
-                            v-if="!editing"
                             class="btn btn-sm btn-primary"
                             @click="editing = match.id"
                         >
@@ -56,7 +55,6 @@
                         </button>
 
                         <button
-                            v-if="!editing"
                             class="btn btn-sm btn-danger"
                             @click="remove(match.id)"
                         >
@@ -72,7 +70,7 @@
                             Cancel
                         </button>
 
-                        <button class="btn btn-sm btn-primary" @click="save(match)">
+                        <button class="btn btn-sm btn-success" @click="save(match)">
                             Save
                         </button>
                     </template>

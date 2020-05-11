@@ -72,17 +72,84 @@ VALUES
 INSERT INTO `schedule` (`id`, `applicationsStartedAt`, `applicationsEndedAt`, `captainVotingStartedAt`, `captainVotingEndedAt`, `mappersChoiceStartedAt`, `mappersChoiceEndedAt`) 
 VALUES (1, '2020-05-01', '2020-05-08', '2020-05-01', '2020-05-20', '2020-05-01', '2020-06-23');
 
-INSERT INTO `round` (`id`, `title`, `submissionsStartedAt`, `submissionsEndedAt`, `judgingStartedAt`, `judgingEndedAt`, `resultsAt`, `isQualifier`) 
-VALUES (1, 'Qualifers', '2020-05-08', '2020-05-29', '2020-05-08', '2020-05-29', '2020-05-08', '1');
 
-INSERT INTO `match` (`id`, `information`, `roundId`, `teamAId`, `teamBId`) 
-VALUES (1, 'All vs All', '1', NULL, NULL);
+/** Qualifiers **/
+INSERT INTO `round` (`id`, `title`, `submissionsStartedAt`, `submissionsEndedAt`, `judgingStartedAt`, `judgingEndedAt`, `resultsAt`, `isQualifier`) 
+VALUES (1, 'Qualifers', '2020-05-08', '2020-05-29', '2020-05-08', '2020-05-29', '2020-05-08', 1);
+
+INSERT INTO `match` (`id`, `roundId`, `teamAId`, `teamBId`) 
+VALUES (1, 1, NULL, NULL);
 
 INSERT INTO `submission` (`originalLink`, `anonymisedAs`, `anonymisedLink`, `countryId`, `matchId`) 
-(SELECT 'some link', NULL, NULL, `country`.`id`, `match`.`id` FROM `country`, `match` WHERE `country`.`wasConfirmed` = 1);
+(
+    SELECT 'some link', NULL, NULL, `country`.`id`, `match`.`id` 
+    FROM `country`, `match`
+    INNER JOIN `round` ON `round`.`id` = `match`.`roundId`
+    WHERE 
+        `country`.`wasConfirmed` = 1 AND
+        `round`.`isQualifier` = 1
+);
 
 INSERT INTO `qualifier_judging` (`judgeId`, `submissionId`) 
 (SELECT `user`.`id`, `submission`.`id` FROM `user`, `submission` WHERE `user`.`roleId` = 6);
 
 INSERT INTO `qualifier_judging_to_criteria` (`score`, `comment`, `qualifierJudgingId`, `criteriaId`)
 (SELECT FLOOR(RAND() * `criteria`.`maxScore`), 'Some comment', `qualifier_judging`.`id`, `criteria`.`id` FROM `qualifier_judging`, `criteria`);
+
+
+/** Elimination **/
+INSERT INTO `round` (`id`, `title`, `submissionsStartedAt`, `submissionsEndedAt`, `judgingStartedAt`, `judgingEndedAt`, `resultsAt`, `isQualifier`) 
+VALUES 
+    (2, 'Round of 16', '2020-05-08', '2020-05-29', '2020-05-08', '2020-05-29', '2020-05-08', 0),
+    (3, 'Quarter finals', '2020-05-08', '2020-05-29', '2020-05-08', '2020-05-29', '2020-05-08', 0),
+    (4, 'Semi finals', '2020-05-08', '2020-05-29', '2020-05-08', '2020-05-29', '2020-05-08', 0),
+    (5, 'Finals', '2020-05-08', '2020-05-29', '2020-05-08', '2020-05-29', '2020-05-08', 0);
+
+INSERT INTO `match` (`roundId`, `teamAId`, `teamBId`) 
+VALUES
+    (2, 1, 8),
+    (2, 2, 7),
+    (2, 3, 6),
+    (2, 4, 5),
+    (2, 1, 8),
+    (2, 2, 7),
+    (2, 3, 6),
+    (2, 4, 5);
+
+INSERT INTO `match` (`roundId`, `teamAId`, `teamBId`) 
+VALUES
+    (3, NULL, NULL),
+    (3, NULL, NULL),
+    (3, NULL, NULL),
+    (3, NULL, NULL),
+    (4, NULL, NULL),
+    (4, NULL, NULL),
+    (5, NULL, NULL),
+    (5, NULL, NULL);
+
+INSERT INTO `submission` (`originalLink`, `anonymisedAs`, `anonymisedLink`, `countryId`, `matchId`) 
+(
+    SELECT 'some link', NULL, NULL, `country`.`id`, `match`.`id`
+    FROM `country`, `match`
+    INNER JOIN `round` ON `round`.`id` = `match`.`roundId`
+    WHERE
+        `country`.`wasConfirmed` = 1 AND
+        `round`.`isQualifier` = 0 AND
+        `match`.`teamAId` IS NOT NULL AND
+        `match`.`teamBId` IS NOT NULL AND
+        (
+            `country`.`id` = `match`.`teamAId` OR
+            `country`.`id` = `match`.`teamBId`
+        )
+);
+
+INSERT INTO `elimination_judging` (`comment`, `judgeId`, `matchId`, `submissionChosenId`)
+(
+    SELECT 'Some comment', `user`.`id`, `match`.`id`, `submission`.`id`
+    FROM `user`, `match`
+    INNER JOIN `round` ON `round`.`id` = `match`.`roundId`
+    INNER JOIN `submission` ON `submission`.`countryId` = `match`.`teamAId` AND `submission`.`matchId` = `match`.`id`
+    WHERE
+        `user`.`roleId` = 6 AND
+        `round`.`isQualifier` = 0
+);

@@ -32,6 +32,12 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
+Vue.filter('shortDateTimeString', (value: string) => {
+    if (!value) return '';
+
+    return new Date(value).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric' });
+});
+
 new Vue({
     store,
     router,

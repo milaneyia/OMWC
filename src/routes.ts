@@ -4,7 +4,8 @@ import Index from './views/Index.vue';
 const Information = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/Information.vue');
 const StaffListing = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/StaffListing.vue');
 const TeamListing = () => import(/* webpackChunkName: "info", webpackPrefetch: true */ './views/TeamListing.vue');
-const QualifierResult = () => import(/* webpackChunkName: "results" */ './views/QualifierResult.vue');
+const QualifierResult = () => import(/* webpackChunkName: "results", webpackPrefetch: true */ './views/QualifierResult.vue');
+const EliminationResult = () => import(/* webpackChunkName: "results", webpackPrefetch: true */ './views/EliminationResult.vue');
 const Captain = () => import(/* webpackChunkName: "apps" */ './views/applications/Captain.vue');
 const Mapper = () => import(/* webpackChunkName: "apps" */ './views/applications/Mapper.vue');
 const Voting = () => import(/* webpackChunkName: "apps" */ './views/applications/Voting.vue');
@@ -25,6 +26,7 @@ const routes: RouteConfig[] = [
     { path: '/staff', component: StaffListing },
     { path: '/teams', component: TeamListing },
     { path: '/results/qualifiers', component: QualifierResult },
+    { path: '/results/elimination', component: EliminationResult },
 
     { path: '/submissions', component: Submission },
 
