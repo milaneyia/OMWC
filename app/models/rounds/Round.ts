@@ -75,4 +75,5 @@ export class Round extends BaseEntity {
 
     @UpdateDateColumn()
     updatedAt!: Date;
+
 }

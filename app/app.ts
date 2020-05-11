@@ -19,7 +19,6 @@ import captainApplicationsRouter from './routes/applications/captains';
 import mapperApplicationsRouter from './routes/applications/mappers';
 import captainVotingRouter from './routes/applications/voting';
 import judgingRouter from './routes/judging';
-import judgingResultsRouter from './routes/judgingResults';
 import resultsRouter from './routes/results';
 import mappersChoiceRouter from './routes/applications/mappersChoice';
 import submissionsRouter from './routes/submissions';
@@ -74,8 +73,6 @@ app.use(indexRouter.routes());
 app.use(indexRouter.allowedMethods());
 app.use(resultsRouter.routes());
 app.use(resultsRouter.allowedMethods());
-app.use(judgingResultsRouter.routes());
-app.use(judgingResultsRouter.allowedMethods());
 app.use(teamsRouter.routes());
 app.use(teamsRouter.allowedMethods());
 

@@ -92,15 +92,15 @@
                                 Teams Choice
                             </router-link>
                             <div class="dropdown-divider" />
-                            <router-link to="/admin/judging" class="dropdown-item">
-                                Judging List
-                            </router-link>
-                            <div class="dropdown-divider" />
                             <router-link to="/admin/rounds" class="dropdown-item">
                                 Rounds
                             </router-link>
                             <router-link to="/admin/submissions" class="dropdown-item">
                                 Submissions
+                            </router-link>
+                            <div class="dropdown-divider" />
+                            <router-link to="/admin/judging" class="dropdown-item">
+                                Judging List
                             </router-link>
                         </div>
                     </li>

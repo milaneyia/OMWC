@@ -19,6 +19,7 @@ const RoundListing = () => import(/* webpackChunkName: "admin" */ './views/admin
 const ManageMatch = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageMatch.vue');
 const RequestAccess = () => import(/* webpackChunkName: "admin" */ './views/admin/RequestAccess.vue');
 const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/admin/SubmissionListing.vue');
+const JudgingListing = () => import(/* webpackChunkName: "admin" */ './views/admin/JudgingListing.vue');
 
 const routes: RouteConfig[] = [
     { path: '/', component: Index },
@@ -44,6 +45,7 @@ const routes: RouteConfig[] = [
     { path: '/admin/rounds/:id(\\d+)', component: ManageRound },
     { path: '/admin/rounds/:id(\\d+)/matches', component: ManageMatch },
     { path: '/admin/submissions', component: SubmissionListing },
+    { path: '/admin/judging', component: JudgingListing },
 
     { path: '*', redirect: '/' },
 ];

@@ -62,64 +62,10 @@
             </div>
         </div>
 
-        <div
+        <elimination-judging-detail
             v-if="selectedMatch"
-            id="detailModal"
-            class="modal fade"
-            tabindex="-1"
-        >
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            {{ selectedMatch.teamA.name }} vs {{ selectedMatch.teamB.name }}
-                        </h5>
-                        <button
-                            type="button"
-                            class="close"
-                            data-dismiss="modal"
-                        >
-                            &times;
-                        </button>
-                    </div>
-
-                    <div class="modal-body text-left">
-                        {{ selectedMatch.information }}
-
-                        <hr>
-
-                        <div
-                            v-for="(eliminationJudging, i) in selectedMatch.eliminationJudging"
-                            :key="eliminationJudging.id"
-                        >
-                            <a
-                                data-toggle="collapse"
-                                :href="`#eliminationJudging${eliminationJudging.id}`"
-                                @click="showComment(eliminationJudging.id)"
-                            >
-                                <small>
-                                    <i
-                                        class="fas mr-2"
-                                        :class="getCollapseClass(eliminationJudging.id)"
-                                    />
-                                </small>
-                                {{ eliminationJudging.judge.username }}
-                                <b>({{ eliminationJudging.submissionChosen.country.name }})</b>:
-                            </a>
-
-                            <p
-                                :id="`eliminationJudging${eliminationJudging.id}`"
-                                class="text-light ml-3 collapse"
-                            >
-                                <span style="white-space: pre-line;">{{ eliminationJudging.comment }}</span>
-                            </p>
-
-                            <hr v-if="i < selectedMatch.eliminationJudging.length - 1">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            :match="selectedMatch"
+        />
     </div>
 </template>
 
@@ -130,11 +76,13 @@ import Component from 'vue-class-component';
 import { Round } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import RoundMatch from '../../components/RoundMatch.vue';
+import EliminationJudgingDetail from '../../components/results/EliminationJudgingDetail.vue';
 
 @Component({
     components: {
         PageHeader,
         RoundMatch,
+        EliminationJudgingDetail,
     },
 })
 export default class EliminationResult extends Vue {
@@ -142,7 +90,6 @@ export default class EliminationResult extends Vue {
     allRounds: Round[] = [];
     currentRound: Round | null = null;
     selectedMatch = null;
-    commentsExpanded: number[] = [];
 
     async created (): Promise<void> {
         const res = await Axios.get('/api/results/elimination');
@@ -170,19 +117,6 @@ export default class EliminationResult extends Vue {
         if (!this.currentRound) return 'round--current';
 
         return id == this.currentRound.id ? 'round--current' : '';
-    }
-
-    showComment (id: number): void {
-        const i = this.commentsExpanded.findIndex(j => j === id);
-        i !== -1 ? this.commentsExpanded.splice(i, 1) : this.commentsExpanded.push(id);
-    }
-
-    getCollapseClass (id: number): string {
-        if (this.commentsExpanded.includes(id)) {
-            return 'fa-chevron-down';
-        }
-
-        return 'fa-chevron-right';
     }
 
 }

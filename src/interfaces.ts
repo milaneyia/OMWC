@@ -53,9 +53,7 @@ export interface Match {
     teamB?: Country;
 
     submissions?: Submission[];
-    eliminationJudging?: {
-        submissionChosen: Submission;
-    }[];
+    eliminationJudging?: EliminationJudging[];
 }
 
 export interface Submission {
@@ -71,6 +69,7 @@ export interface Submission {
     };
 
     qualifierJudging: QualifierJudging[];
+    eliminationJudging: EliminationJudging[];
 }
 
 export interface QualifierJudgingToCriterias {
@@ -92,4 +91,12 @@ export interface Criteria {
     id: number;
     name: string;
     maxScore: number;
+}
+
+export interface EliminationJudging {
+    id: number;
+    judgeId: number;
+    judge: User;
+
+    submissionChosen: Submission;
 }

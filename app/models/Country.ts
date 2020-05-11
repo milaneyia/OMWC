@@ -1,6 +1,5 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './User';
-import { Round } from './rounds/Round';
 import { Submission } from './rounds/Submission';
 import { Match } from './rounds/Match';
 
@@ -28,18 +27,7 @@ export class Country extends BaseEntity {
     @OneToMany(() => Match, (match) => match.teamB)
     matchesB!: Match[];
 
-    @ManyToOne(() => Round)
-    eliminationRound!: Round;
-
     @OneToMany(() => Submission, (submissions) => submissions.country)
     submissions!: Submission[];
 
-    // Used for the leaderboard
-    finalScore!: number;
-    criteriaScores!: CriteriaScore[];
-}
-
-export interface CriteriaScore {
-    criteria: string;
-    score: number;
 }

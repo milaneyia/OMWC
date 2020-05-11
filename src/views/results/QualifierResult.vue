@@ -117,69 +117,10 @@
             </div>
         </div>
 
-        <div
+        <qualifier-judging-detail
             v-if="selectedScore"
-            id="detailModal"
-            class="modal fade"
-            tabindex="-1"
-        >
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            {{ selectedScore.country.name }}
-                        </h5>
-                        <button
-                            type="button"
-                            class="close"
-                            data-dismiss="modal"
-                        >
-                            &times;
-                        </button>
-                    </div>
-
-                    <div class="modal-body text-left">
-                        <div
-                            v-for="(qualifierJudging, i) in scoreDetail.qualifierJudging"
-                            :key="qualifierJudging.id"
-                        >
-                            <b>{{ qualifierJudging.judge.username }}</b>
-
-                            <div
-                                v-for="judgingToCriterias in qualifierJudging.qualifierJudgingToCriterias"
-                                :key="judgingToCriterias.id"
-                                class="my-1"
-                            >
-                                <a
-                                    data-toggle="collapse"
-                                    :href="`#judgingToCriteria${judgingToCriterias.id}`"
-                                    @click="showComment(judgingToCriterias.id)"
-                                >
-                                    <small>
-                                        <i
-                                            class="fas mr-2"
-                                            :class="getCollapseClass(judgingToCriterias.id)"
-                                        />
-                                    </small>
-                                    {{ judgingToCriterias.criteria.name }}
-                                    <b>({{ judgingToCriterias.score }})</b>:
-                                </a>
-
-
-                                <p
-                                    :id="`judgingToCriteria${judgingToCriterias.id}`"
-                                    class="text-light ml-3 collapse"
-                                >
-                                    <span style="white-space: pre-line;">{{ judgingToCriterias.comment }}</span>
-                                </p>
-                            </div>
-
-                            <hr v-if="i < scoreDetail.qualifierJudging.length - 1">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            :submission="scoreDetail"
+        />
     </div>
 </template>
 
@@ -188,6 +129,7 @@ import Vue from 'vue';
 import Axios from 'axios';
 import Component from 'vue-class-component';
 import PageHeader from '../../components/PageHeader.vue';
+import QualifierJudgingDetail from '../../components/results/QualifierJudgingDetail.vue';
 import { Round, Country, User, Submission } from '../../interfaces';
 
 interface TeamScore {
@@ -216,6 +158,7 @@ interface JudgeCorrel {
 @Component({
     components: {
         PageHeader,
+        QualifierJudgingDetail,
     },
 })
 export default class QualifierResult extends Vue {
@@ -224,7 +167,6 @@ export default class QualifierResult extends Vue {
     judges: User[] = [];
     round: Round | null = null;
     selectedScore: TeamScore | null = null;
-    commentsExpanded: number[] = [];
     displayMode = 'criterias';
     judgesCorrel: JudgeCorrel[] = [];
 
@@ -403,19 +345,6 @@ export default class QualifierResult extends Vue {
 
     getJudgeCorrel (id: number): number | string {
         return this.judgesCorrel.find(j => j.id === id)?.correl.toFixed(4) || 0;
-    }
-
-    showComment (id: number): void {
-        const i = this.commentsExpanded.findIndex(j => j === id);
-        i !== -1 ? this.commentsExpanded.splice(i, 1) : this.commentsExpanded.push(id);
-    }
-
-    getCollapseClass (id: number): string {
-        if (this.commentsExpanded.includes(id)) {
-            return 'fa-chevron-down';
-        }
-
-        return 'fa-chevron-right';
     }
 
 }
