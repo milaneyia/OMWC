@@ -11,13 +11,16 @@ export class Submission extends BaseEntity {
     id!: number;
 
     @Column()
-    originalLink!: string;
+    originalPath!: string;
 
     @Column({ nullable: true })
     anonymisedAs!: string;
 
-    @Column({ nullable: true, length: 3000 })
-    anonymisedLink?: string;
+    @Column({ nullable: true })
+    anonymisedPath?: string;
+
+    @Column()
+    countryId!: number;
 
     @ManyToOne(() => Country, (country) => country.submissions, { nullable: false })
     country!: Country;

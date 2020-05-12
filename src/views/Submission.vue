@@ -13,7 +13,7 @@
                                 <tr>
                                     <th>Round</th>
                                     <th>Submission Date</th>
-                                    <th>Link</th>
+                                    <th />
                                 </tr>
                             </thead>
                             <tbody>
@@ -26,8 +26,11 @@
                                         {{ new Date(submission.updatedAt).toLocaleString() }}
                                     </td>
                                     <td>
-                                        <a :href="submission.originalLink">
-                                            {{ submission.originalLink }}
+                                        <a
+                                            v-if="submission.originalPath"
+                                            :href="`/api/submissions/${submission.id}/download`"
+                                        >
+                                            download
                                         </a>
                                     </td>
                                 </tr>
@@ -60,12 +63,14 @@
                             <hr>
 
                             <label>
-                                .osz Link
+                                .osz File (20Mb max)
                             </label>
+
                             <input
-                                v-model="oszLink"
-                                type="text"
+                                id="oszFile"
+                                type="file"
                                 class="form-control"
+                                @change="oszFile = $event.target.files[0]"
                             >
                         </div>
                     </div>
@@ -103,11 +108,10 @@ export default class Submission extends Vue {
     submissions: ISubmission[] = [];
     currentRound = null;
     currentMatch: Match | null = null;
-    oszLink = '';
+    oszFile!: File;
 
     async created (): Promise<void> {
         await this.getData();
-        this.oszLink = this.submissions?.find(s => s.match.id === this.currentMatch?.id)?.originalLink || '';
     }
 
     async getData (): Promise<void> {
@@ -118,8 +122,12 @@ export default class Submission extends Vue {
     }
 
     async save (): Promise<void> {
-        const res = await Axios.post('/api/submissions/save', {
-            oszLink: this.oszLink,
+        const formData = new FormData();
+        formData.append('oszFile', this.oszFile);
+        const res = await Axios.post('/api/submissions/save', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
 
         if (res.data.success) {

@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 function convertToNumber(input: string|undefined, type: string): number | undefined {
     let parsedInput: number|undefined;
 
@@ -66,4 +68,8 @@ export function isOsuUrl(input: string): boolean {
     const url = new URL(input);
 
     return url.host === 'osu.ppy.sh';
+}
+
+export async function checkFileExistence(path: string): Promise<void> {
+    await fs.promises.access(path, fs.constants.F_OK | fs.constants.R_OK);
 }
