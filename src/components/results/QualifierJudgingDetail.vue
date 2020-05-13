@@ -20,6 +20,15 @@
                 </div>
 
                 <div class="modal-body text-left">
+                    <h5>
+                        <a
+                            v-if="submission.originalPath"
+                            :href="`/api/results/download/${submission.id}`"
+                        >
+                            Download the entry
+                        </a>
+                    </h5>
+
                     <div
                         v-for="(qualifierJudging, i) in submission.qualifierJudging"
                         :key="qualifierJudging.id"

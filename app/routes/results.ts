@@ -1,7 +1,10 @@
 import Router from '@koa/router';
 import { LessThanOrEqual } from 'typeorm';
+import path from 'path';
 import { Criteria } from '../models/judging/Criteria';
 import { Round } from '../models/rounds/Round';
+import { findSubmission, download } from '../middlewares/downloadSubmission';
+import { Submission } from '../models/rounds/Submission';
 
 const resultsRouter = new Router();
 
@@ -40,6 +43,8 @@ resultsRouter.get('/elimination', async (ctx) => {
         .innerJoinAndSelect('round.matches', 'matches')
         .leftJoinAndSelect('matches.teamA', 'teamA')
         .leftJoinAndSelect('matches.teamB', 'teamB')
+        .leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() })
+        .leftJoinAndSelect('submissions.country', 'sub_country')
         .leftJoinAndSelect('matches.eliminationJudging', 'eliminationJudging', 'round.resultsAt <= :today', { today: new Date() })
         .leftJoinAndSelect('eliminationJudging.judge', 'judge')
         .leftJoinAndSelect('eliminationJudging.submissionChosen', 'submissionChosen')
@@ -59,5 +64,14 @@ resultsRouter.get('/elimination', async (ctx) => {
         currentRound,
     };
 });
+
+resultsRouter.get('/download/:id', findSubmission, async (ctx, next) => {
+    const submission: Submission = ctx.state.submission;
+
+    ctx.state.baseDir = path.join(__dirname, '../../osz/originals/');
+    ctx.state.downloadPath = submission.originalPath;
+
+    return await next();
+}, download);
 
 export default resultsRouter;

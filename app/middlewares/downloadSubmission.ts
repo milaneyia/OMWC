@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParameterizedContext, Next } from 'koa';
 import path from 'path';
 import fs from 'fs';

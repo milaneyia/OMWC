@@ -20,6 +20,18 @@
                 </div>
 
                 <div class="modal-body text-left">
+                    <div
+                        v-for="submission in match.submissions"
+                        :key="submission.id + '-sub'"
+                    >
+                        <a
+                            v-if="submission.originalPath"
+                            :href="`/api/results/download/${submission.id}`"
+                        >
+                            Download {{ submission.country.name }} entry
+                        </a>
+                    </div>
+
                     {{ match.information }}
 
                     <hr>
