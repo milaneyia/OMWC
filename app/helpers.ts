@@ -73,3 +73,15 @@ export function isOsuUrl(input: string): boolean {
 export async function checkFileExistence(path: string): Promise<void> {
     await fs.promises.access(path, fs.constants.F_OK | fs.constants.R_OK);
 }
+
+export async function saveFile(inputPath: string, outputDir: string, outputPath: string): Promise<void> {
+    await fs.promises.mkdir(outputDir, { recursive: true });
+
+    return new Promise((resolve, reject) => {
+        const reader = fs.createReadStream(inputPath);
+        const stream = fs.createWriteStream(outputPath);
+        reader.pipe(stream).end();
+        stream.on('finish', resolve);
+        stream.on('error', reject);
+    });
+}

@@ -44,14 +44,17 @@
                             <td>{{ submission.country.name }}</td>
                             <td>{{ new Date(submission.updatedAt).toLocaleString() }}</td>
                             <td>
-                                <a :href="submission.originalLink">
-                                    {{ submission.originalLink }}
+                                <a
+                                    v-if="submission.originalPath"
+                                    :href="`/api/admin/submissions/${submission.id}/download`"
+                                >
+                                    download
                                 </a>
                             </td>
                             <td>
                                 <input
                                     v-if="editing == submission.id"
-                                    v-model="submission.anonymisedAs"
+                                    v-model="anonymisedAs"
                                     type="text"
                                     class="form-control form-control-sm"
                                     maxlength="255"
@@ -62,28 +65,40 @@
                             <td>
                                 <input
                                     v-if="editing == submission.id"
-                                    v-model="submission.anonymisedLink"
-                                    type="text"
+                                    type="file"
                                     class="form-control form-control-sm"
                                     maxlength="255"
+                                    @change="oszFile = $event.target.files[0]"
                                 >
 
-                                <a v-else :href="submission.anonymisedLink">
-                                    {{ submission.anonymisedLink }}
+                                <a
+                                    v-else-if="submission.anonymisedPath"
+                                    :href="`/api/admin/submissions/${submission.id}/downloadAnom`"
+                                >
+                                    download
                                 </a>
                             </td>
                             <td>
+                                <template v-if="editing == submission.id">
+                                    <button
+                                        class="btn btn-sm btn-secondary mb-2 mb-lg-0"
+                                        @click="cancel"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+
+                                        class="btn btn-sm btn-success"
+                                        @click="save(submission)"
+                                    >
+                                        Save
+                                    </button>
+                                </template>
+
                                 <button
-                                    v-if="editing == submission.id"
-                                    class="btn btn-sm btn-success"
-                                    @click="save(submission)"
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    v-else
+                                    v-else-if="!editing"
                                     class="btn btn-sm btn-primary"
-                                    @click="editing = submission.id"
+                                    @click="edit(submission.id, submission.anonymisedAs)"
                                 >
                                     Edit
                                 </button>
@@ -120,7 +135,9 @@ import { Submission } from '../../interfaces';
 export default class SubmissionListing extends Vue {
 
     rounds = [];
-    editing = null;
+    editing: null | number = null;
+    anonymisedAs = '';
+    oszFile: File | null = null;
 
     async created (): Promise<void> {
         await this.getData();
@@ -132,17 +149,40 @@ export default class SubmissionListing extends Vue {
     }
 
     async save (submission: Submission): Promise<void> {
-        const res = await Axios.post(`/api/admin/submissions/${submission.id}/save`, {
-            anonymisedAs: submission.anonymisedAs,
-            anonymisedLink: submission.anonymisedLink,
+        if (!this.oszFile) {
+            alert('Select an .osz');
+
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('oszFile', this.oszFile);
+        formData.append('anonymisedAs', this.anonymisedAs);
+        const res = await Axios.post(`/api/admin/submissions/${submission.id}/save`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
 
         if (res.data.success) {
-            this.editing = null;
+            this.cancel();
+            this.getData();
             alert('Saved');
         } else {
             alert(res.data.error || 'Something went wrong');
         }
+    }
+
+    edit (id: number, anonymisedAs: string): void {
+        this.editing = id;
+        this.oszFile = null;
+        this.anonymisedAs = anonymisedAs || '';
+    }
+
+    cancel (): void {
+        this.editing = null;
+        this.oszFile = null;
+        this.anonymisedAs = '';
     }
 
 }

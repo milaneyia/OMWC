@@ -1,14 +1,14 @@
 import Router from '@koa/router';
 import koaBody from 'koa-body';
-import fs from 'fs';
 import path from 'path';
-import { convertToIntOrThrow, checkFileExistence } from '../helpers';
+import { checkFileExistence, saveFile } from '../helpers';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
 import { Match } from '../models/rounds/Match';
+import { findSubmission, canCaptainDownload, download } from '../middlewares/downloadSubmission';
 
-const baseDir = path.join(__dirname, '../../osz/');
+const baseDir = path.join(__dirname, '../../osz/originals/');
 const submissionsRouter = new Router();
 
 submissionsRouter.prefix('/api/submissions');
@@ -80,11 +80,7 @@ submissionsRouter.post('/save', koaBody({
     const originalPath = path.join(ctx.state.user.country.code, fileName);
 
     if (oszFile) {
-        const reader = fs.createReadStream(oszFile.path);
-        await fs.promises.mkdir(finalDir, { recursive: true });
-
-        const stream = fs.createWriteStream(finalPath);
-        reader.pipe(stream);
+        await saveFile(oszFile.path, finalDir, finalPath);
     }
 
     await checkFileExistence(finalPath);
@@ -108,22 +104,13 @@ submissionsRouter.post('/save', koaBody({
     };
 });
 
-submissionsRouter.get('/:id/download', async (ctx) => {
-    const id = convertToIntOrThrow(ctx.params.id);
-    const submission = await Submission.findOneOrFail({ id });
+submissionsRouter.get('/:id/download', findSubmission, canCaptainDownload, async (ctx, next) => {
+    const submission: Submission = ctx.state.submission;
 
-    if (submission.countryId !== ctx.state.user.country.id) {
-        return ctx.body = {
-            error: 'Unauthorized',
-        };
-    }
+    ctx.state.baseDir = baseDir;
+    ctx.state.downloadPath = submission.originalPath;
 
-    await checkFileExistence(path.join(baseDir, submission.originalPath));
-
-    const split = submission.originalPath.split('/');
-    ctx.attachment(split[split.length - 1]);
-    ctx.type = 'application/octet-stream';
-    ctx.body = fs.createReadStream(path.join(baseDir, submission.originalPath));
-});
+    return await next();
+}, download);
 
 export default submissionsRouter;
