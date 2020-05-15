@@ -7,7 +7,13 @@ import { Submission } from '../models/rounds/Submission';
 
 export async function findSubmission(ctx: ParameterizedContext, next: Next): Promise<any> {
     const id = convertToIntOrThrow(ctx.params.id);
-    const submission = await Submission.findOneOrFail({ id });
+    const submission = await Submission.findOneOrFail({
+        where: { id },
+        relations: [
+            'match',
+            'match.round',
+        ],
+    });
 
     ctx.state.submission = submission;
 
