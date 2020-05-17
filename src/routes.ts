@@ -18,6 +18,8 @@ const ManageRound = () => import(/* webpackChunkName: "admin" */ './views/admin/
 const RoundListing = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/RoundListing.vue');
 const ManageMatch = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageMatch.vue');
 const RequestAccess = () => import(/* webpackChunkName: "admin" */ './views/admin/RequestAccess.vue');
+const ManageUser = () => import(/* webpackChunkName: "admin" */ './views/admin/ManageUser.vue');
+const LogListing = () => import(/* webpackChunkName: "admin" */ './views/admin/LogListing.vue');
 const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/admin/SubmissionListing.vue');
 const JudgingListing = () => import(/* webpackChunkName: "admin" */ './views/admin/JudgingListing.vue');
 
@@ -36,7 +38,9 @@ const routes: RouteConfig[] = [
     { path: '/applications/voting', component: Voting },
     { path: '/applications/mappersChoice', component: MapperChoice },
 
+    { path: '/admin/logs', component: LogListing },
     { path: '/admin/users/access', component: RequestAccess },
+    { path: '/admin/users/roles', component: ManageUser },
     { path: '/admin/schedule', component: ManageSchedule },
     { path: '/admin/captainChoice', component: CaptainChoice },
     { path: '/admin/teamsChoice', component: TeamChoice },

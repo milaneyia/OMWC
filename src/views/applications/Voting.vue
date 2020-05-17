@@ -38,7 +38,7 @@
                                             :class="user.captainVoteId == application.id ? 'btn-danger' : 'btn-success'"
                                             @click="vote(application.id)"
                                         >
-                                            <i class="fas" :class="user.captainVoteId == application.id ? 'fa-thumbs-down' : 'fa-thumbs-up'" />
+                                            {{ user.captainVoteId == application.id ? 'Cancel vote' : 'Vote' }}
                                         </button>
                                     </div>
                                     <div class="user-comment__divider" />
@@ -102,9 +102,11 @@ export default class Voting extends Vue {
             return;
         }
 
+        this.$store.commit('updateLoadingState');
         const res = await Axios.get('/api/applications/voting');
         this.applications = res.data.applications;
         this.wasLoaded = true;
+        this.$store.commit('updateLoadingState');
     }
 
     async vote (applicationId: number): Promise<void> {

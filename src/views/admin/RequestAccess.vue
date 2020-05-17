@@ -59,7 +59,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Route } from 'vue-router';
 import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
@@ -73,6 +72,13 @@ import DataTable from '../../components/DataTable.vue';
 export default class RequestAccess extends Vue {
 
     requests = [];
+
+    async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
+        const res = await Axios.get(`/api/admin/users/access`);
+        this.requests = res.data.requests;
+        this.$store.commit('updateLoadingState');
+    }
 
     shortenLink(link: string): string {
         if (link?.length > 60) {
@@ -93,21 +99,6 @@ export default class RequestAccess extends Vue {
             this.requests = res.data.requests;
             alert('Done');
         }
-    }
-
-    async beforeRouteEnter (to: Route, from: Route, next: Function): Promise<void> {
-        const res = await Axios.get(`/api/admin/users/access`);
-        next((vm: RequestAccess) => {
-            vm.requests = res.data.requests;
-        });
-    }
-
-    async beforeRouteUpdate (to: Route, from: Route, next: Function): Promise<void> {
-        this.requests = [];
-        const res = await Axios.get(`/api/admin/users/access`);
-        this.requests = res.data.requests;
-
-        next();
     }
 
 }

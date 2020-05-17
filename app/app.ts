@@ -25,6 +25,7 @@ import submissionsRouter from './routes/submissions';
 import teamsRouter from './routes/teams';
 import usersAdminRouter from './routes/admin/users';
 import usersRouter from './routes/users';
+import logsRouter from './routes/admin/logs';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -113,6 +114,9 @@ app.use(submissionsAdminRouter.routes());
 app.use(submissionsAdminRouter.allowedMethods());
 app.use(judgingAdminRouter.routes());
 app.use(judgingAdminRouter.allowedMethods());
+
+app.use(logsRouter.routes());
+app.use(logsRouter.allowedMethods());
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.on('error', (err, ctx) => {

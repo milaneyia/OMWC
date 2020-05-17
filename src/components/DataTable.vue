@@ -1,6 +1,9 @@
 <template>
     <div class="card-body p-0">
-        <table class="table table-hover table-responsive-lg">
+        <table
+            class="table table-hover"
+            :class="customClass || 'table-responsive-lg'"
+        >
             <thead>
                 <tr>
                     <th v-for="header in headers" :key="header">
@@ -26,6 +29,10 @@ import PageHeader from './PageHeader.vue';
     },
     props: {
         headers: Array,
+        customClass: {
+            type: String,
+            required: false,
+        },
     },
 })
 export default class AdminHeader extends Vue {

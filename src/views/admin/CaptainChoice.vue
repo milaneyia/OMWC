@@ -6,18 +6,22 @@
         />
 
         <div class="row">
-            <div v-if="applicationsByCountry && applicationsByCountry.length" class="col-sm">
+            <div class="col-sm">
                 <div
                     v-for="country in applicationsByCountry"
                     :key="country.id"
-                    class="card"
+                    class="card my-3"
                 >
                     <div class="card-header">
-                        <h4>{{ country.name }}</h4>
+                        <h5 class="mb-0 align-items-center d-flex justify-content-center">
+                            <div class="country-flag mr-2" :style="`background-image: url(https://osu.ppy.sh/images/flags/${country.code}.png)`" />
+                            {{ country.name }}
+                        </h5>
                     </div>
 
                     <data-table
                         :headers="['Applicant', 'Total Votes', 'Voted by', '']"
+                        custom-class="table-responsive-md"
                     >
                         <tr
                             v-for="applicant in country.users"
@@ -67,10 +71,6 @@
                     </data-table>
                 </div>
             </div>
-
-            <p v-else class="card-body">
-                No applications yet
-            </p>
         </div>
 
         <div
@@ -126,7 +126,9 @@ export default class CaptainChoice extends Vue {
     selectedReason = '';
 
     async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
         await this.getData();
+        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {

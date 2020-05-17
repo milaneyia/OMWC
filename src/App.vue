@@ -102,6 +102,13 @@
                             <router-link to="/admin/judging" class="dropdown-item">
                                 Judging List
                             </router-link>
+                            <div class="dropdown-divider" />
+                            <router-link to="/admin/users/roles" class="dropdown-item">
+                                Edit User Role
+                            </router-link>
+                            <router-link to="/admin/logs" class="dropdown-item">
+                                Logs
+                            </router-link>
                         </div>
                     </li>
                 </ul>
@@ -120,7 +127,9 @@
         </nav>
 
         <transition name="route-transition" mode="out-in">
-            <router-view />
+            <loading-page>
+                <router-view />
+            </loading-page>
         </transition>
     </div>
 </template>
@@ -129,8 +138,13 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
+import LoadingPage from './components/LoadingPage.vue';
 
-@Component
+@Component({
+    components: {
+        LoadingPage,
+    },
+})
 export default class App extends Vue {
 
     @State initialized!: object;

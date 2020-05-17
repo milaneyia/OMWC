@@ -91,7 +91,9 @@ export default class TeamChoice extends Vue {
     countries = [];
 
     async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
         await this.getData();
+        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {

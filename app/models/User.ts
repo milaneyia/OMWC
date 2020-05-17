@@ -59,6 +59,9 @@ export class User extends BaseEntity {
     @JoinColumn()
     requestAccess?: RequestAccess;
 
+    @Column({ nullable: true })
+    mapperApplicationId?: number
+
     @OneToOne(() => MapperApplication)
     @JoinColumn()
     mapperApplication?: MapperApplication;

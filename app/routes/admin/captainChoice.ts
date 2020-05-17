@@ -29,6 +29,7 @@ captainChoiceAdminRouter.get('/', async (ctx) => {
             'userVote.osuId',
             'userVote.username',
         ])
+        .orderBy('country.name', 'ASC')
         .getMany();
 
     ctx.body = {

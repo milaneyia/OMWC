@@ -5,6 +5,7 @@ export interface MainState {
     initialized: boolean;
     user: User | null;
     schedule: object | null;
+    isLoading: boolean;
 }
 
 const store: StoreOptions<MainState> = {
@@ -12,6 +13,7 @@ const store: StoreOptions<MainState> = {
         initialized: false,
         user: null,
         schedule: null,
+        isLoading: false,
     },
     mutations: {
         setData (state, payload): void {
@@ -24,6 +26,9 @@ const store: StoreOptions<MainState> = {
         },
         updateSchedule (state, payload): void {
             state.schedule = payload;
+        },
+        updateLoadingState (state): void {
+            state.isLoading = !state.isLoading;
         },
     },
 };

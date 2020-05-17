@@ -2,6 +2,7 @@ export interface User {
     id: number;
     username: string;
     captainVoteId?: number;
+    roleId: number;
 
     isBasicUser: boolean;
     isElevatedUser: boolean;

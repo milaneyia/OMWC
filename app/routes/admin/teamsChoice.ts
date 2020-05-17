@@ -13,10 +13,21 @@ teamsChoiceAdminRouter.use(isStaff);
 teamsChoiceAdminRouter.get('/', async (ctx) => {
     const countries = await Country
         .createQueryBuilder('country')
-        .innerJoinAndSelect('country.users', 'user')
-        .leftJoinAndSelect('user.mapperApplication', 'mapperApplication')
-        .where('user.mapperApplication IS NOT NULL')
+        .innerJoin('country.users', 'user')
+        .where('user.mapperApplicationId IS NOT NULL')
         .orWhere('user.roleId = :captain', { captain: ROLE.Captain })
+        .orWhere('user.roleId = :contestant', { contestant: ROLE.Contestant })
+        .select([
+            'country.id',
+            'country.name',
+            'country.wasConfirmed',
+            'user.id',
+            'user.username',
+            'user.osuId',
+            'user.roleId',
+            'user.mapperApplicationId',
+        ])
+        .orderBy('country.name', 'ASC')
         .getMany();
 
     ctx.body = {
