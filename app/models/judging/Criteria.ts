@@ -10,7 +10,7 @@ export class Criteria extends BaseEntity {
     @Column()
     name!: string;
 
-    @Column('double')
+    @Column()
     maxScore!: number;
 
     @OneToMany(() => QualifierJudgingToCriteria, qualifierJudgingToCriteria => qualifierJudgingToCriteria.criteria)

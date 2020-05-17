@@ -1,45 +1,13 @@
 import fs from 'fs';
 
-function convertToNumber(input: string|undefined, type: string): number | undefined {
-    let parsedInput: number|undefined;
+export function convertToIntOrThrow(input: string): number {
+    const parsedInput = parseInt(input, 10);
 
-    if (input) {
-        if (type === 'int') {
-            parsedInput = parseInt(input, 10);
-        } else if (type === 'float') {
-            parsedInput = parseFloat(input);
-        }
+    if (isNaN(parsedInput)) {
+        throw new Error('Not a number');
     }
 
     return parsedInput;
-}
-
-function shouldThrow(parsedInput: number|undefined): number {
-    if (!parsedInput || isNaN(parsedInput)) {
-        throw new Error('Not a number');
-    } else {
-        return parsedInput;
-    }
-}
-
-export function convertToInt(input: string|undefined): number | undefined {
-    return convertToNumber(input, 'int');
-}
-
-export function convertToIntOrThrow(input: string|undefined): number {
-    const parsedInput = convertToNumber(input, 'int');
-
-    return shouldThrow(parsedInput);
-}
-
-export function convertToFloat(input: string): number | undefined {
-    return convertToNumber(input, 'float');
-}
-
-export function convertToFloatOrThrow(input: string): number {
-    const parsedInput = convertToNumber(input, 'float');
-
-    return shouldThrow(parsedInput);
 }
 
 export function convertToArray<T>(input: T): T[] {

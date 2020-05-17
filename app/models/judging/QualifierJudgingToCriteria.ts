@@ -20,7 +20,7 @@ export class QualifierJudgingToCriteria extends BaseEntity {
     @ManyToOne(() => Criteria, criteria => criteria.qualifierJudgingToCriterias)
     criteria!: Criteria;
 
-    @Column('double')
+    @Column()
     score!: number;
 
     @Column()
