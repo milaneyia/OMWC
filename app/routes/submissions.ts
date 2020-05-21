@@ -104,8 +104,14 @@ submissionsRouter.post('/save', koaBody({
     };
 });
 
-submissionsRouter.get('/:id/download', findSubmission, canCaptainDownload, async (ctx, next) => {
+submissionsRouter.get('/:id/download', findSubmission, async (ctx, next) => {
     const submission: Submission = ctx.state.submission;
+
+    if (submission.countryId !== ctx.state.user.country.id) {
+        return ctx.body = {
+            error: 'Unauthorized',
+        };
+    }
 
     ctx.state.baseDir = baseDir;
     ctx.state.downloadPath = submission.originalPath;

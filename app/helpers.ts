@@ -43,13 +43,11 @@ export async function checkFileExistence(path: string): Promise<void> {
 }
 
 export async function saveFile(inputPath: string, outputDir: string, outputPath: string): Promise<void> {
-    await fs.promises.mkdir(outputDir, { recursive: true });
-
-    return new Promise((resolve, reject) => {
-        const reader = fs.createReadStream(inputPath);
-        const stream = fs.createWriteStream(outputPath);
-        reader.pipe(stream).end();
-        stream.on('finish', resolve);
-        stream.on('error', reject);
-    });
+    try {
+        await fs.promises.mkdir(outputDir, { recursive: true });
+        await fs.promises.writeFile(outputPath, inputPath);
+    } catch (error) {
+        console.log(error);
+        throw new Error(`Couldn't save the file`);
+    }
 }

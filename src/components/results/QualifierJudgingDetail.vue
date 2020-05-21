@@ -24,6 +24,7 @@
                         <a
                             v-if="submission.originalPath"
                             :href="`/api/results/download/${submission.id}`"
+                            target="__blank"
                         >
                             Download the entry
                         </a>

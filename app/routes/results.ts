@@ -68,7 +68,7 @@ resultsRouter.get('/elimination', async (ctx) => {
 resultsRouter.get('/download/:id', findSubmission, async (ctx, next) => {
     const submission: Submission = ctx.state.submission;
 
-    if (submission.match.round.resultsAt >= new Date()) {
+    if (new Date(submission.match.round.resultsAt) > new Date()) {
         return ctx.body = {
             error: 'Unathorized',
         };

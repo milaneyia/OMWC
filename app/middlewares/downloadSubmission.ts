@@ -20,18 +20,6 @@ export async function findSubmission(ctx: ParameterizedContext, next: Next): Pro
     return await next();
 }
 
-export async function canCaptainDownload(ctx: ParameterizedContext, next: Next): Promise<any> {
-    const submission: Submission = ctx.state.submission;
-
-    if (submission.countryId !== ctx.state.user.country.id) {
-        return ctx.body = {
-            error: 'Unauthorized',
-        };
-    }
-
-    return await next();
-}
-
 export async function download(ctx: ParameterizedContext): Promise<any> {
     const baseDir: string = ctx.state.baseDir;
     const downloadPath: string = ctx.state.downloadPath;
