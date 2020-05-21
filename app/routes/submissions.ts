@@ -6,7 +6,7 @@ import { authenticate, isCaptain } from '../middlewares/authentication';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
 import { Match } from '../models/rounds/Match';
-import { findSubmission, canCaptainDownload, download } from '../middlewares/downloadSubmission';
+import { findSubmission, download } from '../middlewares/downloadSubmission';
 
 const baseDir = path.join(__dirname, '../../osz/originals/');
 const submissionsRouter = new Router();
