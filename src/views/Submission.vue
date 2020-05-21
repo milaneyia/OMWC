@@ -80,7 +80,14 @@
             <div class="row">
                 <div class="col-sm">
                     <button class="btn btn-primary btn-block" @click="save">
-                        Save
+                        <div
+                            v-if="isSaving"
+                            class="spinner-border spinner-border-sm align-middle"
+                            role="status"
+                        >
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <span v-else>Save</span>
                     </button>
                 </div>
             </div>
@@ -108,7 +115,8 @@ export default class Submission extends Vue {
     submissions: ISubmission[] = [];
     currentRound = null;
     currentMatch: Match | null = null;
-    oszFile!: File;
+    oszFile: File | null = null;
+    isSaving = false;
 
     async created (): Promise<void> {
         this.$store.commit('updateLoadingState');
@@ -124,6 +132,13 @@ export default class Submission extends Vue {
     }
 
     async save (): Promise<void> {
+        if (!this.oszFile) {
+            alert('Select an .osz');
+
+            return;
+        }
+
+        this.isSaving = true;
         const formData = new FormData();
         formData.append('oszFile', this.oszFile);
         const res = await Axios.post('/api/submissions/save', formData, {
@@ -138,6 +153,8 @@ export default class Submission extends Vue {
         } else {
             alert(res.data.error || 'Something went wrong!');
         }
+
+        this.isSaving = false;
     }
 
 }

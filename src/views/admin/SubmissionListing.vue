@@ -87,11 +87,17 @@
                                         Cancel
                                     </button>
                                     <button
-
                                         class="btn btn-sm btn-success"
                                         @click="save(submission)"
                                     >
-                                        Save
+                                        <div
+                                            v-if="isSaving"
+                                            class="spinner-border spinner-border-sm align-middle"
+                                            role="status"
+                                        >
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                        <span v-else>Save</span>
                                     </button>
                                 </template>
 
@@ -138,6 +144,7 @@ export default class SubmissionListing extends Vue {
     editing: null | number = null;
     anonymisedAs = '';
     oszFile: File | null = null;
+    isSaving = false;
 
     async created (): Promise<void> {
         await this.getData();
@@ -155,6 +162,7 @@ export default class SubmissionListing extends Vue {
             return;
         }
 
+        this.isSaving = true;
         const formData = new FormData();
         formData.append('oszFile', this.oszFile);
         formData.append('anonymisedAs', this.anonymisedAs);
@@ -171,6 +179,8 @@ export default class SubmissionListing extends Vue {
         } else {
             alert(res.data.error || 'Something went wrong');
         }
+
+        this.isSaving = false;
     }
 
     edit (id: number, anonymisedAs: string): void {
