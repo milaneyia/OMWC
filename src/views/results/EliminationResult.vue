@@ -92,9 +92,11 @@ export default class EliminationResult extends Vue {
     selectedMatch = null;
 
     async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
         const res = await Axios.get('/api/results/elimination');
         this.allRounds = res.data.rounds;
         this.currentRound = res.data.currentRound;
+        this.$store.commit('updateLoadingState');
     }
 
     get rounds (): Round[] {

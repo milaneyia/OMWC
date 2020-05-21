@@ -171,7 +171,9 @@ export default class QualifierResult extends Vue {
     judgesCorrel: JudgeCorrel[] = [];
 
     async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
         await this.getData();
+        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {

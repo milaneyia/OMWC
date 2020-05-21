@@ -126,11 +126,11 @@
             </div>
         </nav>
 
-        <transition name="route-transition" mode="out-in">
-            <loading-page>
+        <loading-page>
+            <transition name="route-transition" mode="out-in">
                 <router-view />
-            </loading-page>
-        </transition>
+            </transition>
+        </loading-page>
     </div>
 </template>
 

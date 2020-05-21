@@ -59,7 +59,9 @@ export default class TeamListing extends Vue {
     teams = [];
 
     async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
         await this.getData();
+        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {

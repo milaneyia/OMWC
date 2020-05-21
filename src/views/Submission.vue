@@ -111,7 +111,9 @@ export default class Submission extends Vue {
     oszFile!: File;
 
     async created (): Promise<void> {
+        this.$store.commit('updateLoadingState');
         await this.getData();
+        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {
