@@ -39,29 +39,31 @@
                             Information
                         </router-link>
                     </li>
-                    <li class="nav-item">
-                        <router-link class="nav-link" to="/teams">
-                            Teams
-                        </router-link>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a
-                            class="nav-link dropdown-toggle"
-                            href="#"
-                            data-toggle="dropdown"
-                        >
-                            Results
-                        </a>
+                    <template v-if="hasMappersChoiceEnded">
+                        <li class="nav-item">
+                            <router-link class="nav-link" to="/teams">
+                                Teams
+                            </router-link>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                data-toggle="dropdown"
+                            >
+                                Results
+                            </a>
 
-                        <div class="dropdown-menu">
-                            <router-link to="/results/qualifiers" class="dropdown-item">
-                                Qualifiers
-                            </router-link>
-                            <router-link to="/results/elimination" class="dropdown-item">
-                                Eliminations
-                            </router-link>
-                        </div>
-                    </li>
+                            <div class="dropdown-menu">
+                                <router-link to="/results/qualifiers" class="dropdown-item">
+                                    Qualifiers
+                                </router-link>
+                                <router-link to="/results/elimination" class="dropdown-item">
+                                    Eliminations
+                                </router-link>
+                            </div>
+                        </li>
+                    </template>
                     <li class="nav-item">
                         <router-link class="nav-link" to="/staff">
                             Staff
@@ -139,6 +141,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import LoadingPage from './components/LoadingPage.vue';
+import { Schedule } from './interfaces';
 
 @Component({
     components: {
@@ -149,6 +152,11 @@ export default class App extends Vue {
 
     @State initialized!: object;
     @State user!: object;
+    @State schedule!: Schedule;
+
+    get hasMappersChoiceEnded (): boolean {
+        return this.schedule.mappersChoiceEndedAt && new Date(this.schedule.mappersChoiceEndedAt) < new Date();
+    }
 
 }
 </script>

@@ -9,6 +9,7 @@ export interface User {
     isContestant: boolean;
     isCaptain: boolean;
     isStaff: boolean;
+    isJudge: boolean;
 
     captainApplication: {
         reason: string;

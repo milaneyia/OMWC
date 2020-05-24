@@ -4,6 +4,7 @@ import { RequestAccess } from '../models/RequestAccess';
 import { User } from '../models/User';
 import { isOsuUrl } from '../helpers';
 import { webhookPost } from '../discordWebhook';
+import { Log, LOG_TYPE } from '../models/Log';
 
 const usersRouter = new Router();
 
@@ -44,6 +45,8 @@ usersRouter.post('/requestAccess', isBasicUser, async (ctx) => {
     ctx.body = {
         user,
     };
+
+    await Log.createAndSave(`${ctx.state.user.username} requests access`, LOG_TYPE.User);
 });
 
 export default usersRouter;

@@ -3,6 +3,7 @@
         <div class="col-sm">
             <div class="card">
                 <div class="card-body">
+                    <!-- Access request -->
                     <div v-if="user.isBasicUser && !hasCaptainVotingEnded">
                         <button
                             v-if="!requestingAccess && !user.requestAccess"
@@ -39,21 +40,23 @@
                         </p>
                     </div>
 
-                    <div v-if="user.isElevatedUser && !hasApplicationsEnded">
-                        <router-link
-                            to="/applications/captains"
-                            class="btn btn-block btn-lg"
-                            :class="getStateClassButton(schedule.applicationsStartedAt)"
-                        >
-                            {{ user.captainApplication ? 'Edit your team captain application' : 'Apply for team captain' }}
-                        </router-link>
-
-                        <p class="small">
-                            {{ applicationsDateText }}
-                        </p>
-                    </div>
-
                     <div v-if="!hasApplicationsEnded">
+                        <!-- Captain app -->
+                        <div v-if="user.isElevatedUser">
+                            <router-link
+                                to="/applications/captains"
+                                class="btn btn-block btn-lg"
+                                :class="getStateClassButton(schedule.applicationsStartedAt)"
+                            >
+                                {{ user.captainApplication ? 'Edit your team captain application' : 'Apply for team captain' }}
+                            </router-link>
+
+                            <p class="small">
+                                {{ applicationsDateText }}
+                            </p>
+                        </div>
+
+                        <!-- Mapper app -->
                         <a
                             v-if="user.mapperApplication"
                             href="#"
@@ -75,10 +78,11 @@
                                 {{ applicationsDateText }}
                             </p>
                         </template>
+
+                        <hr>
                     </div>
 
-                    <hr>
-
+                    <!-- Captain voting -->
                     <div v-if="user.isElevatedUser && !hasCaptainVotingEnded">
                         <router-link
                             to="/applications/voting"
@@ -93,28 +97,33 @@
                         </p>
                     </div>
 
-                    <div v-if="!hasMappersChoiceEnded && user.isCaptain">
+                    <template v-if="user.isCaptain">
+                        <!-- Mappers' choice -->
+                        <div v-if="!hasMappersChoiceEnded">
+                            <router-link
+                                to="/applications/mappersChoice"
+                                class="btn btn-block btn-lg"
+                                :class="getStateClassButton(schedule.mappersChoiceStartedAt)"
+                            >
+                                Mappers' Choice
+                            </router-link>
+
+                            <p class="small mt-1">
+                                {{ mappersChoiceDateText }}
+                            </p>
+                        </div>
+
+                        <!-- Osz submission -->
                         <router-link
-                            to="/applications/mappersChoice"
-                            class="btn btn-block btn-lg"
-                            :class="getStateClassButton(schedule.mappersChoiceStartedAt)"
+                            v-else
+                            to="/submissions"
+                            class="btn btn-primary btn-block btn-lg"
                         >
-                            Mappers Choice
+                            .osz submissions
                         </router-link>
+                    </template>
 
-                        <p class="small mt-1">
-                            {{ mappersChoiceDateText }}
-                        </p>
-                    </div>
-
-                    <router-link
-                        v-if="user.isCaptain && hasApplicationsEnded"
-                        to="/submissions"
-                        class="btn btn-primary btn-block btn-lg"
-                    >
-                        .osz submissions
-                    </router-link>
-
+                    <!-- Judging -->
                     <template v-if="user.isJudge">
                         <hr>
 
