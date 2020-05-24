@@ -20,6 +20,8 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    document.title = to.meta.title || 'osu! Beatmapping World Championship';
+
     if (!store.state.initialized) {
         const res = await Axios.get('/api/');
         store.commit('setData', res.data);
