@@ -25,13 +25,14 @@ router.beforeEach(async (to, from, next) => {
         store.commit('setData', res.data);
     }
 
-    if (to.matched.some(r => r.path.startsWith('/admin')) && !store.state.user?.isStaff) {
-        next({ path: '/' });
-    } else if (to.matched.some(r => r.path.startsWith('/judging')) && !store.state.user?.isJudge) {
-        next({ path: '/' });
-    } else if (to.matched.some(r => r.path.startsWith('/submissions') || r.path.startsWith('/applications/mappersChoice')) && !store.state.user?.isCaptain) {
-        next({ path: '/' });
-    } else if (to.matched.some(r => r.path.startsWith('/applications/captains') || r.path.startsWith('/applications/voting')) && !store.state.user?.isElevatedUser) {
+    if (
+        to.matched.some(r =>
+            (r.path.startsWith('/admin') && !store.state.user?.isStaff) ||
+            (r.path.startsWith('/judging') && !store.state.user?.isJudge) ||
+            ((r.path.startsWith('/submissions') || r.path.startsWith('/applications/mappersChoice')) && !store.state.user?.isCaptain) ||
+            ((r.path.startsWith('/applications/captains') || r.path.startsWith('/applications/voting')) && !store.state.user?.isElevatedUser)
+        )
+    ) {
         next({ path: '/' });
     } else {
         next();

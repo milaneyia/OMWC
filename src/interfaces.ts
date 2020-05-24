@@ -10,6 +10,7 @@ export interface User {
     isCaptain: boolean;
     isStaff: boolean;
     isJudge: boolean;
+    isRestricted: boolean;
 
     captainApplication: {
         reason: string;

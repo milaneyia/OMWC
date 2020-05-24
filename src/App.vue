@@ -155,7 +155,7 @@ export default class App extends Vue {
     @State schedule!: Schedule;
 
     get hasMappersChoiceEnded (): boolean {
-        return this.schedule.mappersChoiceEndedAt && new Date(this.schedule.mappersChoiceEndedAt) < new Date();
+        return this.schedule?.mappersChoiceEndedAt && new Date(this.schedule.mappersChoiceEndedAt) < new Date();
     }
 
 }

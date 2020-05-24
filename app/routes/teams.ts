@@ -16,7 +16,8 @@ teamsRouter.get('/', async (ctx) => {
             qb.where('users.roleId = :captain', { captain: ROLE.Captain })
                 .orWhere('users.roleId = :contestant', { contestant: ROLE.Contestant });
         }))
-        .orderBy('users.roleId', 'DESC')
+        .orderBy('country.name', 'ASC')
+        .addOrderBy('users.roleId', 'DESC')
         .getMany();
 
     ctx.body = {

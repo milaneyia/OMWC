@@ -3,12 +3,13 @@
         <div class="row mb-2">
             <div class="col-sm">
                 <div class="header">
-                    <img
-                        src="/img/logo.png"
-                        alt="osu!BWC"
-                        width="60"
-                        heigth="60"
-                    >
+                    <div
+                        style="
+                            background-image: url('/img/logo.png');
+                            width: 60px;
+                            height: 60px;"
+                    />
+
                     <h3 class="ml-2 mb-0">
                         {{ title }}
                     </h3>

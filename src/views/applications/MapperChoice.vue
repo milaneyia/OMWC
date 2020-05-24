@@ -104,7 +104,7 @@ export default class MapperChoice extends Vue {
 
     async getData (): Promise<void> {
         const res = await Axios.get('/api/applications/mappersChoice');
-        this.applications = res.data.applications;
+        this.applications = res.data.applications || [];
     }
 
     async save (): Promise<void> {

@@ -1,5 +1,5 @@
 <template>
-    <div class="container-lg text-center">
+    <div class="container-lg text-center py-2">
         <page-header
             title="Teams"
         />
@@ -47,7 +47,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import PageHeader from '../components/PageHeader.vue';
-import Axios from 'axios';
+import { State } from 'vuex-class';
+import { Country } from '../interfaces';
 
 @Component({
     components: {
@@ -56,17 +57,14 @@ import Axios from 'axios';
 })
 export default class TeamListing extends Vue {
 
-    teams = [];
+    @State teams!: Country[];
 
-    async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
-        await this.getData();
-        this.$store.commit('updateLoadingState');
-    }
-
-    async getData (): Promise<void> {
-        const res = await Axios.get('/api/teams');
-        this.teams = res.data.teams;
+    created (): void {
+        if (!this.teams.length) {
+            this.$store.commit('updateLoadingState');
+            this.$store.dispatch('getTeams');
+            this.$store.commit('updateLoadingState');
+        }
     }
 
 }

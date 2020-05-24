@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user && !user.isRestricted && !user.isStaff && schedule" class="row mb-2">
+    <div v-if="showNav" class="row mb-2">
         <div class="col-sm">
             <div class="card">
                 <div class="card-body">
@@ -125,18 +125,7 @@
 
                     <!-- Judging -->
                     <template v-if="user.isJudge">
-                        <hr>
-
-                        <a
-                            v-if="judgingRound"
-                            href="#"
-                            class="btn btn-secondary disabled btn-block btn-lg"
-                        >
-                            Judging
-                        </a>
-
                         <router-link
-                            v-if="user.isCaptain"
                             to="/judging"
                             class="btn btn-primary btn-block btn-lg"
                         >
@@ -153,7 +142,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import Axios from 'axios';
-import { Schedule } from '../interfaces';
+import { Schedule, User } from '../interfaces';
 
 @Component({
     props: {
@@ -165,6 +154,7 @@ export default class HomeNav extends Vue {
 
     requestingAccess = false;
     requestAccessLink = null;
+    user!: User;
     schedule!: Schedule;
 
     get hasApplicationsEnded (): boolean {
@@ -192,6 +182,17 @@ export default class HomeNav extends Vue {
     get mappersChoiceDateText (): string {
         return `from ${new Date(this.schedule.mappersChoiceStartedAt).toLocaleString()}
                 to ${new Date(this.schedule.mappersChoiceEndedAt).toLocaleString() }`;
+    }
+
+    get showNav (): boolean {
+        return this.user &&
+            !this.user.isRestricted &&
+            !this.user.isStaff &&
+            this.schedule &&
+            (
+                !this.hasMappersChoiceEnded ||
+                (this.hasMappersChoiceEnded && (this.user.isCaptain || this.user.isJudge))
+            );
     }
 
     async requestAccess(): Promise<void> {

@@ -7,7 +7,7 @@
         <div class="brackets">
             <div class="rounds">
                 <div
-                    v-for="(round, i) in rounds"
+                    v-for="(round, i) in nonFinals"
                     :key="round.id"
                     class="round"
                     :class="[
@@ -77,6 +77,7 @@ import { Round } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import RoundMatch from '../../components/RoundMatch.vue';
 import EliminationJudgingDetail from '../../components/results/EliminationJudgingDetail.vue';
+import { State, Getter } from 'vuex-class';
 
 @Component({
     components: {
@@ -87,32 +88,19 @@ import EliminationJudgingDetail from '../../components/results/EliminationJudgin
 })
 export default class EliminationResult extends Vue {
 
-    allRounds: Round[] = [];
-    currentRound: Round | null = null;
+    @State eliminationRounds!: Round[];
+    @State currentRound!: Round | null;
+    @Getter nonFinals!: Round[];
+    @Getter finals!: Round | null;
     selectedMatch = null;
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
-        const res = await Axios.get('/api/results/elimination');
-        this.allRounds = res.data.rounds;
-        this.currentRound = res.data.currentRound;
-        this.$store.commit('updateLoadingState');
-    }
-
-    get rounds (): Round[] {
-        if (this.allRounds.length) {
-            return this.allRounds.slice(0, this.allRounds.length - 1);
+        if (!this.eliminationRounds.length || !this.currentRound) {
+            this.$store.commit('updateLoadingState');
+            const res = await Axios.get('/api/results/elimination');
+            this.$store.commit('updateEliminations', res.data);
+            this.$store.commit('updateLoadingState');
         }
-
-        return [];
-    }
-
-    get finals (): Round | null {
-        if (this.allRounds.length) {
-            return this.allRounds[this.allRounds.length - 1];
-        }
-
-        return null;
     }
 
     getRoundClass (id: number): string {

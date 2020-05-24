@@ -11,7 +11,7 @@ const resultsRouter = new Router();
 resultsRouter.prefix('/api/results');
 
 resultsRouter.get('/qualifiers', async (ctx) => {
-    const round = await Round.findOne({
+    const qualifier = await Round.findOne({
         where: {
             isQualifier: true,
             resultsAt: LessThanOrEqual(new Date()),
@@ -28,11 +28,11 @@ resultsRouter.get('/qualifiers', async (ctx) => {
     });
 
     const criterias = await Criteria.find({});
-    const judges = round?.matches[0]?.submissions[0]?.qualifierJudging?.map(j => j.judge);
+    const judges = qualifier?.matches?.[0].submissions?.[0].qualifierJudging?.map(j => j.judge);
 
     return ctx.body = {
         criterias,
-        round,
+        qualifier,
         judges,
     };
 });

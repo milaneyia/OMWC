@@ -6,7 +6,7 @@
 
         <div class="row">
             <div class="col-sm">
-                <div class="my-2">
+                <div class="my-3">
                     <a
                         href="#"
                         :class="displayMode === 'criterias' ? 'border-bottom border-secondary' : ''"
@@ -32,7 +32,10 @@
                     </a>
                 </div>
 
-                <table class="leaderboard">
+                <table
+                    class="leaderboard"
+                    :class="submissionsLength ? 'leaderboard--clickable' : ''"
+                >
                     <thead>
                         <tr>
                             <th>#</th>
@@ -80,7 +83,7 @@
                             </template>
 
                             <td>{{ score.rawFinalScore }}</td>
-                            <td>{{ score.standardizedFinalScore.toFixed(4) }}</td>
+                            <td>{{ getFinalScore(score.standardizedFinalScore) }}</td>
                         </tr>
 
                         <template v-if="displayMode === 'detail'">
@@ -118,7 +121,7 @@
         </div>
 
         <qualifier-judging-detail
-            v-if="selectedScore"
+            v-if="submissionsLength && selectedScore"
             :submission="scoreDetail"
         />
     </div>
@@ -131,6 +134,7 @@ import Component from 'vue-class-component';
 import PageHeader from '../../components/PageHeader.vue';
 import QualifierJudgingDetail from '../../components/results/QualifierJudgingDetail.vue';
 import { Round, Country, User, Submission } from '../../interfaces';
+import { State, Getter } from 'vuex-class';
 
 interface TeamScore {
     country: Country;
@@ -163,29 +167,36 @@ interface JudgeCorrel {
 })
 export default class QualifierResult extends Vue {
 
-    criterias = [];
-    judges: User[] = [];
-    round: Round | null = null;
+    @State teams!: Country[];
+    @State criterias!: [];
+    @State judges!: User[];
+    @State qualifier!: Round | null;
+    @Getter submissionsLength!: number | undefined;
+
     selectedScore: TeamScore | null = null;
-    displayMode = 'criterias';
+    displayMode: 'criterias' | 'judges' | 'detail' = 'criterias';
     judgesCorrel: JudgeCorrel[] = [];
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
-        await this.getData();
-        this.$store.commit('updateLoadingState');
+        if (!this.qualifier) {
+            this.$store.commit('updateLoadingState');
+            await this.getData();
+            this.$store.commit('updateLoadingState');
+        }
     }
 
     async getData (): Promise<void> {
         const res = await Axios.get('/api/results/qualifiers');
-        this.criterias = res.data.criterias;
-        this.judges = res.data.judges;
-        this.round = res.data.round;
+        this.$store.commit('updateQualifier', res.data);
+
+        if (!this.submissionsLength && !this.teams.length) {
+            this.$store.dispatch('getTeams');
+        }
     }
 
     get scoreDetail (): Submission | undefined {
         if (this.selectedScore) {
-            return this.round?.matches[0].submissions?.find(s => s.country.id == this.selectedScore?.country.id);
+            return this.qualifier?.matches?.[0].submissions?.find(s => s.country.id == this.selectedScore?.country.id);
         }
 
         return undefined;
@@ -195,8 +206,22 @@ export default class QualifierResult extends Vue {
         const teamsScores: TeamScore[] = [];
         const judgesCorrel: JudgeCorrel[] = [];
 
-        if (this.round?.matches.length) {
-            const submissions = this.round.matches[0].submissions;
+        if (!this.submissionsLength && this.teams.length) {
+            for (const team of this.teams) {
+                teamsScores.push({
+                    country: team,
+                    criteriaSum: [],
+                    judgingSum: [],
+                    rawFinalScore: 0,
+                    standardizedFinalScore: 0,
+                });
+            }
+
+            return teamsScores;
+        }
+
+        if (this.submissionsLength) {
+            const submissions = this.qualifier?.matches[0].submissions;
 
             if (submissions) {
                 for (const submission of submissions) {
@@ -295,7 +320,7 @@ export default class QualifierResult extends Vue {
             // Set correlation coefficient per judge
             for (const judgeId of judgesIds) {
                 const i = judgesCorrel.findIndex(j => j.id === judgeId);
-                const judgeAvg = judgesCorrel[i]?.avg || 0;
+                const judgeAvg = judgesCorrel?.[i].avg || 0;
 
                 let sum1 = 0;
                 let sum2 = 0;
@@ -329,9 +354,10 @@ export default class QualifierResult extends Vue {
 
     getJudgeScore (score: TeamScore, judgeId: number, std = false): number | string {
         const judgeScore = score.judgingSum.find(j => j.judgeId === judgeId);
+        const stdScore = judgeScore?.standardized || 0;
 
         if (std) {
-            return `${judgeScore?.sum || 0} (${judgeScore?.standardized.toFixed(3) || 0})`;
+            return `${judgeScore?.sum || 0} (${stdScore.toFixed(3)})`;
         }
 
         return judgeScore?.sum || 0;
@@ -346,7 +372,13 @@ export default class QualifierResult extends Vue {
     }
 
     getJudgeCorrel (id: number): number | string {
-        return this.judgesCorrel.find(j => j.id === id)?.correl.toFixed(4) || 0;
+        const correl = this.judgesCorrel.find(j => j.id === id)?.correl || 0;
+
+        return correl.toFixed(4);
+    }
+
+    getFinalScore (standardizedFinalScore: number): string {
+        return isNaN(standardizedFinalScore) ? '0' : standardizedFinalScore.toFixed(4);
     }
 
 }
