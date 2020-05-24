@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import { authenticate, isElevatedUser } from '../../middlewares/authentication';
 import { onGoingApplications } from '../../middlewares/scheduleCheck';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
+import { Log, LOG_TYPE } from '../../models/Log';
 
 const captainApplicationsRouter = new Router();
 
@@ -33,6 +34,8 @@ captainApplicationsRouter.post('/save', async (ctx) => {
     }
 
     ctx.body = body;
+
+    await Log.createAndSave(`${ctx.state.user.username} applied for captain`, LOG_TYPE.User, ctx.state.user.id);
 });
 
 export default captainApplicationsRouter;

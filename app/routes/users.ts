@@ -46,7 +46,7 @@ usersRouter.post('/requestAccess', isBasicUser, async (ctx) => {
         user,
     };
 
-    await Log.createAndSave(`${ctx.state.user.username} requests access`, LOG_TYPE.User);
+    await Log.createAndSave(`${ctx.state.user.username} requests access`, LOG_TYPE.User, ctx.state.user.id);
 });
 
 export default usersRouter;

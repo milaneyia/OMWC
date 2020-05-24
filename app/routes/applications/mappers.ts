@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import { authenticate } from '../../middlewares/authentication';
 import { onGoingApplications } from '../../middlewares/scheduleCheck';
 import { MapperApplication } from '../../models/applications/MapperApplication';
+import { Log, LOG_TYPE } from '../../models/Log';
 
 const mapperApplicationsRouter = new Router();
 
@@ -29,6 +30,8 @@ mapperApplicationsRouter.post('/store', async (ctx) => {
     ctx.body = {
         error: `Couldn't create the application`,
     };
+
+    await Log.createAndSave(`${ctx.state.user.username} applied for mapper`, LOG_TYPE.User, ctx.state.user.id);
 });
 
 export default mapperApplicationsRouter;

@@ -3,6 +3,7 @@ import { authenticate, isElevatedUser } from '../../middlewares/authentication';
 import { onGoingCaptainVoting } from '../../middlewares/scheduleCheck';
 import { CaptainApplication } from '../../models/applications/CaptainApplication';
 import { convertToIntOrThrow } from '../../helpers';
+import { Log, LOG_TYPE } from '../../models/Log';
 
 const captainVotingRouter = new Router();
 
@@ -49,6 +50,8 @@ captainVotingRouter.post('/save', async (ctx) => {
     ctx.body = {
         error: `It's not a valid vote`,
     };
+
+    await Log.createAndSave(`${ctx.state.user.username} submitted its vote for ${application.user.username}`, LOG_TYPE.User, ctx.state.user.id);
 });
 
 export default captainVotingRouter;

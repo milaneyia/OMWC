@@ -132,7 +132,7 @@ usersAdminRouter.post('/:id/updateRole', async (ctx) => {
         success: 'Updated',
     };
 
-    await Log.createAndSave(`${ctx.state.user.username} changed ${user.username} role to ${role.name}`, LOG_TYPE.Admin);
+    await Log.createAndSave(`${ctx.state.user.username} changed ${user.username} role to ${role.name}`, LOG_TYPE.Admin, user.id);
 });
 
 export default usersAdminRouter;

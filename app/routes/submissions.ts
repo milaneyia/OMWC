@@ -7,6 +7,7 @@ import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
 import { Match } from '../models/rounds/Match';
 import { findSubmission, download } from '../middlewares/downloadSubmission';
+import { Log, LOG_TYPE } from '../models/Log';
 
 const baseDir = path.join(__dirname, '../../osz/originals/');
 const submissionsRouter = new Router();
@@ -102,6 +103,8 @@ submissionsRouter.post('/save', koaBody({
     ctx.body = {
         success: 'ok',
     };
+
+    await Log.createAndSave(`${ctx.state.user.username} uploaded a submission for ${currentRound.title} under ${originalPath}`, LOG_TYPE.User, submission.id);
 });
 
 submissionsRouter.get('/:id/download', findSubmission, async (ctx, next) => {

@@ -6,6 +6,7 @@ import { MapperApplication } from '../../models/applications/MapperApplication';
 import { User } from '../../models/User';
 import { Country } from '../../models/Country';
 import { ROLE } from '../../models/Role';
+import { Log, LOG_TYPE } from '../../models/Log';
 
 const mappersChoiceRouter = new Router();
 
@@ -65,6 +66,8 @@ mappersChoiceRouter.post('/save', async (ctx) => {
     ctx.body = {
         success: 'ok',
     };
+
+    await Log.createAndSave(`${ctx.state.user.username} submitted its mappers choice`, LOG_TYPE.User, ctx.state.user.id);
 });
 
 export default mappersChoiceRouter;
