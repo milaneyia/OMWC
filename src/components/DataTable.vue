@@ -1,7 +1,7 @@
 <template>
     <div class="card-body p-0">
         <table
-            class="table table-hover"
+            class="table table-hover text-left"
             :class="customClass || 'table-responsive-lg'"
         >
             <thead>

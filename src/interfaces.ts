@@ -1,8 +1,8 @@
 export interface User {
     id: number;
     username: string;
-    captainVoteId?: number;
     roleId: number;
+    country: Country;
 
     isBasicUser: boolean;
     isElevatedUser: boolean;
@@ -12,20 +12,22 @@ export interface User {
     isJudge: boolean;
     isRestricted: boolean;
 
-    captainApplication: {
-        reason: string;
-    };
-
+    captainApplication: CaptainApplication;
     mapperApplication: MapperApplication;
 
-    captainVote: {
-        id: number;
-    };
+    captainVote?: CaptainApplication;
+    captainVoteId?: number;
 }
 
 export interface MapperApplication {
     id: number;
     user: User;
+}
+
+export interface CaptainApplication {
+    id: number;
+    user: User;
+    reason: string;
 }
 
 export interface Schedule {
@@ -40,6 +42,7 @@ export interface Schedule {
 export interface Country {
     id: number;
     users: User[];
+    wasConfirmed: boolean;
 }
 
 export interface Round {

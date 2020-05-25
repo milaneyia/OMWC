@@ -54,7 +54,7 @@
 
             <div class="row">
                 <div class="col-sm">
-                    <button class="btn btn-primary btn-block" @click="save">
+                    <button class="btn btn-primary btn-block" @click="save($event)">
                         Save
                     </button>
                 </div>
@@ -67,7 +67,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Axios from 'axios';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { User, MapperApplication } from '../../interfaces';
@@ -96,28 +95,18 @@ export default class MapperChoice extends Vue {
             return;
         }
 
-        await this.getData();
+        await this.initialRequest<{ applications: [] }>('/api/applications/mappersChoice', (data) => {
+            this.applications = data.applications || [];
 
-        const contestants = this.applications.filter(a => a.user.isContestant);
-        this.chosenAppsIds = contestants.map(c => c.id);
-    }
-
-    async getData (): Promise<void> {
-        const res = await Axios.get('/api/applications/mappersChoice');
-        this.applications = res.data.applications || [];
-    }
-
-    async save (): Promise<void> {
-        const res = await Axios.post('/api/applications/mappersChoice/save', {
-            chosenAppsIds: this.chosenAppsIds,
+            const contestants = this.applications.filter(a => a.user.isContestant);
+            this.chosenAppsIds = contestants.map(c => c.id);
         });
+    }
 
-        if (res.data.success) {
-            await this.getData();
-            alert('Saved!');
-        } else {
-            alert(res.data.error || 'Something went wrong!');
-        }
+    async save (e: Event): Promise<void> {
+        await this.postRequest<{ mapperApplication: MapperApplication }>('/api/applications/mappersChoice/save', {
+            chosenAppsIds: this.chosenAppsIds,
+        }, e);
     }
 
 }

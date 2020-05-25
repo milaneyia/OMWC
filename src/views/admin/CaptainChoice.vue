@@ -55,14 +55,14 @@
                                 <button
                                     v-if="applicant.isCaptain"
                                     class="btn btn-sm btn-danger mb-2"
-                                    @click="remove(applicant.captainApplication.id)"
+                                    @click="remove(applicant.captainApplication.id, $event)"
                                 >
                                     Remove
                                 </button>
                                 <button
                                     v-else-if="!(country.users.find(u => u.isCaptain))"
                                     class="btn btn-sm btn-success mb-2"
-                                    @click="choose(applicant.captainApplication.id)"
+                                    @click="choose(applicant.captainApplication.id, $event)"
                                 >
                                     Choose
                                 </button>
@@ -109,7 +109,6 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { Schedule } from '../../interfaces';
-import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 
@@ -126,40 +125,25 @@ export default class CaptainChoice extends Vue {
     selectedReason = '';
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
         await this.getData();
-        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {
-        const res = await Axios.get('/api/admin/captainChoice');
-        this.applicationsByCountry = res.data.applicationsByCountry;
+        await this.initialRequest<{ applicationsByCountry: [] }>('/api/admin/captainChoice', (data) => {
+            this.applicationsByCountry = data.applicationsByCountry;
+        });
     }
 
-    async choose (applicationId: number): Promise<void> {
-        const res = await Axios.post('/api/admin/captainChoice/choose', {
+    async choose (applicationId: number, e: Event): Promise<void> {
+        await this.postRequest('/api/admin/captainChoice/choose', {
             applicationId,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            await this.getData();
-            alert('ok');
-        }
+        }, e, this.getData);
     }
 
-    async remove (applicationId: number): Promise<void> {
-        const res = await Axios.post('/api/admin/captainChoice/remove', {
+    async remove (applicationId: number, e: Event): Promise<void> {
+        await this.postRequest('/api/admin/captainChoice/remove', {
             applicationId,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            await this.getData();
-            alert('ok');
-        }
+        }, e, this.getData);
     }
 
 }

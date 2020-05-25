@@ -27,18 +27,18 @@
                                 </a>
                             </td>
                             <td>{{ request.status }}</td>
-                            <td>{{ new Date(request.createdAt).toLocaleString() }}</td>
+                            <td>{{ request.createdAt | shortDateTimeString }}</td>
                             <td>
                                 <template v-if="request.status == 'Pending'">
                                     <button
                                         class="btn btn-sm btn-success mb-2"
-                                        @click="setStatus(request.id, 'Accepted')"
+                                        @click="setStatus(request.id, 'Accepted', $event)"
                                     >
                                         Accept
                                     </button>
                                     <button
                                         class="btn btn-sm btn-danger mb-2"
-                                        @click="setStatus(request.id, 'Rejected')"
+                                        @click="setStatus(request.id, 'Rejected', $event)"
                                     >
                                         Reject
                                     </button>
@@ -59,7 +59,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 
@@ -74,10 +73,9 @@ export default class RequestAccess extends Vue {
     requests = [];
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
-        const res = await Axios.get(`/api/admin/users/access`);
-        this.requests = res.data.requests;
-        this.$store.commit('updateLoadingState');
+        await this.initialRequest<{ requests: [] }>('/api/admin/users/access', (data) => {
+            this.requests = data.requests;
+        });
     }
 
     shortenLink(link: string): string {
@@ -88,17 +86,13 @@ export default class RequestAccess extends Vue {
         return link || '';
     }
 
-    async setStatus(requestId: number, status: string): Promise<void> {
-        const res = await Axios.post(`/api/admin/users/access/${requestId}/save`, {
+    async setStatus(requestId: number, status: string, e: Event): Promise<void> {
+        await this.postRequest<{ requests: [] }>(`/api/admin/users/access/${requestId}/save`, {
             status,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            this.requests = res.data.requests;
+        }, e, (data) => {
+            this.requests = data.requests;
             alert('Done');
-        }
+        });
     }
 
 }

@@ -9,7 +9,7 @@
                 <button
                     v-if="!newMatch"
                     class="btn btn-primary btn-block my-2"
-                    @click="create"
+                    @click="createNew"
                 >
                     Create
                 </button>
@@ -21,7 +21,7 @@
                         :editing="false"
                     />
 
-                    <button class="btn btn-success btn-block my-2" @click="store">
+                    <button class="btn btn-success btn-block my-2" @click="store($event)">
                         Save
                     </button>
 
@@ -56,7 +56,7 @@
 
                         <button
                             class="btn btn-sm btn-danger"
-                            @click="remove(match.id)"
+                            @click="remove(match.id, $event)"
                         >
                             Remove
                         </button>
@@ -70,7 +70,7 @@
                             Cancel
                         </button>
 
-                        <button class="btn btn-sm btn-success" @click="save(match)">
+                        <button class="btn btn-sm btn-success" @click="save(match, $event)">
                             Save
                         </button>
                     </template>
@@ -91,18 +91,24 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
-import { Route } from 'vue-router';
 import { Match, Country } from '../../../interfaces';
 import PageHeader from '../../../components/PageHeader.vue';
 import DataTable from '../../../components/DataTable.vue';
 import MatchForm from '../../../components/MatchForm.vue';
+
+interface ApiResponse {
+    matches: [];
+    competingTeams: [];
+}
 
 @Component({
     components: {
         PageHeader,
         DataTable,
         MatchForm,
+    },
+    watch: {
+        '$route': 'getData',
     },
 })
 export default class ManageMatch extends Vue {
@@ -112,72 +118,53 @@ export default class ManageMatch extends Vue {
     editing = null;
     newMatch: Match | null = null;
 
-    create (): void {
+    async created (): Promise<void> {
+        await this.getData();
+    }
+
+    async getData (): Promise<void> {
+        this.matches = [];
+        this.competingTeams = [];
+
+        if (this.$route.params.id) {
+            await this.initialRequest<ApiResponse>(`/api/admin/rounds/${this.$route.params.id}/matches`, (data) => {
+                this.matches = data.matches;
+                this.competingTeams = data.competingTeams;
+            });
+        }
+    }
+
+    createNew (): void {
         this.newMatch = {
             roundId: parseInt(this.$route.params.id),
         };
     }
 
-    async store (): Promise<void> {
-        const res = await Axios.post(`/api/admin/rounds/${this.$route.params.id}/matches/store`, {
+    async store (e: Event): Promise<void> {
+        await this.postRequest<ApiResponse>(`/api/admin/rounds/${this.$route.params.id}/matches/store`, {
             match: this.newMatch,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
+        }, e, (data) => {
             this.newMatch = null;
-            this.matches = res.data.matches;
-            alert('ok');
-        }
-    }
-
-    async save (match: Match): Promise<void> {
-        const res = await Axios.post(`/api/admin/rounds/${this.$route.params.id}/matches/${match.id}/save`, {
-            match,
+            this.matches = data.matches;
+            alert('Saved');
         });
+    }
 
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            this.matches = res.data.matches;
+    async save (match: Match, e: Event): Promise<void> {
+        await this.postRequest<ApiResponse>(`/api/admin/rounds/${this.$route.params.id}/matches/${match.id}/save`, {
+            match,
+        }, e, (data) => {
+            this.matches = data.matches;
             this.editing = null;
-            alert('ok');
-        }
+            alert('Saved');
+        });
     }
 
-    async remove (matchId: number): Promise<void> {
-        const res = await Axios.post(`/api/admin/rounds/${this.$route.params.id}/matches/${matchId}/remove`);
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            this.matches = res.data.matches;
-            alert('ok');
-        }
-    }
-
-    async beforeRouteEnter (to: Route, from: Route, next: Function): Promise<void> {
-        if (to.params.id) {
-            const res = await Axios.get(`/api/admin/rounds/${to.params.id}/matches`);
-            next((vm: ManageMatch) => {
-                vm.matches = res.data.matches;
-                vm.competingTeams = res.data.competingTeams;
-            });
-        } else {
-            next();
-        }
-    }
-
-    async beforeRouteUpdate (to: Route, from: Route, next: Function): Promise<void> {
-        if (to.params.id) {
-            this.matches = [];
-            const res = await Axios.get(`/api/admin/rounds/${to.params.id}/matches`);
-            this.matches = res.data.matches;
-            this.competingTeams = res.data.competingTeams;
-        }
-
-        next();
+    async remove (matchId: number, e: Event): Promise<void> {
+        await this.postRequest<ApiResponse>(`/api/admin/rounds/${this.$route.params.id}/matches/${matchId}/remove`, {}, e, (data) => {
+            this.matches = data.matches;
+            alert('Saved');
+        });
     }
 
 }

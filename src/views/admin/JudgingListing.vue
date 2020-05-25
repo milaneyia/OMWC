@@ -78,8 +78,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Route } from 'vue-router';
-import Axios from 'axios';
 import { Submission, Round, Match } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
@@ -100,10 +98,9 @@ export default class JudgingListing extends Vue {
     selected: Submission | Match | null = null;
     selectedType = '';
 
-    async beforeRouteEnter (to: Route, from: Route, next: Function): Promise<void> {
-        const res = await Axios.get(`/api/admin/judging/`);
-        next((vm: JudgingListing) => {
-            vm.rounds = res.data.rounds;
+    async created (): Promise<void> {
+        await this.initialRequest<{ rounds: [] }>('/api/admin/judging', (data) => {
+            this.rounds = data.rounds;
         });
     }
 

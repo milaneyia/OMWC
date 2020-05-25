@@ -23,7 +23,7 @@
                                 >
                                     <td> {{ submission.match.round.title }}</td>
                                     <td>
-                                        {{ new Date(submission.updatedAt).toLocaleString() }}
+                                        {{ submission.updatedAt | shortDateTimeString }}
                                     </td>
                                     <td>
                                         <a
@@ -79,7 +79,7 @@
 
             <div class="row">
                 <div class="col-sm">
-                    <button class="btn btn-primary btn-block" @click="save">
+                    <button class="btn btn-primary btn-block" @click="save($event)">
                         <div
                             v-if="isSaving"
                             class="spinner-border spinner-border-sm align-middle"
@@ -100,8 +100,14 @@ import Vue from 'vue';
 import Axios from 'axios';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import { User, Submission as ISubmission, Match } from '../interfaces';
+import { User, Submission as ISubmission, Match, Round } from '../interfaces';
 import PageHeader from '../components/PageHeader.vue';
+
+interface ApiResponse {
+    submissions: ISubmission[];
+    currentRound: Round | null;
+    currentMatch: Match | null;
+}
 
 @Component({
     components: {
@@ -113,48 +119,55 @@ export default class Submission extends Vue {
     @State user!: User;
 
     submissions: ISubmission[] = [];
-    currentRound = null;
+    currentRound: Round | null = null;
     currentMatch: Match | null = null;
     oszFile: File | null = null;
     isSaving = false;
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
         await this.getData();
-        this.$store.commit('updateLoadingState');
     }
 
     async getData (): Promise<void> {
-        const res = await Axios.get('/api/submissions');
-        this.submissions = res.data.submissions;
-        this.currentRound = res.data.currentRound;
-        this.currentMatch = res.data.currentMatch;
+        await this.initialRequest<ApiResponse>('/api/submissions', (data) => {
+            this.submissions = data.submissions,
+            this.currentRound = data.currentRound,
+            this.currentMatch = data.currentMatch;
+        });
     }
 
-    async save (): Promise<void> {
+    async save (e: Event): Promise<void> {
         if (!this.oszFile) {
             alert('Select an .osz');
 
             return;
         }
 
+        (e?.target as HTMLInputElement).disabled = true;
         this.isSaving = true;
         const formData = new FormData();
         formData.append('oszFile', this.oszFile);
-        const res = await Axios.post('/api/submissions/save', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
 
-        if (res.data.success) {
-            await this.getData();
-            alert('Saved!');
-        } else {
-            alert(res.data.error || 'Something went wrong!');
+        try {
+            const res = await Axios.post('/api/submissions/save', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (res.data.success) {
+                await this.getData();
+                alert('Saved!');
+            } else {
+                alert(res.data.error || 'Something went wrong!');
+            }
+        } catch (error) {
+            console.log(error);
+            alert('Something went wrong');
         }
 
         this.isSaving = false;
+        (e?.target as HTMLInputElement).disabled = false;
     }
 
 }

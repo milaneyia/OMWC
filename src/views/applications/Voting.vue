@@ -36,7 +36,7 @@
                                             v-if="application.user.id !== user.id"
                                             class="btn btn-sm btn-block mt-2"
                                             :class="user.captainVoteId == application.id ? 'btn-danger' : 'btn-success'"
-                                            @click="vote(application.id)"
+                                            @click="vote(application.id, $event)"
                                         >
                                             {{ user.captainVoteId == application.id ? 'Cancel vote' : 'Vote' }}
                                         </button>
@@ -73,8 +73,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import { User } from '../../interfaces';
-import Axios from 'axios';
+import { User, CaptainApplication } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import LoginModal from '../../components/LoginModal.vue';
 
@@ -102,27 +101,22 @@ export default class Voting extends Vue {
             return;
         }
 
-        this.$store.commit('updateLoadingState');
-        const res = await Axios.get('/api/applications/voting');
-        this.applications = res.data.applications;
-        this.wasLoaded = true;
-        this.$store.commit('updateLoadingState');
+        await this.initialRequest<{ applications: [] }>('/api/applications/voting', (data) => {
+            this.applications = data.applications;
+            this.wasLoaded = true;
+        });
     }
 
-    async vote (applicationId: number): Promise<void> {
-        const res = await Axios.post('/api/applications/voting/save', {
+    async vote (applicationId: number, e: Event): Promise<void> {
+        await this.postRequest<{ application: CaptainApplication | undefined }>('/api/applications/voting/save', {
             applicationId,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
+        }, e, (data) => {
             const user = this.user;
-            user.captainVoteId = res.data.application?.id;
-            user.captainVote = res.data.application;
+            user.captainVoteId = data.application?.id;
+            user.captainVote = data.application;
             this.$store.commit('updateUser', user);
             alert('Your vote was submitted!');
-        }
+        });
     }
 
 }

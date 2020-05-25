@@ -29,7 +29,7 @@ captainApplicationsRouter.post('/save', async (ctx) => {
     if (app) {
         body = {
             captainApplication: app,
-            success: 'ok',
+            success: 'Saved',
         };
     }
 

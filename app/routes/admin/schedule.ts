@@ -39,7 +39,9 @@ scheduleAdminRouter.post('/save', async (ctx) => {
     schedule.mappersChoiceEndedAt = ctx.request.body.mappersChoiceEndedAt.date;
     await schedule.save();
 
-    ctx.body = schedule;
+    ctx.body = {
+        schedule,
+    };
 });
 
 export default scheduleAdminRouter;

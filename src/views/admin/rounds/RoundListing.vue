@@ -59,10 +59,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
 import PageHeader from '../../../components/PageHeader.vue';
 import DataTable from '../../../components/DataTable.vue';
-import { Route } from 'vue-router';
 
 @Component({
     components: {
@@ -75,35 +73,9 @@ export default class RoundListing extends Vue {
     rounds = [];
 
     async created (): Promise<void> {
-        await this.getData();
-    }
-
-    async getData (): Promise<void> {
-        const res = await Axios.get('/api/admin/rounds');
-        this.rounds = res.data.rounds;
-    }
-
-    async beforeRouteEnter (to: Route, from: Route, next: Function): Promise<void> {
-        const res = await Axios.get(`/api/admin/rounds`);
-        next((vm: RoundListing) => vm.rounds = res.data.rounds);
-    }
-
-    async beforeRouteUpdate (to: Route, from: Route, next: Function): Promise<void> {
-        await this.getData();
-        next();
-    }
-
-    async save (): Promise<void> {
-        const res = await Axios.post('/api/admin/rounds/save', {
-
+        await this.initialRequest<{ rounds: [] }>('/api/admin/rounds', (data) => {
+            this.rounds = data.rounds;
         });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            await this.getData();
-            alert('ok');
-        }
     }
 
 }

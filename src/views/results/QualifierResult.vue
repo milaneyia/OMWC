@@ -63,14 +63,7 @@
                             @click="selectedScore = score"
                         >
                             <td>{{ i + 1 }}</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="country-flag" :style="`background-image: url(https://osu.ppy.sh/images/flags/${score.country.code}.png)`" />
-                                    <div class="ml-2">
-                                        {{ score.country.name }}
-                                    </div>
-                                </div>
-                            </td>
+                            <country-flag-cell :country="score.country" />
                             <template v-if="displayMode === 'criterias'">
                                 <td v-for="criteria in criterias" :key="criteria.id">
                                     {{ getCriteriaScore(score, criteria.id) }}
@@ -129,9 +122,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Axios from 'axios';
 import Component from 'vue-class-component';
 import PageHeader from '../../components/PageHeader.vue';
+import CountryFlagCell from '../../components/CountryFlagCell.vue';
 import QualifierJudgingDetail from '../../components/results/QualifierJudgingDetail.vue';
 import { Round, Country, User, Submission } from '../../interfaces';
 import { State, Getter } from 'vuex-class';
@@ -163,6 +156,7 @@ interface JudgeCorrel {
     components: {
         PageHeader,
         QualifierJudgingDetail,
+        CountryFlagCell,
     },
 })
 export default class QualifierResult extends Vue {
@@ -179,18 +173,13 @@ export default class QualifierResult extends Vue {
 
     async created (): Promise<void> {
         if (!this.qualifier) {
-            this.$store.commit('updateLoadingState');
-            await this.getData();
-            this.$store.commit('updateLoadingState');
-        }
-    }
+            await this.initialRequest('/api/results/qualifiers', (data) => {
+                this.$store.commit('updateQualifier', data);
 
-    async getData (): Promise<void> {
-        const res = await Axios.get('/api/results/qualifiers');
-        this.$store.commit('updateQualifier', res.data);
-
-        if (!this.submissionsLength && !this.teams.length) {
-            this.$store.dispatch('getTeams');
+                if (!this.submissionsLength && !this.teams.length) {
+                    this.$store.dispatch('getTeams');
+                }
+            });
         }
     }
 

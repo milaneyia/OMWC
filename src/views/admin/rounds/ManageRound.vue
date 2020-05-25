@@ -87,7 +87,7 @@
 
         <div class="row box py-2">
             <div class="col-sm-12">
-                <button class="btn btn-primary btn-block" @click="save">
+                <button class="btn btn-primary btn-block" @click="save($event)">
                     Save
                 </button>
 
@@ -102,69 +102,49 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
 import PageHeader from '../../../components/PageHeader.vue';
 import DataTable from '../../../components/DataTable.vue';
-import { Route } from 'vue-router';
 
 @Component({
     components: {
         PageHeader,
         DataTable,
     },
+    watch: {
+        '$route': 'getData',
+    },
 })
 export default class ManageRound extends Vue {
 
-    emptyRound = {
-        title: '',
-        submissionsStartedAt: '',
-        submissionsEndedAt: '',
-        judgingStartedAt: '',
-        judgingEndedAt: '',
-        resultsAt: '',
-        isQualifier: false,
+    round = {};
+
+    async created (): Promise<void> {
+        await this.getData();
     }
 
-    round = this.emptyRound;
+    async getData (): Promise<void> {
+        this.round = {};
 
-    async save (): Promise<void> {
+        if (this.$route.params.id) {
+            await this.initialRequest<{ round: {} }>(`/api/admin/rounds/${this.$route.params.id}`, (data) => {
+                this.round = data.round;
+            });
+        }
+    }
+
+    async save (e: Event): Promise<void> {
         let url = '/api/admin/rounds/store';
 
         if (this.$route.params.id) {
             url = `/api/admin/rounds/${this.$route.params.id}/save`;
         }
 
-        const res = await Axios.post(url, {
+        await this.postRequest(url, {
             round: this.round,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            alert('ok');
+        }, e, () => {
+            alert('Saved');
             this.$router.go(-1);
-        }
-    }
-
-    async beforeRouteEnter (to: Route, from: Route, next: Function): Promise<void> {
-        if (to.params.id) {
-            const res = await Axios.get(`/api/admin/rounds/${to.params.id}`);
-            next((vm: ManageRound) => {
-                vm.round = res.data.round;
-            });
-        } else {
-            next();
-        }
-    }
-
-    async beforeRouteUpdate (to: Route, from: Route, next: Function): Promise<void> {
-        if (to.params.id) {
-            this.round = this.emptyRound;
-            const res = await Axios.get(`/api/admin/rounds/${to.params.id}`);
-            this.round = res.data.round;
-        }
-
-        next();
+        });
     }
 
 }

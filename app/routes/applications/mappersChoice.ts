@@ -64,7 +64,7 @@ mappersChoiceRouter.post('/save', async (ctx) => {
     }
 
     ctx.body = {
-        success: 'ok',
+        success: 'Saved',
     };
 
     await Log.createAndSave(`${ctx.state.user.username} submitted its mappers choice`, LOG_TYPE.User, ctx.state.user.id);

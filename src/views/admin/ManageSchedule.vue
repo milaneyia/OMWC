@@ -28,7 +28,7 @@
             </div>
 
             <div class="col-sm-12">
-                <button class="btn btn-primary btn-block" @click="save">
+                <button class="btn btn-primary btn-block" @click="save($event)">
                     Update
                 </button>
             </div>
@@ -41,7 +41,6 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { Schedule } from '../../interfaces';
-import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 
 @Component({
@@ -83,15 +82,11 @@ export default class ManageSchedule extends Vue {
         };
     }
 
-    async save (): Promise<void> {
-        const res = await Axios.post('/api/admin/schedule/save', this.editSchedule);
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            this.$store.commit('updateSchedule', res.data);
-            this.$router.push('/');
-        }
+    async save (e: Event): Promise<void> {
+        await this.postRequest<{ schedule: Schedule }>('/api/admin/schedule/save', this.editSchedule, e, (data) => {
+            this.$store.commit('updateSchedule', data.schedule);
+            alert('Saved');
+        });
     }
 
 }

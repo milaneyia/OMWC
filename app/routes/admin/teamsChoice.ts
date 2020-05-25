@@ -21,6 +21,7 @@ teamsChoiceAdminRouter.get('/', async (ctx) => {
             'country.id',
             'country.name',
             'country.wasConfirmed',
+            'country.code',
             'user.id',
             'user.username',
             'user.osuId',
@@ -42,7 +43,7 @@ teamsChoiceAdminRouter.post('/confirm', async (ctx) => {
     await country.save();
 
     ctx.body = {
-        success: 'ok',
+        success: 'Saved',
     };
 });
 
@@ -53,7 +54,7 @@ teamsChoiceAdminRouter.post('/remove', async (ctx) => {
     await country.save();
 
     ctx.body = {
-        success: 'ok',
+        success: 'Saved',
     };
 });
 

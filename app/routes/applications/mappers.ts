@@ -24,7 +24,9 @@ mapperApplicationsRouter.post('/store', async (ctx) => {
     await app.save();
 
     if (app) {
-        return ctx.body = app;
+        return ctx.body = {
+            mapperApplication: app,
+        };
     }
 
     ctx.body = {

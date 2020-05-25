@@ -20,7 +20,11 @@
                         </tr>
                     </data-table>
 
-                    <button class="btn btn-block btn-primary" @click="showMore">
+                    <button
+                        v-if="logs.length % 50 == 0"
+                        class="btn btn-block btn-primary"
+                        @click="showMore($event)"
+                    >
                         show more
                     </button>
                 </div>
@@ -32,7 +36,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 
@@ -48,21 +51,16 @@ export default class LogListing extends Vue {
     skip = 50;
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
-        const res = await Axios.get(`/api/admin/logs`);
-        this.logs = res.data.logs;
-        this.$store.commit('updateLoadingState');
+        await this.initialRequest<{ logs: [] }>('/api/admin/logs', (data) => {
+            this.logs = data.logs;
+        });
     }
 
-    async showMore (): Promise<void> {
-        const res = await Axios.get(`/api/admin/logs?s=${this.skip}`);
-
-        if (res.data.logs) {
-            this.logs = this.logs.concat(res.data.logs);
+    async showMore (e: Event): Promise<void> {
+        await this.getRequest<{ logs: [] }>(`/api/admin/logs?s=${this.skip}`, e, (data) => {
+            this.logs = this.logs.concat(data.logs);
             this.skip += 50;
-        } else {
-            alert(res.data.error || 'Something went wrong');
-        }
+        });
     }
 
 }

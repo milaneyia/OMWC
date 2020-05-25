@@ -36,7 +36,7 @@
 
             <div class="row">
                 <div class="col-sm">
-                    <button class="btn btn-primary btn-block" @click="apply">
+                    <button class="btn btn-primary btn-block" @click="apply($event)">
                         {{ user.captainApplication ? 'Update' : 'Apply' }}
                     </button>
                 </div>
@@ -51,8 +51,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import { User } from '../../interfaces';
-import Axios from 'axios';
+import { User, CaptainApplication } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import LoginModal from '../../components/LoginModal.vue';
 
@@ -81,19 +80,14 @@ export default class Captain extends Vue {
         this.reason = this.user.captainApplication?.reason || '';
     }
 
-    async apply (): Promise<void> {
-        const res = await Axios.post('/api/applications/captains/save', {
+    async apply (e: Event): Promise<void> {
+        await this.postRequest<{ captainApplication: CaptainApplication }>('/api/applications/captains/save', {
             reason: this.reason,
-        });
-
-        if (res.data.success) {
+        }, e, (data) => {
             const user = { ...this.user };
-            user.captainApplication = res.data.captainApplication;
+            user.captainApplication = data.captainApplication;
             this.$store.commit('updateUser', user);
-            this.$router.push('/');
-        } else {
-            alert(res.data.error || 'Something went wrong!');
-        }
+        });
     }
 
 }

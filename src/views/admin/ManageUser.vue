@@ -24,7 +24,7 @@
                         >
 
                         <div class="input-group-append">
-                            <button class="btn btn-primary" @click="search">
+                            <button class="btn btn-primary" @click="search($event)">
                                 Search
                             </button>
                         </div>
@@ -42,7 +42,7 @@
                                     v-if="!user.mapperApplicationId"
                                     class="btn btn-primary btn-sm mb-1"
                                     title="In case someone forgot to apply..."
-                                    @click="createApp(user.id)"
+                                    @click="createApp(user.id, $event)"
                                 >
                                     Create mapper app
                                 </button>
@@ -60,7 +60,7 @@
                                 </select>
 
                                 <div class="input-group-append">
-                                    <button class="btn btn-success" @click="save(user)">
+                                    <button class="btn btn-success" @click="save(user, $event)">
                                         Save
                                     </button>
                                 </div>
@@ -82,10 +82,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
-import { User } from '../../interfaces';
+import { User, MapperApplication } from '../../interfaces';
 
 @Component({
     components: {
@@ -100,44 +99,33 @@ export default class ManageUser extends Vue {
     query = '';
 
     async created (): Promise<void> {
-        this.$store.commit('updateLoadingState');
-        const res = await Axios.get(`/api/admin/users/roles`);
-        this.roles = res.data.roles;
-        this.$store.commit('updateLoadingState');
+        await this.initialRequest<{ roles: [] }>('/api/admin/users/roles', (data) => {
+            this.roles = data.roles;
+        });
     }
 
-    async search (): Promise<void> {
-        const res = await Axios.get(`/api/admin/users/query?u=${this.query}`);
-
-        if (res.data.users) {
-            this.users = res.data.users;
-        } else {
-            alert(res.data.error || 'Something went wrong');
-        }
+    async search (e: Event): Promise<void> {
+        await this.getRequest<{ users: User[] }>(`/api/admin/users/query?u=${this.query}`, e, (data) => {
+            this.users = data.users;
+        });
     }
 
-    async createApp (id: number): Promise<void> {
-        const res = await Axios.post(`/api/admin/users/${id}/createMapperApplication`);
-
-        if (res.data.app) {
+    async createApp (id: number, e: Event): Promise<void> {
+        await this.postRequest<{ app: MapperApplication }>(`/api/admin/users/${id}/createMapperApplication`, {}, e, (data) => {
             const i = this.users.findIndex(u => u.id === id);
 
             if (i !== -1) {
-                Vue.set(this.users[i], 'mapperApplicationId', res.data.app.id);
+                Vue.set(this.users[i], 'mapperApplicationId', data.app.id);
             }
 
-            alert('saved');
-        } else {
-            alert(res.data.success || res.data.error || 'Something went wrong');
-        }
+            alert('Created');
+        });
     }
 
-    async save (user: User): Promise<void> {
-        const res = await Axios.post(`/api/admin/users/${user.id}/updateRole`, {
+    async save (user: User, e: Event): Promise<void> {
+        await this.postRequest<{ app: MapperApplication }>(`/api/admin/users/${user.id}/updateRole`, {
             roleId: user.roleId,
-        });
-
-        alert(res.data.success || res.data.error || 'Something went wrong');
+        }, e);
     }
 
 }

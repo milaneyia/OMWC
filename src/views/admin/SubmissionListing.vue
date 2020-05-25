@@ -41,8 +41,8 @@
                             v-for="submission in match.submissions"
                             :key="submission.id"
                         >
-                            <td>{{ submission.country.name }}</td>
-                            <td>{{ new Date(submission.updatedAt).toLocaleString() }}</td>
+                            <country-flag-cell :country="submission.country" />
+                            <td>{{ submission.updatedAt | shortDateTimeString }}</td>
                             <td>
                                 <a
                                     v-if="submission.originalPath"
@@ -130,12 +130,14 @@ import Component from 'vue-class-component';
 import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
+import CountryFlagCell from '../../components/CountryFlagCell.vue';
 import { Submission } from '../../interfaces';
 
 @Component({
     components: {
         PageHeader,
         DataTable,
+        CountryFlagCell,
     },
 })
 export default class SubmissionListing extends Vue {
@@ -151,8 +153,9 @@ export default class SubmissionListing extends Vue {
     }
 
     async getData (): Promise<void> {
-        const res = await Axios.get('/api/admin/submissions');
-        this.rounds = res.data.rounds;
+        await this.initialRequest<{ rounds: [] }>('/api/admin/submissions', (data) => {
+            this.rounds = data.rounds;
+        });
     }
 
     async save (submission: Submission): Promise<void> {

@@ -115,7 +115,7 @@
 
                         <!-- Osz submission -->
                         <router-link
-                            v-else
+                            v-else-if="user.country.wasConfirmed"
                             to="/submissions"
                             class="btn btn-primary btn-block btn-lg"
                         >

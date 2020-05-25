@@ -16,7 +16,7 @@
 
             <div class="row">
                 <div class="col-sm">
-                    <button class="btn btn-primary btn-block" @click="apply">
+                    <button class="btn btn-primary btn-block" @click="apply($event)">
                         Apply
                     </button>
                 </div>
@@ -31,8 +31,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import { User } from '../../interfaces';
-import Axios from 'axios';
+import { User, MapperApplication } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import LoginModal from '../../components/LoginModal.vue';
 
@@ -46,17 +45,13 @@ export default class Mapper extends Vue {
 
     @State user!: User;
 
-    async apply (): Promise<void> {
-        const res = await Axios.post('/api/applications/mappers/store');
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
-            const user = this.user;
-            user.mapperApplication = res.data;
+    async apply (e: Event): Promise<void> {
+        await this.postRequest<{ mapperApplication: MapperApplication }>('/api/applications/mappers/store', {}, e, (data) => {
+            const user = { ...this.user };
+            user.mapperApplication = data.mapperApplication;
             this.$store.commit('updateUser', user);
             this.$router.push('/');
-        }
+        });
     }
 
 }
