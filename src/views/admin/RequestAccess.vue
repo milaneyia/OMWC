@@ -60,7 +60,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import PageHeader from '../../components/PageHeader.vue';
-import DataTable from '../../components/DataTable.vue';
+import DataTable from '../../components/admin/DataTable.vue';
 
 @Component({
     components: {

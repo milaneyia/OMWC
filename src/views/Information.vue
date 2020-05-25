@@ -4,7 +4,7 @@
             title="Information"
         />
 
-        <modal-text>
+        <card-text>
             <h5>
                 You can read the whole documentation
                 <a href="https://docs.google.com/document/d/1D76nZfKeOGd5PkImYJxGfyKqN8_ikeIlG9wgUsUYXng/edit?usp=sharing" target="__blank">
@@ -15,9 +15,9 @@
             <p class="mb-0">
                 osu! Beatmapping World Championship is a 6 month tournament starting from may till october and will be divided in 3 phases
             </p>
-        </modal-text>
+        </card-text>
 
-        <modal-text
+        <card-text
             header="Phases"
         >
             <b>Preparation phase:</b>
@@ -65,9 +65,9 @@
                 <li>Teams choose 1 genre between 3 to 'ban' it. The remaining will be the chosen to map</li>
                 <li>Judges review each entry and decide what entry was the best</li>
             </ul>
-        </modal-text>
+        </card-text>
 
-        <modal-text
+        <card-text
             header="Criterias"
         >
             <ul>
@@ -101,7 +101,7 @@
                     </div>
                 </li>
             </ul>
-        </modal-text>
+        </card-text>
     </div>
 </template>
 
@@ -109,12 +109,12 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import PageHeader from '../components/PageHeader.vue';
-import ModalText from '../components/ModalText.vue';
+import CardText from '../components/CardText.vue';
 
 @Component({
     components: {
         PageHeader,
-        ModalText,
+        CardText,
     },
 })
 export default class Information extends Vue {

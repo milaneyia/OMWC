@@ -80,7 +80,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Submission, Round, Match } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
-import DataTable from '../../components/DataTable.vue';
+import DataTable from '../../components/admin/DataTable.vue';
 import EliminationJudgingDetail from '../../components/results/EliminationJudgingDetail.vue';
 import QualifierJudgingDetail from '../../components/results/QualifierJudgingDetail.vue';
 

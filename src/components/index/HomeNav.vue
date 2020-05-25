@@ -29,7 +29,7 @@
                                 placeholder="Link a ranked GD"
                             >
 
-                            <button class="btn btn-primary btn-block" @click="requestAccess">
+                            <button class="btn btn-primary btn-block" @click="requestAccess($event)">
                                 Request
                             </button>
 
@@ -141,8 +141,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
-import { Schedule, User } from '../interfaces';
+import { Schedule, User } from '../../interfaces';
 
 @Component({
     props: {
@@ -195,19 +194,15 @@ export default class HomeNav extends Vue {
             );
     }
 
-    async requestAccess(): Promise<void> {
-        const res = await Axios.post('/api/users/requestAccess', {
+    async requestAccess(e: Event): Promise<void> {
+        await this.postRequest<{ user: User }>('/api/users/requestAccess', {
             mapLink: this.requestAccessLink,
-        });
-
-        if (res.data.error) {
-            alert(res.data.error);
-        } else {
+        }, e, (data) => {
             this.requestingAccess = false;
             this.requestAccessLink = null;
-            this.$store.commit('updateUser', res.data.user);
+            this.$store.commit('updateUser', data.user);
             alert('Request submitted! An admin will evaluate it soon');
-        }
+        });
     }
 
     getStateClassButton (startedAt: Date | undefined): string {

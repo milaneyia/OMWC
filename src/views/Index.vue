@@ -224,8 +224,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import HomeNav from '../components/HomeNav.vue';
-import ScheduleDate from '../components/ScheduleDate.vue';
+import HomeNav from '../components/index/HomeNav.vue';
+import ScheduleDate from '../components/index/ScheduleDate.vue';
 
 @Component({
     components: {

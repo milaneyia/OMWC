@@ -31,7 +31,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Match } from '../interfaces';
+import { Match } from '../../interfaces';
 
 @Component({
     props: {

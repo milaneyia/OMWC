@@ -74,7 +74,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Round } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
-import RoundMatch from '../../components/RoundMatch.vue';
+import RoundMatch from '../../components/results/RoundMatch.vue';
 import EliminationJudgingDetail from '../../components/results/EliminationJudgingDetail.vue';
 import { State, Getter } from 'vuex-class';
 

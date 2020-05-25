@@ -31,7 +31,7 @@ import Component from 'vue-class-component';
         header: String,
     },
 })
-export default class ModalText extends Vue {
+export default class CardText extends Vue {
 
 }
 </script>

@@ -93,8 +93,8 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Match, Country } from '../../../interfaces';
 import PageHeader from '../../../components/PageHeader.vue';
-import DataTable from '../../../components/DataTable.vue';
-import MatchForm from '../../../components/MatchForm.vue';
+import DataTable from '../../../components/admin/DataTable.vue';
+import MatchForm from '../../../components/admin/MatchForm.vue';
 
 interface ApiResponse {
     matches: [];

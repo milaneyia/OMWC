@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import PageHeader from './PageHeader.vue';
+import PageHeader from '../PageHeader.vue';
 
 @Component({
     components: {

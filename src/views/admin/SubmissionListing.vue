@@ -129,7 +129,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
-import DataTable from '../../components/DataTable.vue';
+import DataTable from '../../components/admin/DataTable.vue';
 import CountryFlagCell from '../../components/CountryFlagCell.vue';
 import { Submission } from '../../interfaces';
 

@@ -110,7 +110,7 @@ import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { Schedule } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
-import DataTable from '../../components/DataTable.vue';
+import DataTable from '../../components/admin/DataTable.vue';
 
 @Component({
     components: {
