@@ -19,7 +19,10 @@
                         {{ team.name }}
                     </div>
 
-                    <div class="match__team-score">
+                    <div
+                        v-if="match.eliminationJudging && match.eliminationJudging.length"
+                        class="match__team-score"
+                    >
                         {{ getScore(team.id) }}
                     </div>
                 </template>

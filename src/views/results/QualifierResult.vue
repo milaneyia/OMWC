@@ -4,34 +4,65 @@
             title="Leaderboard"
         />
 
+        <div class="row my-3">
+            <div class="col-sm">
+                <div class="round__details">
+                    Submissions
+                    <div class="round__date">
+                        {{ qualifier.submissionsStartedAt | shortDateTimeString }} -
+                        {{ qualifier.submissionsEndedAt | shortDateTimeString }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="round__details">
+                    Judging
+                    <div class="round__date">
+                        {{ qualifier.judgingStartedAt | shortDateTimeString }} -
+                        {{ qualifier.judgingEndedAt | shortDateTimeString }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="round__details">
+                    Results
+                    <div class="round__date">
+                        {{ qualifier.resultsAt | shortDateTimeString }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <div class="col-sm">
+                <a
+                    href="#"
+                    :class="displayMode === 'criterias' ? 'border-bottom border-secondary' : ''"
+                    @click="displayMode = 'criterias'"
+                >
+                    Per criteria
+                </a>
+                |
+                <a
+                    href="#"
+                    :class="displayMode === 'judges' ? 'border-bottom border-secondary' : ''"
+                    @click="displayMode = 'judges'"
+                >
+                    Per judge
+                </a>
+                |
+                <a
+                    href="#"
+                    :class="displayMode === 'detail' ? 'border-bottom border-secondary' : ''"
+                    @click="displayMode = 'detail'"
+                >
+                    Std detail
+                </a>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-sm">
-                <div class="my-3">
-                    <a
-                        href="#"
-                        :class="displayMode === 'criterias' ? 'border-bottom border-secondary' : ''"
-                        @click="displayMode = 'criterias'"
-                    >
-                        Per criteria
-                    </a>
-                    |
-                    <a
-                        href="#"
-                        :class="displayMode === 'judges' ? 'border-bottom border-secondary' : ''"
-                        @click="displayMode = 'judges'"
-                    >
-                        Per judge
-                    </a>
-                    |
-                    <a
-                        href="#"
-                        :class="displayMode === 'detail' ? 'border-bottom border-secondary' : ''"
-                        @click="displayMode = 'detail'"
-                    >
-                        Std detail
-                    </a>
-                </div>
-
                 <table
                     class="leaderboard"
                     :class="submissionsLength ? 'leaderboard--clickable' : ''"

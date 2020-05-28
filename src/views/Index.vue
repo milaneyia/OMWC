@@ -105,7 +105,9 @@
                     <div class="col-sm">
                         <div class="card">
                             <div class="card-header">
-                                <h3>Prizes</h3>
+                                <h3 class="mb-0">
+                                    Prizes
+                                </h3>
 
                                 <small>
                                     supporter tags are for each team member
@@ -178,9 +180,12 @@
                 <div class="row mb-2">
                     <div class="col-sm">
                         <div class="card">
-                            <h3 class="card-header">
-                                Schedule
-                            </h3>
+                            <div class="card-header">
+                                <h3 class="mb-0">
+                                    Schedule
+                                </h3>
+                                <small>dates are in your local timezone</small>
+                            </div>
 
                             <div class="card-body">
                                 <div class="row">
@@ -188,7 +193,6 @@
                                         <schedule-date
                                             collapse="preparationCollapse"
                                             group-title="Preparation phase"
-                                            date-summary="from may 02 to may 29"
                                             :dates="preparationDates"
                                         />
 
@@ -197,7 +201,6 @@
                                         <schedule-date
                                             collapse="qualifiersCollapse"
                                             group-title="Qualifiers"
-                                            date-summary="from may 30 to june 27"
                                             :dates="qualifiersDates"
                                         />
 
@@ -206,7 +209,6 @@
                                         <schedule-date
                                             collapse="eliminationCollapse"
                                             group-title="Head-to-head elimination"
-                                            date-summary="from june 30 to october 08"
                                             :dates="eliminationDates"
                                         />
                                     </div>

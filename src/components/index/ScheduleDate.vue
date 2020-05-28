@@ -17,7 +17,8 @@
         </h5>
 
         <p>
-            {{ dateSummary }}
+            {{ dates[0].from | shortDateTimeString }} -
+            {{ dates[dates.length - 1].to || dates[dates.length - 2].to | shortDateTimeString }}
         </p>
 
         <div :id="collapse" class="collapse">
@@ -30,11 +31,11 @@
                 >
                     <div class="col-sm-3">
                         <div>
-                            {{ date.from.toLocaleString() }}
+                            {{ date.from | shortDateTimeString }}
                         </div>
 
                         <div v-if="date.to">
-                            {{ date.to.toLocaleString() }}
+                            {{ date.to | shortDateTimeString }}
                         </div>
                     </div>
 
@@ -58,10 +59,6 @@ import Component from 'vue-class-component';
             required: true,
         },
         groupTitle: {
-            type: String,
-            required: true,
-        },
-        dateSummary: {
             type: String,
             required: true,
         },
