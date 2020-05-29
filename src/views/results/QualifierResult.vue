@@ -216,7 +216,7 @@ export default class QualifierResult extends Vue {
 
     get scoreDetail (): Submission | undefined {
         if (this.selectedScore) {
-            return this.qualifier?.matches?.[0].submissions?.find(s => s.country.id == this.selectedScore?.country.id);
+            return this.qualifier?.matches?.[0]?.submissions?.find(s => s.country.id == this.selectedScore?.country.id);
         }
 
         return undefined;
@@ -340,7 +340,7 @@ export default class QualifierResult extends Vue {
             // Set correlation coefficient per judge
             for (const judgeId of judgesIds) {
                 const i = judgesCorrel.findIndex(j => j.id === judgeId);
-                const judgeAvg = judgesCorrel?.[i].avg || 0;
+                const judgeAvg = judgesCorrel?.[i]?.avg || 0;
 
                 let sum1 = 0;
                 let sum2 = 0;

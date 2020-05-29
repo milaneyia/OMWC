@@ -36,7 +36,7 @@ const store: StoreOptions<MainState> = {
     },
     getters: {
         submissionsLength (state): number | undefined {
-            return state.qualifier?.matches?.[0].submissions?.length;
+            return state.qualifier?.matches?.[0]?.submissions?.length;
         },
         nonFinals (state): Round[] {
             if (state.eliminationRounds.length) {
