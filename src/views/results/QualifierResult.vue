@@ -4,7 +4,7 @@
             title="Leaderboard"
         />
 
-        <div class="row my-3">
+        <div v-if="qualifier" class="row my-3">
             <div class="col-sm">
                 <div class="round__details">
                     Submissions
