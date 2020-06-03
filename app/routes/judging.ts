@@ -6,6 +6,7 @@ import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
 import { Criteria } from '../models/judging/Criteria';
 import { QualifierJudgingToCriteria } from '../models/judging/QualifierJudgingToCriteria';
+import { Match } from '../models/rounds/Match';
 
 const judgingRouter = new Router();
 
@@ -14,88 +15,114 @@ judgingRouter.use(authenticate);
 judgingRouter.use(isJudge);
 
 judgingRouter.get('/', async (ctx) => {
-    // const today = new Date();
-    // const currentRound = await Round
-    //     .createQueryBuilder('round')
-    //     .leftJoinAndSelect('round.submissions', 'submission')
-    //     .where('judgingStartedAt <= :today', { today })
-    //     .andWhere('judgingEndedAt >= :today', { today })
-    //     .andWhere('submission.anonymisedAs IS NOT NULL')
-    //     .select(['round', 'submission.id', 'submission.anonymisedAs'])
-    //     .getOne();
+    const currentRound = await Round.findCurrentJudgingRound();
 
-    // if (!currentRound) {
-    //     return ctx.body = {
-    //         error: 'Not a round in progress',
-    //     };
-    // }
+    if (!currentRound) {
+        return ctx.body = {
+            error: 'There is currently no round to judge',
+        };
+    }
 
-    // const criterias = await Criteria.find({});
-    // const judgingDone = await QualifierJudging.find({
-    //     judgeId: ctx.state.user.id,
-    //     roundId: currentRound.id,
-    // });
+    const matches = await Match.findByRoundWithSubmissions(currentRound.id);
+    currentRound.matches = matches;
 
-    // ctx.body = {
-    //     criterias,
-    //     currentRound,
-    //     judgingDone,
-    // };
+    if (currentRound.isQualifier) {
+        const [criterias, judgingDone] = await Promise.all([
+            Criteria.find({}),
+            QualifierJudging.find({
+                where: { judgeId: ctx.state.user.id },
+                relations: ['qualifierJudgingToCriterias'],
+            }),
+        ]);
+
+        return ctx.body = {
+            currentRound,
+            criterias,
+            judgingDone,
+        };
+
+    } else {
+        // do something
+    }
+
 });
 
 judgingRouter.post('/save', async (ctx) => {
-    // const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
-    // const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
-    // const score = convertToFloat(ctx.request.body.score);
-    // const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
+    const round: Round = ctx.request.body.round;
 
-    // const submission = await Submission.findOneOrFail({ id: submissionId });
-    // const criteria = await Criteria.findOneOrFail({ id: criteriaId });
-    // const round = await Round.findCurrentJudgingRound();
+    if (!round) {
+        return ctx.body = { error: 'fuck' };
+    }
 
-    // if (!round || !score || !comment) {
-    //     return ctx.body = { error: 'Missing data' };
-    // }
+    if (round.isQualifier) {
+        const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
+        const criteriaId = await convertToIntOrThrow(ctx.request.body.criteriaId);
+        const score = convertToIntOrThrow(ctx.request.body.score);
+        const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
 
-    // if (score > criteria.maxScore) {
-    //     return ctx.body = { error: 'Score is higher than expected' };
-    // }
+        const [currentRound, criteria, submission] = await Promise.all([
+            Round.findCurrentJudgingRound(),
+            Criteria.findOneOrFail({ id: criteriaId }),
+            Submission.findOneOrFail({ id: submissionId }),
+        ]);
 
-    // let judging = await QualifierJudging.findOne({
-    //     judgeId: ctx.state.user.id,
-    //     roundId: round.id,
-    //     submissionId: submission.id,
-    // });
-    // let judgingToCriteria;
+        if (!score || !comment || !criteria || !submission) {
+            return ctx.body = { error: 'Missing data' };
+        }
 
-    // if (judging) {
-    //     judgingToCriteria = await QualifierJudgingToCriteria.findOne({
-    //         criteria,
-    //         judging,
-    //     });
-    // } else {
-    //     judging = new QualifierJudging();
-    // }
+        if (!currentRound) {
+            return ctx.body = { error: 'There is currently no round to judge' };
+        }
 
-    // if (!judging || !judgingToCriteria) {
-    //     judgingToCriteria = new QualifierJudgingToCriteria();
-    // }
+        if (score > criteria.maxScore) {
+            return ctx.body = { error: 'Score is higher than expected' };
+        }
 
-    // judging.judgeId = ctx.state.user.id;
-    // judging.roundId = round.id;
-    // judging.submissionId = submission.id;
-    // judging.comment = comment;
-    // await judging.save();
+        let judging = await QualifierJudging.findOne({
+            judgeId: ctx.state.user.id,
+            submissionId: submission.id,
+        });
 
-    // judgingToCriteria.criteria = criteria;
-    // judgingToCriteria.judging = judging;
-    // judgingToCriteria.score = score;
-    // await judgingToCriteria.save();
+        let judgingToCriteria;
 
-    // return ctx.body = {
-    //     judging,
-    //     success: 'Saved',
-    // };
+        if (judging) {
+            judgingToCriteria = await QualifierJudgingToCriteria.findOne({
+                criteria,
+                qualifierJudgingId: judging.id,
+            });
+        } else {
+            judging = new QualifierJudging();
+        }
+
+        if (!judgingToCriteria) {
+            judgingToCriteria = new QualifierJudgingToCriteria();
+        }
+
+        judging.judgeId = ctx.state.user.id;
+        judging.submissionId = submission.id;
+        await judging.save();
+
+        judgingToCriteria.criteria = criteria;
+        judgingToCriteria.qualifierJudgingId = judging.id;
+        judgingToCriteria.score = score;
+        judgingToCriteria.comment = comment;
+        await judgingToCriteria.save();
+
+        const judgingDone = await QualifierJudging.find({
+            where: { judgeId: ctx.state.user.id },
+            relations: ['qualifierJudgingToCriterias'],
+        });
+
+        return ctx.body = {
+            judgingDone,
+            success: 'Saved!',
+        };
+
+    } else {
+        // do something!!
+    }
+
+    ctx.body = { success: 'Saved!' };
 });
 
 export default judgingRouter;
