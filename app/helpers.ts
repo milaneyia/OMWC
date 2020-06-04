@@ -45,7 +45,7 @@ export async function checkFileExistence(path: string): Promise<void> {
 export async function saveFile(inputPath: string, outputDir: string, outputPath: string): Promise<void> {
     try {
         await fs.promises.mkdir(outputDir, { recursive: true });
-        await fs.promises.writeFile(outputPath, inputPath);
+        await fs.promises.copyFile(inputPath, outputPath);
     } catch (error) {
         console.log(error);
         throw new Error(`Couldn't save the file`);
