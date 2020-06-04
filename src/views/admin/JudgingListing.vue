@@ -6,58 +6,57 @@
         />
 
         <div
-            v-for="round in rounds"
+            v-for="(round, i) in rounds"
             :key="round.id"
-            class="row text-left mt-3"
+            class="row mt-3"
         >
             <div class="col-sm">
-                <h5>{{ round.title }}</h5>
+                <h5 class="box py-2">
+                    <a
+                        :href="`#round-${i}`"
+                        data-toggle="collapse"
+                    >
+                        {{ round.title }}
+                    </a>
+                </h5>
 
                 <div
-                    v-for="(match, i) in round.matches"
+                    v-for="match in round.matches"
+                    :id="`round-${i}`"
                     :key="match.id"
+                    class="collapse card mb-2"
                 >
-                    <a
-                        class="mb-2"
-                        data-toggle="collapse"
-                        :href="`#match-${match.id}`"
+                    <div class="card-header">
+                        {{ match.information }}
+                    </div>
+
+                    <data-table
+                        v-if="match.submissions && match.submissions.length"
+                        :headers="['Country', 'Judges']"
                     >
-                        Match {{ i + 1 }}
-                    </a>
+                        <tr
+                            v-for="submission in match.submissions"
+                            :key="submission.id"
+                            data-toggle="modal"
+                            data-target="#detailModal"
+                            style="cursor: pointer"
+                            @click="select(round.isQualifier, submission, match)"
+                        >
+                            <td>
+                                <div class="align-items-center d-flex">
+                                    <div class="country-flag mr-2" :style="`background-image: url(https://osu.ppy.sh/images/flags/${submission.country.code}.png)`" />
+                                    {{ `${submission.country.name} (${submission.anonymisedAs || 'Not anonymized'})` }}
+                                </div>
+                            </td>
+                            <td>{{ getJudgesInvolved(submission, round.isQualifier) }}</td>
+                        </tr>
+                    </data-table>
 
                     <div
-                        :id="`match-${match.id}`"
-                        class="collapse"
+                        v-else
+                        class="card-body"
                     >
-                        <div class="card mb-2">
-                            <div class="card-header">
-                                {{ match.information }}
-                            </div>
-
-                            <div class="card-body p-0">
-                                <data-table
-                                    :headers="['Country', 'Judges']"
-                                >
-                                    <tr
-                                        v-for="submission in match.submissions"
-                                        :key="submission.id"
-                                        data-toggle="modal"
-                                        data-target="#detailModal"
-                                        @click="select(round.isQualifier, submission, match)"
-                                    >
-                                        <td>
-                                            <div class="align-items-center d-flex">
-                                                <div class="country-flag mr-2" :style="`background-image: url(https://osu.ppy.sh/images/flags/${submission.country.code}.png)`" />
-                                                {{ `${submission.country.name} (${submission.anonymisedAs || 'Not anonymized'})` }}
-                                            </div>
-                                        </td>
-                                        <td>{{ getJudgesInvolved(submission, round.isQualifier) }}</td>
-                                    </tr>
-                                </data-table>
-                            </div>
-                        </div>
-
-                        <hr>
+                        No submissions
                     </div>
                 </div>
             </div>

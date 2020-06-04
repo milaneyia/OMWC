@@ -25,22 +25,24 @@
                                 </td>
                                 <td>
                                     <span
-                                        v-for="contestant in country.users.filter(u => u.isContestant)"
+                                        v-for="(contestant, i) in country.users.filter(u => u.isContestant)"
                                         :key="contestant.id"
                                     >
                                         <a :href="`https://osu.ppy.sh/users/${contestant.osuId}`" target="__blank">
                                             {{ contestant.username }}
                                         </a>
+                                        {{ i >= country.users.filter(u => u.isContestant).length - 1 ? '' : ', ' }}
                                     </span>
                                 </td>
                                 <td>
                                     <span
-                                        v-for="user in country.users.filter(u => !u.isContestant && !u.isCaptain)"
+                                        v-for="(user, i) in country.users.filter(u => !u.isContestant && !u.isCaptain)"
                                         :key="user.id"
                                     >
                                         <a :href="`https://osu.ppy.sh/users/${user.osuId}`" target="__blank">
                                             {{ user.username }}
                                         </a>
+                                        {{ i >= country.users.filter(u => !u.isContestant && !u.isCaptain).length - 1 ? '' : ', ' }}
                                     </span>
                                 </td>
                                 <td>

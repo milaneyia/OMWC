@@ -4,6 +4,25 @@
             title="Teams"
         />
 
+        <div v-if="user && user.isStaff" class="text-left my-2">
+            <a
+                class="btn btn-primary"
+                data-toggle="collapse"
+                href="#teamsList"
+            >
+                Show teams list
+            </a>
+            <div id="teamsList" class="collapse mt-2">
+                <div class="card card-body">
+                    <div v-for="team in teams" :key="team.id">
+                        :flag_{{ team.code.toLowerCase() }}:
+                        {{ team.name }}:
+                        {{ listUsers(team) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div
             v-for="team in teams"
             :key="team.id"
@@ -48,7 +67,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import PageHeader from '../components/PageHeader.vue';
 import { State } from 'vuex-class';
-import { Country } from '../interfaces';
+import { Country, User } from '../interfaces';
 
 @Component({
     components: {
@@ -58,6 +77,7 @@ import { Country } from '../interfaces';
 export default class TeamListing extends Vue {
 
     @State teams!: Country[];
+    @State user!: User;
 
     created (): void {
         if (!this.teams.length) {
@@ -65,6 +85,16 @@ export default class TeamListing extends Vue {
             this.$store.dispatch('getTeams');
             this.$store.commit('updateLoadingState');
         }
+    }
+
+    listUsers (team: Country): string {
+        const list = team.users.map(u => u.username);
+
+        if (list.length) {
+            list[0] = `${list[0]} (captain)`;
+        }
+
+        return list.join(', ');
     }
 
 }

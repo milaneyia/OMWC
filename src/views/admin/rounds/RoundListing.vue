@@ -2,8 +2,7 @@
     <div class="container text-center">
         <page-header
             title="Round Listing"
-            subtitle="Listing of all rounds, once the submissions are done and you made the osz with the anonymised entries,
-                you can add the link here (It'll show up for the judges and results tables)"
+            subtitle="Listing of all rounds, once judging ends, you can set who vs who (by editing matches)"
         />
 
         <router-link to="/admin/rounds/create" class="btn btn-primary btn-block my-2">

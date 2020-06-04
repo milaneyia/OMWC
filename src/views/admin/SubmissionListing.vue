@@ -2,25 +2,29 @@
     <div class="container text-center">
         <page-header
             title="Submissions"
-            subtitle="Listing of submissions by round, you NEED to set an anonymised name for the entry, otherwise it'll not show up for the judges"
+            subtitle="Listing of submissions by round, you NEED to set an anonymised name and upload the .osz for the entry, otherwise it'll not show up for the judges"
         />
 
-        <hr>
-
         <div
-            v-for="round in rounds"
+            v-for="(round, i) in rounds"
             :key="round.id"
-            class="row mb-5"
+            class="row mt-3"
         >
             <div class="col-sm">
                 <h5 class="box py-2">
-                    {{ round.title }}
+                    <a
+                        :href="`#round-${i}`"
+                        data-toggle="collapse"
+                    >
+                        {{ round.title }}
+                    </a>
                 </h5>
 
                 <div
                     v-for="match in round.matches"
+                    :id="`round-${i}`"
                     :key="match.id"
-                    class="card"
+                    class="collapse card mb-2"
                 >
                     <div class="card-header">
                         {{ match.information }}

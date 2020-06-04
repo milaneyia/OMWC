@@ -35,12 +35,13 @@
                             <td>{{ applicant.captainApplication.userVotes.length }}</td>
                             <td>
                                 <span
-                                    v-for="voter in applicant.captainApplication.userVotes"
+                                    v-for="(voter, i) in applicant.captainApplication.userVotes"
                                     :key="voter.id"
                                 >
                                     <a :href="`https://osu.ppy.sh/users/${voter.osuId}`" target="__blank">
                                         {{ voter.username }}
                                     </a>
+                                    {{ i >= applicant.captainApplication.userVotes.length - 1 ? '' : ', ' }}
                                 </span>
                             </td>
                             <td>
