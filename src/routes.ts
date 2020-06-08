@@ -22,7 +22,7 @@ const ManageUser = () => import(/* webpackChunkName: "admin" */ './views/admin/M
 const LogListing = () => import(/* webpackChunkName: "admin" */ './views/admin/LogListing.vue');
 const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/admin/SubmissionListing.vue');
 const JudgingListing = () => import(/* webpackChunkName: "admin" */ './views/admin/JudgingListing.vue');
-const Judging = () => import(/* webpackChunkName: "admin" */ './views/Judging.vue');
+const Judging = () => import(/* webpackChunkName: "judging" */ './views/Judging.vue');
 
 const routes: RouteConfig[] = [
     { path: '/', component: Index },

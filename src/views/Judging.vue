@@ -8,7 +8,7 @@
                 :judging-done="judgingDone"
             />
             <elimination
-                v-else-if="currentRound.isQualifier === false"
+                v-else
                 :round="currentRound"
             />
         </template>

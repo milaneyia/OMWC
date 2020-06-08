@@ -48,7 +48,7 @@
                                         <td>
                                             <i
                                                 class="fa"
-                                                :class="isCompleted(submission.id) ? 'fa-check' : 'fa-times'"
+                                                :class="isCompleted(submission.id) ? 'fa-check text-success' : 'fa-times text-danger'"
                                             />
                                         </td>
                                     </tr>
@@ -79,7 +79,6 @@
                     </div>
                     <div class="modal-header">
                         <h5
-                            v-if="editingCriteria"
                             id="exampleModalLongTitle"
                             class="modal-title"
                         >
@@ -95,7 +94,7 @@
                                 type="number"
                                 step="1"
                                 min="0"
-                                :max="editingCriteria.id == 4 ? 10 : 30"
+                                :max="editingCriteria.maxScore"
                                 class="form-control"
                             >
                         </div>

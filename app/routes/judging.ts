@@ -56,7 +56,7 @@ judgingRouter.post('/save', async (ctx) => {
 
     if (round.isQualifier) {
         const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
-        const criteriaId = await convertToIntOrThrow(ctx.request.body.criteriaId);
+        const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
         const score = convertToIntOrThrow(ctx.request.body.score);
         const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
 
@@ -66,7 +66,7 @@ judgingRouter.post('/save', async (ctx) => {
             Submission.findOneOrFail({ id: submissionId }),
         ]);
 
-        if (!score || !comment || !criteria || !submission) {
+        if (!comment || !criteria || !submission) {
             return ctx.body = { error: 'Missing data' };
         }
 
@@ -119,10 +119,8 @@ judgingRouter.post('/save', async (ctx) => {
         };
 
     } else {
-        // do something!!
+        return ctx.body = { error: 'nope' };
     }
-
-    ctx.body = { success: 'Saved!' };
 });
 
 export default judgingRouter;
