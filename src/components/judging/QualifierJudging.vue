@@ -250,7 +250,7 @@ export default class Qualifier extends Vue {
             return;
 
         const { judgingDone } = res.data;
-        this.judgingDone = judgingDone;
+        this.$emit('update:judging-done', judgingDone);
     }
 
     closeModal(): void {

@@ -5,7 +5,7 @@
                 v-if="currentRound.isQualifier"
                 :round="currentRound"
                 :criterias="criterias"
-                :judging-done="judgingDone"
+                :judging-done.sync="judgingDone"
             />
             <elimination
                 v-else

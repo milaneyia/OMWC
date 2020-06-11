@@ -95,18 +95,17 @@ judgingRouter.post('/save', async (ctx) => {
             });
         } else {
             judging = new QualifierJudging();
+            judging.judgeId = ctx.state.user.id;
+            judging.submissionId = submission.id;
+            await judging.save();
         }
 
         if (!judgingToCriteria) {
             judgingToCriteria = new QualifierJudgingToCriteria();
+            judgingToCriteria.criteria = criteria;
+            judgingToCriteria.qualifierJudgingId = judging.id;
         }
 
-        judging.judgeId = ctx.state.user.id;
-        judging.submissionId = submission.id;
-        await judging.save();
-
-        judgingToCriteria.criteria = criteria;
-        judgingToCriteria.qualifierJudgingId = judging.id;
         judgingToCriteria.score = score;
         judgingToCriteria.comment = comment;
         await judgingToCriteria.save();
