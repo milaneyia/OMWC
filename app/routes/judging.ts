@@ -29,7 +29,18 @@ judgingRouter.use(async (ctx: ParameterizedContext, next: Next) => {
 
 judgingRouter.get('/', async (ctx) => {
     const currentRound = ctx.state.currentRound;
-    const matches = await Match.findByRoundWithSubmissions(currentRound.id);
+    const matches = await Match.createQueryBuilder('match')
+        .leftJoin('match.round', 'round')
+        .leftJoin('match.submissions', 'submissions')
+        .select([
+            'match.id',
+            'submissions.id',
+            'submissions.anonymisedAs',
+            'submissions.anonymisedPath',
+        ])
+        .where('round.id = :roundId', { roundId: currentRound.id })
+        .orderBy('RAND()')
+        .getMany();
     currentRound.matches = matches;
 
     if (currentRound.isQualifier) {
