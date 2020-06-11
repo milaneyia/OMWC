@@ -12,6 +12,14 @@
                 :round="currentRound"
             />
         </template>
+
+        <img
+            v-else
+            src="https://media1.tenor.com/images/46d73c3cc50fa32e0e1d8c2a38007477/tenor.gif?itemid=7513882"
+            width="600"
+            height="600"
+            alt=""
+        >
     </div>
 </template>
 

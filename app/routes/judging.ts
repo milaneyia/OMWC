@@ -127,7 +127,7 @@ judgingRouter.post('/save', async (ctx) => {
 
 judgingRouter.get('/submission/:id/download', findSubmission, async (ctx, next) => {
     const submission: Submission = ctx.state.submission;
-    const baseDir = path.join(__dirname, '../../../osz/');
+    const baseDir = path.join(__dirname, '../../osz/');
 
     if (ctx.state.currentRound.id !== ctx.state.submission.match.roundId) {
         return ctx.body = {
