@@ -20,19 +20,30 @@
                         <table class="table table-hover table-responsive-sm">
                             <thead>
                                 <tr>
-                                    <th>Entry's Name</th>
+                                    <th class="text-left">
+                                        Entry's Name
+                                    </th>
                                     <th v-for="criteria in criterias" :key="criteria.id">
-                                        | {{ criteria.name }}
+                                        {{ criteria.name }}
                                     </th>
                                     <th>
-                                        | Completed
+                                        Completed
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template v-if="round.matches && round.matches.length">
                                     <tr v-for="submission in round.matches[0].submissions" :key="submission.id">
-                                        <td>{{ submission.anonymisedAs }}</td>
+                                        <td class="text-left">
+                                            <a
+                                                class="mr-1"
+                                                :href="`api/judging/submission/${submission.id}/download`"
+                                                target="_blank"
+                                            >
+                                                <i class="fas fa-file-download" />
+                                            </a>
+                                            {{ submission.anonymisedAs }}
+                                        </td>
                                         <td v-for="criteria in criterias" :key="criteria.id">
                                             <a
                                                 href="#"
@@ -166,6 +177,7 @@ import { QualifierJudging, QualifierJudgingToCriterias, Round, Submission, Crite
 export default class Qualifier extends Vue {
 
     judgingDone!: QualifierJudging[];
+    criterias!: Criteria[];
     round!: Round;
     editingSubmission: Submission | null = null;
     editingCriteria: Criteria | null = null;
@@ -215,7 +227,7 @@ export default class Qualifier extends Vue {
         if (!judging)
             return false;
 
-        return judging.qualifierJudgingToCriterias.length === 4;
+        return judging.qualifierJudgingToCriterias.length === this.criterias.length;
     }
 
     async save (): Promise<void> {
@@ -225,7 +237,6 @@ export default class Qualifier extends Vue {
             criteriaId: this.editingCriteria?.id,
             score: this.editingScore,
             comment: this.editingComment,
-            round: this.round,
         });
 
         if (!res.data)

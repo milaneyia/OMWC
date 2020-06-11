@@ -1,28 +1,34 @@
 import Router from '@koa/router';
 import { convertToIntOrThrow } from '../helpers';
 import { authenticate, isJudge } from '../middlewares/authentication';
+import { findSubmission, download } from '../middlewares/downloadSubmission';
 import { QualifierJudging } from '../models/judging/QualifierJudging';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
 import { Criteria } from '../models/judging/Criteria';
 import { QualifierJudgingToCriteria } from '../models/judging/QualifierJudgingToCriteria';
 import { Match } from '../models/rounds/Match';
+import { ParameterizedContext, Next } from 'koa';
+import path from 'path';
 
 const judgingRouter = new Router();
 
 judgingRouter.prefix('/api/judging');
 judgingRouter.use(authenticate);
 judgingRouter.use(isJudge);
-
-judgingRouter.get('/', async (ctx) => {
+judgingRouter.use(async (ctx: ParameterizedContext, next: Next) => {
     const currentRound = await Round.findCurrentJudgingRound();
 
     if (!currentRound) {
-        return ctx.body = {
-            error: 'There is currently no round to judge',
-        };
+        return ctx.body = { error: 'There is currently no round to judge' };
     }
 
+    ctx.state.currentRound = currentRound;
+    await next();
+});
+
+judgingRouter.get('/', async (ctx) => {
+    const currentRound = ctx.state.currentRound;
     const matches = await Match.findByRoundWithSubmissions(currentRound.id);
     currentRound.matches = matches;
 
@@ -42,36 +48,33 @@ judgingRouter.get('/', async (ctx) => {
         };
 
     } else {
-        // do something
+        return ctx.body = { error: 'soon tm' };
     }
 
 });
 
 judgingRouter.post('/save', async (ctx) => {
-    const round: Round = ctx.request.body.round;
 
-    if (!round) {
-        return ctx.body = { error: 'fuck' };
-    }
-
-    if (round.isQualifier) {
+    if (ctx.state.currentRound.isQualifier) {
         const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
         const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
         const score = convertToIntOrThrow(ctx.request.body.score);
         const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
 
-        const [currentRound, criteria, submission] = await Promise.all([
-            Round.findCurrentJudgingRound(),
+        const [criteria, submission] = await Promise.all([
             Criteria.findOneOrFail({ id: criteriaId }),
-            Submission.findOneOrFail({ id: submissionId }),
+            Submission.findOneOrFail({
+                where: { id: submissionId },
+                relations: ['match'],
+            }),
         ]);
 
         if (!comment || !criteria || !submission) {
             return ctx.body = { error: 'Missing data' };
         }
 
-        if (!currentRound) {
-            return ctx.body = { error: 'There is currently no round to judge' };
+        if (submission.match.roundId !== ctx.state.currentRound.id) {
+            return ctx.body = { error: 'woah' };
         }
 
         if (score > criteria.maxScore) {
@@ -122,5 +125,21 @@ judgingRouter.post('/save', async (ctx) => {
         return ctx.body = { error: 'nope' };
     }
 });
+
+judgingRouter.get('/submission/:id/download', findSubmission, async (ctx, next) => {
+    const submission: Submission = ctx.state.submission;
+    const baseDir = path.join(__dirname, '../../../osz/');
+
+    if (ctx.state.currentRound.id !== ctx.state.submission.match.roundId) {
+        return ctx.body = {
+            error: 'oops',
+        };
+    }
+
+    ctx.state.baseDir = baseDir;
+    ctx.state.downloadPath = submission.anonymisedPath;
+
+    return await next();
+}, download);
 
 export default judgingRouter;
