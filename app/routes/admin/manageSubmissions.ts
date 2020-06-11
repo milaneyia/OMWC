@@ -7,6 +7,7 @@ import { Round } from '../../models/rounds/Round';
 import { Submission } from '../../models/rounds/Submission';
 import { findSubmission, download } from '../../middlewares/downloadSubmission';
 
+const originalBaseDir = path.join(__dirname, '../../../osz/originals/');
 const baseDir = path.join(__dirname, '../../../osz/');
 const submissionsAdminRouter = new Router();
 
@@ -83,7 +84,7 @@ submissionsAdminRouter.post('/:id/save', koaBody({
 submissionsAdminRouter.get('/:id/download', findSubmission, async (ctx, next) => {
     const submission: Submission = ctx.state.submission;
 
-    ctx.state.baseDir = baseDir;
+    ctx.state.baseDir = originalBaseDir;
     ctx.state.downloadPath = submission.originalPath;
 
     return await next();
