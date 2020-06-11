@@ -1,101 +1,155 @@
 import Router from '@koa/router';
 import { convertToIntOrThrow } from '../helpers';
 import { authenticate, isJudge } from '../middlewares/authentication';
+import { findSubmission, download } from '../middlewares/downloadSubmission';
 import { QualifierJudging } from '../models/judging/QualifierJudging';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
 import { Criteria } from '../models/judging/Criteria';
 import { QualifierJudgingToCriteria } from '../models/judging/QualifierJudgingToCriteria';
+import { Match } from '../models/rounds/Match';
+import { ParameterizedContext, Next } from 'koa';
+import path from 'path';
 
 const judgingRouter = new Router();
 
 judgingRouter.prefix('/api/judging');
 judgingRouter.use(authenticate);
 judgingRouter.use(isJudge);
+judgingRouter.use(async (ctx: ParameterizedContext, next: Next) => {
+    const currentRound = await Round.findCurrentJudgingRound();
+
+    if (!currentRound) {
+        return ctx.body = { error: 'There is currently no round to judge' };
+    }
+
+    ctx.state.currentRound = currentRound;
+    await next();
+});
 
 judgingRouter.get('/', async (ctx) => {
-    // const today = new Date();
-    // const currentRound = await Round
-    //     .createQueryBuilder('round')
-    //     .leftJoinAndSelect('round.submissions', 'submission')
-    //     .where('judgingStartedAt <= :today', { today })
-    //     .andWhere('judgingEndedAt >= :today', { today })
-    //     .andWhere('submission.anonymisedAs IS NOT NULL')
-    //     .select(['round', 'submission.id', 'submission.anonymisedAs'])
-    //     .getOne();
+    const currentRound = ctx.state.currentRound;
+    const matches = await Match.createQueryBuilder('match')
+        .leftJoin('match.round', 'round')
+        .leftJoin('match.submissions', 'submissions')
+        .select([
+            'match.id',
+            'submissions.id',
+            'submissions.anonymisedAs',
+            'submissions.anonymisedPath',
+        ])
+        .where('round.id = :roundId', { roundId: currentRound.id })
+        .orderBy('RAND()')
+        .getMany();
+    currentRound.matches = matches;
 
-    // if (!currentRound) {
-    //     return ctx.body = {
-    //         error: 'Not a round in progress',
-    //     };
-    // }
+    if (currentRound.isQualifier) {
+        const [criterias, judgingDone] = await Promise.all([
+            Criteria.find({}),
+            QualifierJudging.find({
+                where: { judgeId: ctx.state.user.id },
+                relations: ['qualifierJudgingToCriterias'],
+            }),
+        ]);
 
-    // const criterias = await Criteria.find({});
-    // const judgingDone = await QualifierJudging.find({
-    //     judgeId: ctx.state.user.id,
-    //     roundId: currentRound.id,
-    // });
+        return ctx.body = {
+            currentRound,
+            criterias,
+            judgingDone,
+        };
 
-    // ctx.body = {
-    //     criterias,
-    //     currentRound,
-    //     judgingDone,
-    // };
+    } else {
+        return ctx.body = { error: 'soon tm' };
+    }
+
 });
 
 judgingRouter.post('/save', async (ctx) => {
-    // const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
-    // const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
-    // const score = convertToFloat(ctx.request.body.score);
-    // const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
 
-    // const submission = await Submission.findOneOrFail({ id: submissionId });
-    // const criteria = await Criteria.findOneOrFail({ id: criteriaId });
-    // const round = await Round.findCurrentJudgingRound();
+    if (ctx.state.currentRound.isQualifier) {
+        const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
+        const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
+        const score = convertToIntOrThrow(ctx.request.body.score);
+        const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
 
-    // if (!round || !score || !comment) {
-    //     return ctx.body = { error: 'Missing data' };
-    // }
+        const [criteria, submission] = await Promise.all([
+            Criteria.findOneOrFail({ id: criteriaId }),
+            Submission.findOneOrFail({
+                where: { id: submissionId },
+                relations: ['match'],
+            }),
+        ]);
 
-    // if (score > criteria.maxScore) {
-    //     return ctx.body = { error: 'Score is higher than expected' };
-    // }
+        if (!comment || !criteria || !submission) {
+            return ctx.body = { error: 'Missing data' };
+        }
 
-    // let judging = await QualifierJudging.findOne({
-    //     judgeId: ctx.state.user.id,
-    //     roundId: round.id,
-    //     submissionId: submission.id,
-    // });
-    // let judgingToCriteria;
+        if (submission.match.roundId !== ctx.state.currentRound.id) {
+            return ctx.body = { error: 'woah' };
+        }
 
-    // if (judging) {
-    //     judgingToCriteria = await QualifierJudgingToCriteria.findOne({
-    //         criteria,
-    //         judging,
-    //     });
-    // } else {
-    //     judging = new QualifierJudging();
-    // }
+        if (score > criteria.maxScore) {
+            return ctx.body = { error: 'Score is higher than expected' };
+        }
 
-    // if (!judging || !judgingToCriteria) {
-    //     judgingToCriteria = new QualifierJudgingToCriteria();
-    // }
+        let judging = await QualifierJudging.findOne({
+            judgeId: ctx.state.user.id,
+            submissionId: submission.id,
+        });
 
-    // judging.judgeId = ctx.state.user.id;
-    // judging.roundId = round.id;
-    // judging.submissionId = submission.id;
-    // judging.comment = comment;
-    // await judging.save();
+        let judgingToCriteria;
 
-    // judgingToCriteria.criteria = criteria;
-    // judgingToCriteria.judging = judging;
-    // judgingToCriteria.score = score;
-    // await judgingToCriteria.save();
+        if (judging) {
+            judgingToCriteria = await QualifierJudgingToCriteria.findOne({
+                criteria,
+                qualifierJudgingId: judging.id,
+            });
+        } else {
+            judging = new QualifierJudging();
+            judging.judgeId = ctx.state.user.id;
+            judging.submissionId = submission.id;
+            await judging.save();
+        }
 
-    // return ctx.body = {
-    //     judging,
-    //     success: 'Saved',
-    // };
+        if (!judgingToCriteria) {
+            judgingToCriteria = new QualifierJudgingToCriteria();
+            judgingToCriteria.criteria = criteria;
+            judgingToCriteria.qualifierJudgingId = judging.id;
+        }
+
+        judgingToCriteria.score = score;
+        judgingToCriteria.comment = comment;
+        await judgingToCriteria.save();
+
+        const judgingDone = await QualifierJudging.find({
+            where: { judgeId: ctx.state.user.id },
+            relations: ['qualifierJudgingToCriterias'],
+        });
+
+        return ctx.body = {
+            judgingDone,
+            success: 'Saved!',
+        };
+
+    } else {
+        return ctx.body = { error: 'nope' };
+    }
 });
+
+judgingRouter.get('/submission/:id/download', findSubmission, async (ctx, next) => {
+    const submission: Submission = ctx.state.submission;
+    const baseDir = path.join(__dirname, '../../osz/');
+
+    if (ctx.state.currentRound.id !== ctx.state.submission.match.roundId) {
+        return ctx.body = {
+            error: 'oops',
+        };
+    }
+
+    ctx.state.baseDir = baseDir;
+    ctx.state.downloadPath = submission.anonymisedPath;
+
+    return await next();
+}, download);
 
 export default judgingRouter;

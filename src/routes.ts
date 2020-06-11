@@ -22,6 +22,7 @@ const ManageUser = () => import(/* webpackChunkName: "admin" */ './views/admin/M
 const LogListing = () => import(/* webpackChunkName: "admin" */ './views/admin/LogListing.vue');
 const SubmissionListing = () => import(/* webpackChunkName: "admin" */ './views/admin/SubmissionListing.vue');
 const JudgingListing = () => import(/* webpackChunkName: "admin" */ './views/admin/JudgingListing.vue');
+const Judging = () => import(/* webpackChunkName: "judging" */ './views/Judging.vue');
 
 const routes: RouteConfig[] = [
     { path: '/', component: Index },
@@ -50,6 +51,8 @@ const routes: RouteConfig[] = [
     { path: '/admin/rounds/:id(\\d+)/matches', component: ManageMatch, meta: { title: 'Manage Rounds - osu!BWC' } },
     { path: '/admin/submissions', component: SubmissionListing, meta: { title: 'Manage Submissions - osu!BWC' } },
     { path: '/admin/judging', component: JudgingListing, meta: { title: 'Judging - osu!BWC' } },
+
+    { path: '/judging', component: Judging, meta: { title: 'Judging - osu!BWC' } },
 
     { path: '*', redirect: '/' },
 ];
