@@ -18,7 +18,8 @@
                     <div class="round__details">
                         {{ round.title }}
                         <div class="round__date">
-                            {{ round.submissionsStartedAt | shortDateTimeString }} - {{ round.resultsAt | shortDateTimeString }}
+                            <time-string :timestamp="round.submissionsStartedAt" /> -
+                            <time-string :timestamp="round.resultsAt" />
                         </div>
                     </div>
 
@@ -50,7 +51,8 @@
                         {{ i == 0 ? 'final' : 'third place' }}
 
                         <div class="round__date">
-                            {{ finals.submissionsStartedAt | shortDateTimeString }} - {{ finals.resultsAt | shortDateTimeString }}
+                            <time-string :timestamp="finals.submissionsStartedAt" /> -
+                            <time-string :timestamp="finals.resultsAt" />
                         </div>
                     </div>
 
@@ -76,6 +78,7 @@ import { Round } from '../../interfaces';
 import PageHeader from '../../components/PageHeader.vue';
 import RoundMatch from '../../components/results/RoundMatch.vue';
 import EliminationJudgingDetail from '../../components/results/EliminationJudgingDetail.vue';
+import TimeString from '../../components/TimeString.vue';
 import { State, Getter } from 'vuex-class';
 
 @Component({
@@ -83,6 +86,7 @@ import { State, Getter } from 'vuex-class';
         PageHeader,
         RoundMatch,
         EliminationJudgingDetail,
+        TimeString,
     },
 })
 export default class EliminationResult extends Vue {

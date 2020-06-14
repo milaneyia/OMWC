@@ -17,8 +17,8 @@
         </h5>
 
         <p>
-            {{ dates[0].from | shortDateTimeString }} -
-            {{ dates[dates.length - 1].to || dates[dates.length - 2].to | shortDateTimeString }}
+            <time-string :timestamp="dates[0].from" /> -
+            <time-string :timestamp="dates[dates.length - 1].to || dates[dates.length - 2].to" />
         </p>
 
         <div :id="collapse" class="collapse">
@@ -31,11 +31,16 @@
                 >
                     <div class="col-sm-3">
                         <div>
-                            {{ date.from | shortDateTimeString }}
+                            <time-string
+                                :timestamp="date.from"
+                            />
                         </div>
 
-                        <div v-if="date.to">
-                            {{ date.to | shortDateTimeString }}
+                        <div>
+                            <time-string
+                                v-if="date.to"
+                                :timestamp="date.to"
+                            />
                         </div>
                     </div>
 
@@ -51,6 +56,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import TimeString from '../TimeString.vue';
 
 @Component({
     props: {
@@ -66,6 +72,9 @@ import Component from 'vue-class-component';
             type: Array,
             required: true,
         },
+    },
+    components: {
+        TimeString,
     },
 })
 export default class ScheduleDate extends Vue {

@@ -56,8 +56,8 @@
                                 {{ currentMatch.information }}
                             </p>
                             <p class="card-subtitle">
-                                You have from <b>{{ currentRound.submissionsStartedAt }}</b> to
-                                <b>{{ currentRound.submissionsEndedAt }}</b> to submit your entry
+                                You have from <b><time-string :timestamp="currentRound.submissionsStartedAt" /></b> to
+                                <b><time-string :timestamp="currentRound.submissionsEndedAt" /></b> to submit your entry
                             </p>
 
                             <hr>
@@ -102,6 +102,7 @@ import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import { User, Submission as ISubmission, Match, Round } from '../interfaces';
 import PageHeader from '../components/PageHeader.vue';
+import TimeString from '../components/TimeString.vue';
 
 interface ApiResponse {
     submissions: ISubmission[];
@@ -112,6 +113,7 @@ interface ApiResponse {
 @Component({
     components: {
         PageHeader,
+        TimeString,
     },
 })
 export default class Submission extends Vue {

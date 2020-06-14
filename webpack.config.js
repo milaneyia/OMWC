@@ -11,7 +11,7 @@ module.exports = {
         publicPath: '/js/',
     },
     mode: 'development',
-    devtool: '#eval-source-map',
+    devtool: 'eval-cheap-source-map',
     devServer: {
         contentBase: './dist',
         hot: true,

@@ -4,10 +4,14 @@
             title="Judging List"
             subtitle=" "
         >
-            <p>This shows a listing of the scores you set in each entry</p>
+            <p>
+                Listing of all the scores you set in each entry.
+                You have till <b><time-string :timestamp="round.judgingEndedAt" /></b> to finish
+            </p>
             <div>When editing you need to add a comment for each criteria in addition to the score</div>
             <small>(if you don't save and close this window or start editing another entry, the changes will be lost!)</small>
         </page-header>
+
         <div class="row mb-2">
             <div class="col-sm">
                 <div class="card">
@@ -151,6 +155,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import PageHeader from '../../components/PageHeader.vue';
+import TimeString from '../../components/TimeString.vue';
 import Axios from 'axios';
 import { QualifierJudging, QualifierJudgingToCriterias, Round, Submission, Criteria } from '../../interfaces';
 
@@ -171,6 +176,7 @@ import { QualifierJudging, QualifierJudgingToCriterias, Round, Submission, Crite
     },
     components: {
         PageHeader,
+        TimeString,
     },
 })
 

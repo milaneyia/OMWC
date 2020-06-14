@@ -29,6 +29,8 @@
     "vuex-class": "^0.3.2"
   },
   "devDependencies": {
+    "@types/bootstrap": "^4.5.0",
+    "@types/jquery": "^3.3.38",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-helmet": "^3.1.2",

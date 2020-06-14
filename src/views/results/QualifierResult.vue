@@ -9,8 +9,8 @@
                 <div class="round__details">
                     Submissions
                     <div class="round__date">
-                        {{ qualifier.submissionsStartedAt | shortDateTimeString }} -
-                        {{ qualifier.submissionsEndedAt | shortDateTimeString }}
+                        <time-string :timestamp="qualifier.submissionsStartedAt" /> -
+                        <time-string :timestamp="qualifier.submissionsEndedAt" />
                     </div>
                 </div>
             </div>
@@ -18,8 +18,8 @@
                 <div class="round__details">
                     Judging
                     <div class="round__date">
-                        {{ qualifier.judgingStartedAt | shortDateTimeString }} -
-                        {{ qualifier.judgingEndedAt | shortDateTimeString }}
+                        <time-string :timestamp="qualifier.judgingStartedAt" /> -
+                        <time-string :timestamp="qualifier.judgingEndedAt" />
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 <div class="round__details">
                     Results
                     <div class="round__date">
-                        {{ qualifier.resultsAt | shortDateTimeString }}
+                        <time-string :timestamp="qualifier.resultsAt" />
                     </div>
                 </div>
             </div>
@@ -157,6 +157,7 @@ import Component from 'vue-class-component';
 import PageHeader from '../../components/PageHeader.vue';
 import CountryFlagCell from '../../components/CountryFlagCell.vue';
 import QualifierJudgingDetail from '../../components/results/QualifierJudgingDetail.vue';
+import TimeString from '../../components/TimeString.vue';
 import { Round, Country, User, Submission } from '../../interfaces';
 import { State, Getter } from 'vuex-class';
 
@@ -188,6 +189,7 @@ interface JudgeCorrel {
         PageHeader,
         QualifierJudgingDetail,
         CountryFlagCell,
+        TimeString,
     },
 })
 export default class QualifierResult extends Vue {

@@ -9,6 +9,10 @@ import './sass/app.scss';
 import Axios from 'axios';
 import mixins from './mixins';
 
+$(document).ready(function() {
+    $('body').tooltip({ selector: '[data-toggle=tooltip]', trigger: 'hover' });
+});
+
 Vue.use(VueRouter);
 Vue.use(Vuex);
 
