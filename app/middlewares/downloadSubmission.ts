@@ -26,8 +26,8 @@ export async function download(ctx: ParameterizedContext): Promise<any> {
 
     await checkFileExistence(path.join(baseDir, downloadPath));
 
-    const s = downloadPath.split('/');
-    ctx.attachment(s[s.length - 1]);
+    const filename = path.basename(downloadPath);
+    ctx.attachment(filename);
     ctx.type = 'application/octet-stream';
     ctx.body = fs.createReadStream(path.join(baseDir, downloadPath));
 }
