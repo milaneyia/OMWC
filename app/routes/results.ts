@@ -6,7 +6,7 @@ import { Round } from '../models/rounds/Round';
 import { User } from '../models/User';
 import { findSubmission, download } from '../middlewares/downloadSubmission';
 import { Submission } from '../models/rounds/Submission';
-import { calculateQualifierScores } from '../helpers';
+import { calculateQualifierScores, convertToIntOrThrow } from '../helpers';
 import { ROLE } from '../models/Role';
 
 const resultsRouter = new Router();
@@ -126,6 +126,24 @@ resultsRouter.get('/download/:id', findSubmission, async (ctx: ParameterizedCont
 
     ctx.state.baseDir = path.join(__dirname, '../../osz/originals/');
     ctx.state.downloadPath = submission.originalPath;
+
+    return await next();
+}, download);
+
+resultsRouter.get('/downloadZip/:id', async (ctx: ParameterizedContext, next) => {
+    const id = convertToIntOrThrow(ctx.params.id);
+    const round = await Round.findOneOrFail({
+        id,
+    });
+
+    if (new Date(round.resultsAt) > new Date()) {
+        return ctx.body = {
+            error: 'Unauthorized',
+        };
+    }
+
+    ctx.state.baseDir = path.join(__dirname, '../../osz/zips/originals');
+    ctx.state.downloadPath = `${round.title}.zip`;
 
     return await next();
 }, download);

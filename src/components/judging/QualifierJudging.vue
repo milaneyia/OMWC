@@ -19,6 +19,12 @@
                         <h4 class="card-title">
                             {{ round.title }}
                         </h4>
+                        <a
+                            :href="`/api/judging/round/${round.id}/downloadZip`"
+                            target="_blank"
+                        >
+                            Download all entries
+                        </a>
                     </div>
                     <div class="card-body p-0">
                         <table class="table table-hover table-responsive-sm">

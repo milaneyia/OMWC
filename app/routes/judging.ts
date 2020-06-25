@@ -149,6 +149,24 @@ judgingRouter.post('/save', async (ctx) => {
     }
 });
 
+judgingRouter.get('/round/:id/downloadZip', async (ctx, next) => {
+    const id = convertToIntOrThrow(ctx.params.id);
+    const round = await Round.findOneOrFail({
+        id,
+    });
+
+    if (ctx.state.currentRound.id !== round.id) {
+        return ctx.body = {
+            error: 'oops',
+        };
+    }
+
+    ctx.state.baseDir = path.join(__dirname, '../../osz/zips/anoms');
+    ctx.state.downloadPath = `${round.title}.zip`;
+
+    return await next();
+}, download);
+
 judgingRouter.get('/submission/:id/download', findSubmission, async (ctx, next) => {
     const submission: Submission = ctx.state.submission;
     const baseDir = path.join(__dirname, '../../osz/');

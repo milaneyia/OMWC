@@ -13,6 +13,29 @@
                     {{ round.title }}
                 </option>
             </select>
+
+            <button class="btn btn-sm btn-primary mt-2 mx-1" @click="generateZip($event)">
+                Generate zip (from originals osz)
+            </button>
+            <a
+                :href="`/api/admin/rounds/${selectedRoundId}/downloadZip`"
+                class="btn btn-sm btn-primary mt-2 mx-1"
+                target="_blank"
+            >
+                Download original
+            </a>
+
+            <button class="btn btn-sm btn-primary mt-2 mx-1" @click="generateAnomZip($event)">
+                Generate zip (from anonymised osz for judges)
+            </button>
+
+            <a
+                :href="`/api/admin/rounds/${selectedRoundId}/downloadAnomZip`"
+                class="btn btn-sm btn-primary mt-2 mx-1"
+                target="_blank"
+            >
+                Download anom
+            </a>
         </page-header>
 
         <template v-if="selectedRound">
@@ -199,6 +222,18 @@ export default class SubmissionListing extends Vue {
         this.editing = null;
         this.oszFile = null;
         this.anonymisedAs = '';
+    }
+
+    async generateZip (e: Event): Promise<void> {
+        await this.postRequest(`/api/admin/rounds/${this.selectedRoundId}/generateZip`, {
+            type: 'original',
+        }, e);
+    }
+
+    async generateAnomZip (e: Event): Promise<void> {
+        await this.postRequest(`/api/admin/rounds/${this.selectedRoundId}/generateZip`, {
+            type: 'anom',
+        }, e);
     }
 
 }

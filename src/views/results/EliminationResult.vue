@@ -17,6 +17,13 @@
                 >
                     <div class="round__details">
                         {{ round.title }}
+                        <a
+                            v-if="new Date() >= new Date(round.resultsAt)"
+                            :href="`/api/results/downloadZip/${round.id}`"
+                            target="_blank"
+                        >
+                            | Download all entries
+                        </a>
                         <div class="round__date">
                             <time-string :timestamp="round.submissionsStartedAt" /> -
                             <time-string :timestamp="round.resultsAt" />

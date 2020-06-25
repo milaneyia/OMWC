@@ -1,5 +1,9 @@
 import Router from '@koa/router';
-import { convertToIntOrThrow } from '../../helpers';
+import JSZip from 'jszip';
+import path from 'path';
+import fs from 'fs';
+import { checkFileExistence, convertToIntOrThrow } from '../../helpers';
+import { download } from '../../middlewares/downloadSubmission';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
 import { Match } from '../../models/rounds/Match';
@@ -212,5 +216,115 @@ roundsAdminRouter.post('/:id/matches/:matchId/remove', async (ctx) => {
         matches,
     };
 });
+
+roundsAdminRouter.post('/:id/generateZip', async (ctx) => {
+    const type = ctx.request.body.type;
+    let baseDir = '';
+
+    if (type === 'anom') {
+        baseDir = path.join(__dirname, '../../../osz/');
+    } else {
+        baseDir = path.join(__dirname, '../../../osz/originals/');
+    }
+
+    const roundId = convertToIntOrThrow(ctx.params.id);
+    const round = await Round.findOneOrFail({
+        where: {
+            id: roundId,
+        },
+        relations: [
+            'matches',
+            'matches.teamA',
+            'matches.teamB',
+            'matches.submissions',
+        ],
+    });
+
+    const zip = new JSZip();
+
+    for (const match of round.matches) {
+        let matchFolder = '';
+
+        if (!round.isQualifier) {
+            if (type === 'anom') {
+                const anomNames = match.submissions.map(s => s.anonymisedAs);
+                console.log(anomNames);
+
+
+                if (anomNames.length == 2) {
+                    matchFolder = `${anomNames[0]} vs ${anomNames[1]}`;
+                } else {
+                    matchFolder = match.id.toString();
+                }
+            } else {
+                matchFolder = `${match.teamA?.name} vs ${match.teamB?.name}`;
+            }
+        }
+
+        for (const submission of match.submissions) {
+            let submissionPath = '';
+            let filename = '';
+            let split = [];
+
+            if (type === 'anom') {
+                if (!submission.anonymisedPath) continue;
+
+                submissionPath = path.join(baseDir, submission.anonymisedPath);
+                split = submission.anonymisedPath.split('\\');
+            } else {
+                if (!submission.originalPath) continue;
+
+                submissionPath = path.join(baseDir, submission.originalPath);
+                split = submission.originalPath.split('\\');
+            }
+
+            filename = path.join(matchFolder, split[split.length - 1]);
+
+            zip.file(filename, fs.createReadStream(submissionPath));
+        }
+    }
+
+    let finalDirPath = '';
+
+    if (type === 'anom') {
+        finalDirPath = path.join(__dirname, '../../../osz/zips/anoms');
+    } else {
+        finalDirPath = path.join(__dirname, '../../../osz/zips/originals');
+    }
+
+    await fs.promises.mkdir(finalDirPath, { recursive: true });
+    const finalFilePath = path.join(finalDirPath, `${round.title}.zip`);
+    const content = await zip.generateAsync({ type: 'nodebuffer' });
+    await fs.promises.writeFile(finalFilePath, content);
+    await checkFileExistence(finalFilePath);
+
+    ctx.body = {
+        success: 'Ok',
+    };
+});
+
+roundsAdminRouter.get('/:id/downloadZip', async (ctx, next) => {
+    const id = convertToIntOrThrow(ctx.params.id);
+    const round = await Round.findOneOrFail({
+        id,
+    });
+
+    ctx.state.baseDir = path.join(__dirname, '../../../osz/zips/originals');
+    ctx.state.downloadPath = `${round.title}.zip`;
+
+    return await next();
+}, download);
+
+roundsAdminRouter.get('/:id/downloadAnomZip', async (ctx, next) => {
+    const id = convertToIntOrThrow(ctx.params.id);
+    const round = await Round.findOneOrFail({
+        id,
+    });
+
+    ctx.state.baseDir = path.join(__dirname, '../../../osz/zips/anoms');
+    ctx.state.downloadPath = `${round.title}.zip`;
+
+    return await next();
+}, download);
 
 export default roundsAdminRouter;
