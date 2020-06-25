@@ -31,61 +31,80 @@
                             <thead>
                                 <tr>
                                     <th class="text-left">
-                                        Entry's Name
+                                        <a
+                                            href="#"
+                                            @click.prevent="sortSubmissionsBy('name')"
+                                        >
+                                            Entry's Name
+                                        </a>
                                     </th>
                                     <th v-for="criteria in criterias" :key="criteria.id">
-                                        {{ criteria.name }}
+                                        <a
+                                            href="#"
+                                            @click.prevent="sortSubmissionsBy('criteria', criteria.id)"
+                                        >
+                                            {{ criteria.name }}
+                                        </a>
                                     </th>
                                     <th>
-                                        Total
+                                        <a
+                                            href="#"
+                                            @click.prevent="sortSubmissionsBy('total')"
+                                        >
+                                            Total
+                                        </a>
                                     </th>
                                     <th>
-                                        Completed
+                                        <a
+                                            href="#"
+                                            @click.prevent="sortSubmissionsBy('completed')"
+                                        >
+                                            Completed
+                                        </a>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <template v-if="round.matches && round.matches.length">
-                                    <tr v-for="submission in round.matches[0].submissions" :key="submission.id">
-                                        <td class="text-left">
-                                            <a
-                                                class="mr-1"
-                                                :href="`api/judging/submission/${submission.id}/download`"
-                                                target="_blank"
-                                            >
-                                                <i class="fas fa-file-download" />
-                                            </a>
-                                            {{ submission.anonymisedAs }}
-                                        </td>
-                                        <td v-for="criteria in criterias" :key="criteria.id">
-                                            <a
-                                                href="#"
-                                                class="d-flex align-items-center justify-content-center"
-                                                data-toggle="modal"
-                                                data-target="#editing-judging-modal"
-                                                @click.prevent="selectForEditing(submission, criteria)"
-                                            >
-                                                <i class="mr-1 fas fa-edit" />
-                                                {{ getScore(submission.id, criteria.id) + `/ ${criteria.maxScore}` }}
-                                            </a>
-                                        </td>
-                                        <td>
-                                            {{ getTotalScore(submission.id) }} / {{ maxPossibleScore }}
-                                        </td>
-                                        <td>
-                                            <i
-                                                class="fa"
-                                                :class="isCompleted(submission.id) ? 'fa-check text-success' : 'fa-times text-danger'"
-                                            />
-                                        </td>
-                                    </tr>
-                                </template>
+                                <tr v-for="submission in sortedSubmissions" :key="submission.id">
+                                    <td class="text-left">
+                                        <a
+                                            class="mr-1"
+                                            :href="`api/judging/submission/${submission.id}/download`"
+                                            target="_blank"
+                                        >
+                                            <i class="fas fa-file-download" />
+                                        </a>
+                                        {{ submission.anonymisedAs }}
+                                    </td>
+                                    <td v-for="criteria in criterias" :key="criteria.id">
+                                        <a
+                                            href="#"
+                                            class="d-flex align-items-center justify-content-center"
+                                            data-toggle="modal"
+                                            data-target="#editing-judging-modal"
+                                            @click.prevent="selectForEditing(submission, criteria)"
+                                        >
+                                            <i class="mr-1 fas fa-edit" />
+                                            {{ getScore(submission.id, criteria.id) + `/ ${criteria.maxScore}` }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{ getTotalScore(submission.id) }} / {{ maxPossibleScore }}
+                                    </td>
+                                    <td>
+                                        <i
+                                            class="fa"
+                                            :class="isCompleted(submission.id) ? 'fa-check text-success' : 'fa-times text-danger'"
+                                        />
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+
         <div
             v-if="editingCriteria"
             id="editing-judging-modal"
@@ -203,6 +222,63 @@ export default class Qualifier extends Vue {
     editingComment = '';
     alertInfo = '';
     alertSuccess!: boolean;
+    sortBy = 'name';
+    sortByCriteria = 1;
+    sortDesc = false;
+
+    get sortedSubmissions (): Submission[] {
+        const submissions = this.round.matches[0]?.submissions;
+        if (!submissions) return [];
+
+        if (this.sortBy === 'name') {
+            submissions.sort((a, b) => {
+                const anomA = a.anonymisedAs?.toUpperCase();
+                const anomB = b.anonymisedAs?.toUpperCase();
+
+                if (anomA < anomB) return this.sortDesc ? -1 : 1;
+                if (anomA > anomB) return this.sortDesc ? 1 : -1;
+
+                return 0;
+            });
+        } else if (this.sortBy === 'total') {
+            submissions.sort((a, b) => {
+                const aValue = this.getTotalScore(a.id);
+                const bValue = this.getTotalScore(b.id);
+
+                if (this.sortDesc) {
+                    return aValue - bValue;
+                }
+
+                return bValue - aValue;
+            });
+        } else if (this.sortBy === 'criteria') {
+            submissions.sort((a, b) => {
+                const aValue = this.getScore(a.id, this.sortByCriteria);
+                const bValue = this.getScore(b.id, this.sortByCriteria);
+
+                if (this.sortDesc) {
+                    return aValue - bValue;
+                }
+
+                return bValue - aValue;
+            });
+        } else if (this.sortBy === 'completed') {
+            submissions.sort((a, b) => {
+                const aValue = this.isCompleted(a.id);
+                const bValue = this.isCompleted(b.id);
+
+                if (aValue === bValue) return 0;
+
+                if (this.sortDesc) {
+                    return aValue ? 1 : -1;
+                }
+
+                return aValue ? -1 : 1;
+            });
+        }
+
+        return submissions;
+    }
 
     get maxPossibleScore (): number {
         return this.criterias.reduce((acc, c) => c.maxScore + acc, 0);
@@ -286,6 +362,15 @@ export default class Qualifier extends Vue {
 
     closeModal(): void {
         document.getElementById('close-button')?.click();
+    }
+
+    sortSubmissionsBy (type: string, criteriaId?: number): void {
+        this.sortBy = type;
+        this.sortDesc = !this.sortDesc;
+
+        if (type === 'criteria' && criteriaId) {
+            this.sortByCriteria = criteriaId;
+        }
     }
 
 }
