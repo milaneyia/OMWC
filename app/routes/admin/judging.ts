@@ -34,11 +34,8 @@ judgingAdminRouter.get('/', async (ctx) => {
         ],
     });
 
-    const judgeCount = await User.count({ roleId: ROLE.Judge });
-
     ctx.body = {
         rounds,
-        judgeCount,
     };
 });
 

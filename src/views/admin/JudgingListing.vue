@@ -46,7 +46,7 @@
                             </div>
                         </td>
                         <td
-                            :class="getJudgesInvolvedCount(submission, selectedRound.isQualifier) === judgeCount ? 'text-success' : 'text-danger'"
+                            :class="getJudgesInvolvedCount(submission, selectedRound.isQualifier) >= judgeCount ? 'text-success' : 'text-danger'"
                         >
                             {{ getJudgesInvolvedCount(submission, selectedRound.isQualifier) }} done of {{ judgeCount }}
                         </td>
@@ -102,13 +102,12 @@ export default class JudgingListing extends Vue {
     selected: Submission | Match | null = null;
     selectedType = '';
     selectedRoundId = 1;
-    judgeCount = 0;
+    judgeCount = 5;
 
     async created (): Promise<void> {
         await Promise.all([
-            this.initialRequest<{ rounds: []; judgeCount: number }>('/api/admin/judging', (data) => {
+            this.initialRequest<{ rounds: [] }>('/api/admin/judging', (data) => {
                 this.rounds = data.rounds;
-                this.judgeCount = data.judgeCount;
             }),
 
             this.getRequest('/api/results/qualifiers', null, (data) => {
