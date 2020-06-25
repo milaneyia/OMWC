@@ -14,7 +14,7 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
         return await next();
     } else {
         if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unathorized' };
+            return ctx.body = { error: 'Unauthorized' };
         } else {
             return ctx.render('error');
         }
@@ -26,7 +26,7 @@ export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any
         return await next();
     } else {
         if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unathorized' };
+            return ctx.body = { error: 'Unauthorized' };
         } else {
             return ctx.render('error');
         }
@@ -38,7 +38,7 @@ export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<a
         return await next();
     } else {
         if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unathorized' };
+            return ctx.body = { error: 'Unauthorized' };
         } else {
             return ctx.render('error');
         }
@@ -50,7 +50,7 @@ export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any
         return await next();
     } else {
         if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unathorized' };
+            return ctx.body = { error: 'Unauthorized' };
         } else {
             return ctx.render('error');
         }
@@ -62,7 +62,7 @@ export async function isElevatedUser(ctx: ParameterizedContext, next: () => Prom
         return await next();
     } else {
         if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unathorized' };
+            return ctx.body = { error: 'Unauthorized' };
         } else {
             return ctx.render('error');
         }
@@ -74,7 +74,7 @@ export async function isBasicUser(ctx: ParameterizedContext, next: () => Promise
         return await next();
     } else {
         if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unathorized' };
+            return ctx.body = { error: 'Unauthorized' };
         } else {
             return ctx.render('error');
         }

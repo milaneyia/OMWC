@@ -31,6 +31,9 @@
                                         {{ criteria.name }}
                                     </th>
                                     <th>
+                                        Total
+                                    </th>
+                                    <th>
                                         Completed
                                     </th>
                                 </tr>
@@ -59,6 +62,9 @@
                                                 <i class="mr-1 fas fa-edit" />
                                                 {{ getScore(submission.id, criteria.id) + `/ ${criteria.maxScore}` }}
                                             </a>
+                                        </td>
+                                        <td>
+                                            {{ getTotalScore(submission.id) }} / {{ maxPossibleScore }}
                                         </td>
                                         <td>
                                             <i
@@ -192,6 +198,10 @@ export default class Qualifier extends Vue {
     alertInfo = '';
     alertSuccess!: boolean;
 
+    get maxPossibleScore (): number {
+        return this.criterias.reduce((acc, c) => c.maxScore + acc, 0);
+    }
+
     selectForEditing (submission: Submission, criteria: Criteria): void {
         this.editingSubmission = submission;
         this.editingCriteria = criteria;
@@ -226,6 +236,15 @@ export default class Qualifier extends Vue {
             return 0;
 
         return qualifierJudgingToCriterias.score;
+    }
+
+    getTotalScore(submissionId: number): number {
+        const judging = this.judgingDone.find(j => j.submissionId === submissionId);
+
+        if (!judging)
+            return 0;
+
+        return judging.qualifierJudgingToCriterias.reduce((acc, j) => j.score + acc, 0);
     }
 
     isCompleted(submissionId: number): boolean {

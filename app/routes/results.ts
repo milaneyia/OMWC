@@ -65,7 +65,7 @@ resultsRouter.get('/download/:id', findSubmission, async (ctx, next) => {
 
     if (new Date(submission.match.round.resultsAt) > new Date()) {
         return ctx.body = {
-            error: 'Unathorized',
+            error: 'Unauthorized',
         };
     }
 
