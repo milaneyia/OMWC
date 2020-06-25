@@ -1,19 +1,41 @@
 import Router from '@koa/router';
+import { ParameterizedContext } from 'koa';
 import path from 'path';
 import { Criteria } from '../models/judging/Criteria';
 import { Round } from '../models/rounds/Round';
+import { User } from '../models/User';
 import { findSubmission, download } from '../middlewares/downloadSubmission';
 import { Submission } from '../models/rounds/Submission';
+import { calculateQualifierScores } from '../helpers';
+import { ROLE } from '../models/Role';
 
 const resultsRouter = new Router();
 
 resultsRouter.prefix('/api/results');
 
-resultsRouter.get('/qualifiers', async (ctx) => {
-    const qualifier = await Round
+resultsRouter.get('/qualifiers', async (ctx: ParameterizedContext) => {
+    const query = Round
         .createQueryBuilder('round')
-        .innerJoinAndSelect('round.matches', 'matches')
-        .leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() })
+        .innerJoinAndSelect('round.matches', 'matches');
+
+    let user;
+
+    if (ctx.session.osuId) {
+        user = await User.findOne({
+            where: {
+                osuId: ctx.session.osuId,
+                roleId: ROLE.Staff,
+            },
+        });
+    }
+
+    if (user) {
+        query.leftJoinAndSelect('matches.submissions', 'submissions');
+    } else {
+        query.leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() });
+    }
+
+    const qualifier = await query
         .leftJoinAndSelect('submissions.country', 'country')
         .leftJoinAndSelect('submissions.qualifierJudging', 'qualifierJudging')
         .leftJoinAndSelect('qualifierJudging.judge', 'judge')
@@ -24,24 +46,46 @@ resultsRouter.get('/qualifiers', async (ctx) => {
 
     const criterias = await Criteria.find({});
     const judges = qualifier?.matches?.[0]?.submissions?.[0]?.qualifierJudging?.map(j => j.judge);
+    const { teamsScores, judgesCorrel } = await calculateQualifierScores(qualifier);
 
     return ctx.body = {
         criterias,
         qualifier,
         judges,
+        teamsScores,
+        judgesCorrel,
     };
 });
 
-resultsRouter.get('/elimination', async (ctx) => {
-    const rounds = await Round
+resultsRouter.get('/elimination', async (ctx: ParameterizedContext) => {
+    const query = Round
         .createQueryBuilder('round')
         .innerJoinAndSelect('round.matches', 'matches')
         .leftJoinAndSelect('matches.teamA', 'teamA')
-        .leftJoinAndSelect('matches.teamB', 'teamB')
-        .leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() })
-        .leftJoinAndSelect('submissions.country', 'sub_country')
-        .leftJoinAndSelect('matches.eliminationJudging', 'eliminationJudging', 'round.resultsAt <= :today', { today: new Date() })
-        .leftJoinAndSelect('eliminationJudging.judge', 'judge')
+        .leftJoinAndSelect('matches.teamB', 'teamB');
+
+    let user;
+
+    if (ctx.session.osuId) {
+        user = await User.findOne({
+            where: {
+                osuId: ctx.session.osuId,
+                roleId: ROLE.Staff,
+            },
+        });
+    }
+
+    if (user) {
+        query.leftJoinAndSelect('matches.submissions', 'submissions')
+            .leftJoinAndSelect('submissions.country', 'sub_country')
+            .leftJoinAndSelect('matches.eliminationJudging', 'eliminationJudging');
+    } else {
+        query.leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() })
+            .leftJoinAndSelect('submissions.country', 'sub_country')
+            .leftJoinAndSelect('matches.eliminationJudging', 'eliminationJudging', 'round.resultsAt <= :today', { today: new Date() });
+    }
+
+    const rounds = await query.leftJoinAndSelect('eliminationJudging.judge', 'judge')
         .leftJoinAndSelect('eliminationJudging.submissionChosen', 'submissionChosen')
         .leftJoinAndSelect('submissionChosen.country', 'country')
         .where('round.isQualifier = false')
@@ -60,10 +104,21 @@ resultsRouter.get('/elimination', async (ctx) => {
     };
 });
 
-resultsRouter.get('/download/:id', findSubmission, async (ctx, next) => {
+resultsRouter.get('/download/:id', findSubmission, async (ctx: ParameterizedContext, next) => {
     const submission: Submission = ctx.state.submission;
 
-    if (new Date(submission.match.round.resultsAt) > new Date()) {
+    let user;
+
+    if (ctx.session.osuId) {
+        user = await User.findOne({
+            where: {
+                osuId: ctx.session.osuId,
+                roleId: ROLE.Staff,
+            },
+        });
+    }
+
+    if (new Date(submission.match.round.resultsAt) > new Date() && !user) {
         return ctx.body = {
             error: 'Unauthorized',
         };

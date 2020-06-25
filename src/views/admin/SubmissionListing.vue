@@ -3,128 +3,122 @@
         <page-header
             title="Submissions"
             subtitle="Listing of submissions by round, you NEED to set an anonymised name and upload the .osz for the entry, otherwise it'll not show up for the judges"
-        />
-
-        <div
-            v-for="(round, i) in rounds"
-            :key="round.id"
-            class="row mt-3"
         >
-            <div class="col-sm">
-                <h5 class="box py-2">
-                    <a
-                        :href="`#round-${i}`"
-                        data-toggle="collapse"
+            <select v-model="selectedRoundId" class="form-control mt-3">
+                <option
+                    v-for="round in rounds"
+                    :key="round.id"
+                    :value="round.id"
+                >
+                    {{ round.title }}
+                </option>
+            </select>
+        </page-header>
+
+        <template v-if="selectedRound">
+            <div
+                v-for="match in selectedRound.matches"
+                :key="match.id"
+                class="card my-2"
+            >
+                <div class="card-header">
+                    {{ match.information }}
+                </div>
+
+                <data-table
+                    v-if="match.submissions && match.submissions.length"
+                    :headers="[
+                        'Team',
+                        'Submission Date',
+                        'Original Link',
+                        'Anonymised As',
+                        'Anonymised Link',
+                        '',
+                    ]"
+                >
+                    <tr
+                        v-for="submission in match.submissions"
+                        :key="submission.id"
                     >
-                        {{ round.title }}
-                    </a>
-                </h5>
+                        <country-flag-cell :country="submission.country" />
+                        <td>{{ submission.updatedAt | shortDateTimeString }}</td>
+                        <td>
+                            <a
+                                v-if="submission.originalPath"
+                                :href="`/api/admin/submissions/${submission.id}/download`"
+                            >
+                                download
+                            </a>
+                        </td>
+                        <td>
+                            <input
+                                v-if="editing == submission.id"
+                                v-model="anonymisedAs"
+                                type="text"
+                                class="form-control form-control-sm"
+                                maxlength="255"
+                            >
+
+                            <span v-else>{{ submission.anonymisedAs }}</span>
+                        </td>
+                        <td>
+                            <input
+                                v-if="editing == submission.id"
+                                type="file"
+                                class="form-control form-control-sm"
+                                maxlength="255"
+                                @change="oszFile = $event.target.files[0]"
+                            >
+
+                            <a
+                                v-else-if="submission.anonymisedPath"
+                                :href="`/api/admin/submissions/${submission.id}/downloadAnom`"
+                            >
+                                download
+                            </a>
+                        </td>
+                        <td>
+                            <template v-if="editing == submission.id">
+                                <button
+                                    class="btn btn-sm btn-secondary mb-2 mb-lg-0"
+                                    @click="cancel"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-success"
+                                    @click="save(submission)"
+                                >
+                                    <div
+                                        v-if="isSaving"
+                                        class="spinner-border spinner-border-sm align-middle"
+                                        role="status"
+                                    >
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <span v-else>Save</span>
+                                </button>
+                            </template>
+
+                            <button
+                                v-else-if="!editing"
+                                class="btn btn-sm btn-primary"
+                                @click="edit(submission.id, submission.anonymisedAs)"
+                            >
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                </data-table>
 
                 <div
-                    v-for="match in round.matches"
-                    :id="`round-${i}`"
-                    :key="match.id"
-                    class="collapse card mb-2"
+                    v-else
+                    class="card-body"
                 >
-                    <div class="card-header">
-                        {{ match.information }}
-                    </div>
-
-                    <data-table
-                        v-if="match.submissions && match.submissions.length"
-                        :headers="[
-                            'Team',
-                            'Submission Date',
-                            'Original Link',
-                            'Anonymised As',
-                            'Anonymised Link',
-                            '',
-                        ]"
-                    >
-                        <tr
-                            v-for="submission in match.submissions"
-                            :key="submission.id"
-                        >
-                            <country-flag-cell :country="submission.country" />
-                            <td>{{ submission.updatedAt | shortDateTimeString }}</td>
-                            <td>
-                                <a
-                                    v-if="submission.originalPath"
-                                    :href="`/api/admin/submissions/${submission.id}/download`"
-                                >
-                                    download
-                                </a>
-                            </td>
-                            <td>
-                                <input
-                                    v-if="editing == submission.id"
-                                    v-model="anonymisedAs"
-                                    type="text"
-                                    class="form-control form-control-sm"
-                                    maxlength="255"
-                                >
-
-                                <span v-else>{{ submission.anonymisedAs }}</span>
-                            </td>
-                            <td>
-                                <input
-                                    v-if="editing == submission.id"
-                                    type="file"
-                                    class="form-control form-control-sm"
-                                    maxlength="255"
-                                    @change="oszFile = $event.target.files[0]"
-                                >
-
-                                <a
-                                    v-else-if="submission.anonymisedPath"
-                                    :href="`/api/admin/submissions/${submission.id}/downloadAnom`"
-                                >
-                                    download
-                                </a>
-                            </td>
-                            <td>
-                                <template v-if="editing == submission.id">
-                                    <button
-                                        class="btn btn-sm btn-secondary mb-2 mb-lg-0"
-                                        @click="cancel"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        class="btn btn-sm btn-success"
-                                        @click="save(submission)"
-                                    >
-                                        <div
-                                            v-if="isSaving"
-                                            class="spinner-border spinner-border-sm align-middle"
-                                            role="status"
-                                        >
-                                            <span class="sr-only">Loading...</span>
-                                        </div>
-                                        <span v-else>Save</span>
-                                    </button>
-                                </template>
-
-                                <button
-                                    v-else-if="!editing"
-                                    class="btn btn-sm btn-primary"
-                                    @click="edit(submission.id, submission.anonymisedAs)"
-                                >
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                    </data-table>
-
-                    <div
-                        v-else
-                        class="card-body"
-                    >
-                        No submissions
-                    </div>
+                    No submissions
                 </div>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 
@@ -135,7 +129,7 @@ import Axios from 'axios';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 import CountryFlagCell from '../../components/CountryFlagCell.vue';
-import { Submission } from '../../interfaces';
+import { Submission, Round } from '../../interfaces';
 
 @Component({
     components: {
@@ -146,14 +140,19 @@ import { Submission } from '../../interfaces';
 })
 export default class SubmissionListing extends Vue {
 
-    rounds = [];
+    rounds: Round[] = [];
     editing: null | number = null;
     anonymisedAs = '';
     oszFile: File | null = null;
     isSaving = false;
+    selectedRoundId = 1;
 
     async created (): Promise<void> {
         await this.getData();
+    }
+
+    get selectedRound (): Round | undefined {
+        return this.rounds.find(r => r.id === this.selectedRoundId);
     }
 
     async getData (): Promise<void> {
