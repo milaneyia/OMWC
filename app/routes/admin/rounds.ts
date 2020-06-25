@@ -248,8 +248,6 @@ roundsAdminRouter.post('/:id/generateZip', async (ctx) => {
         if (!round.isQualifier) {
             if (type === 'anom') {
                 const anomNames = match.submissions.map(s => s.anonymisedAs);
-                console.log(anomNames);
-
 
                 if (anomNames.length == 2) {
                     matchFolder = `${anomNames[0]} vs ${anomNames[1]}`;
@@ -264,22 +262,21 @@ roundsAdminRouter.post('/:id/generateZip', async (ctx) => {
         for (const submission of match.submissions) {
             let submissionPath = '';
             let filename = '';
-            let split = [];
 
             if (type === 'anom') {
                 if (!submission.anonymisedPath) continue;
 
                 submissionPath = path.join(baseDir, submission.anonymisedPath);
-                split = submission.anonymisedPath.split('\\');
+                filename = path.basename(submission.anonymisedPath);
             } else {
                 if (!submission.originalPath) continue;
 
                 submissionPath = path.join(baseDir, submission.originalPath);
-                split = submission.originalPath.split('\\');
+                filename = path.basename(submission.originalPath);
             }
 
-            filename = path.join(matchFolder, split[split.length - 1]);
-
+            filename = path.join(matchFolder, filename);
+            await checkFileExistence(submissionPath);
             zip.file(filename, fs.createReadStream(submissionPath));
         }
     }
