@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Router from '@koa/router';
+import { ParameterizedContext } from 'koa';
 import * as osuApi from '../middlewares/osuApi';
 import { Country } from '../models/Country';
 import { ROLE } from '../models/Role';
 import { Round } from '../models/rounds/Round';
 import { Schedule } from '../models/Schedule';
 import { User } from '../models/User';
-import { Context, DefaultState } from 'koa';
 
-const indexRouter = new Router<DefaultState, Context>();
+const indexRouter = new Router();
 
-indexRouter.get('/api/', async (ctx) => {
+indexRouter.get('/api/', async (ctx: ParameterizedContext) => {
     const schedule = await Schedule.findOne({});
     const judgingRound = await Round.findCurrentJudgingRound();
-    const osuId = ctx.session?.osuId;
+    const osuId = ctx.session.osuId;
     let user;
 
     if (osuId) {
@@ -27,17 +26,17 @@ indexRouter.get('/api/', async (ctx) => {
     };
 });
 
-indexRouter.get('/login', (ctx) => {
+indexRouter.get('/login', (ctx: ParameterizedContext) => {
     const state = osuApi.generateState();
     ctx.cookies.set('_state', state);
-    ctx.session!.redirectTo = ctx.request.header.referer;
+    ctx.session.redirectTo = ctx.request.header.referer;
 
     return ctx.redirect(osuApi.generateAuthorizeUrl(state));
 });
 
-indexRouter.get('/callback', async (ctx) => {
+indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
     if (!ctx.query.code || ctx.query.error) {
-        return ctx.redirect('/');
+        return ctx.render('error');
     }
 
     const decodedState = osuApi.decodeState(ctx.query.state);
@@ -53,9 +52,6 @@ indexRouter.get('/callback', async (ctx) => {
     if (osuApi.isRequestError(response)) {
         return ctx.render('error');
     } else {
-        ctx.session!.accessToken = response.access_token;
-        ctx.session!.refreshToken = response.refresh_token;
-
         const userResponse = await osuApi.getUserInfo(response.access_token);
 
         if (osuApi.isRequestError(userResponse)) {
@@ -64,8 +60,12 @@ indexRouter.get('/callback', async (ctx) => {
             return ctx.render('error');
         }
 
-        ctx.session!.osuId = userResponse.id;
-        ctx.session!.username = userResponse.username;
+        ctx.session.maxAge = 172800000;
+        ctx.session.expiresAt = new Date(Date.now() + (response.expires_in * 1000));
+        ctx.session.accessToken = response.access_token;
+        ctx.session.refreshToken = response.refresh_token;
+        ctx.session.osuId = userResponse.id;
+        ctx.session.username = userResponse.username;
 
         let country = await Country.findOne({ where: { name: userResponse.country.name } });
 
@@ -90,7 +90,7 @@ indexRouter.get('/callback', async (ctx) => {
 
         if  (user) {
             const redirectUrl = ctx.session?.redirectTo || '/';
-            ctx.session!.redirectUrl = null;
+            ctx.session.redirectUrl = null;
 
             return ctx.redirect(redirectUrl);
         }
