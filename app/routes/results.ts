@@ -74,6 +74,7 @@ resultsRouter.get('/elimination', async (ctx: ParameterizedContext) => {
         .leftJoinAndSelect('submissionChosen.country', 'country')
         .where('round.isQualifier = false')
         .orderBy('round.id', 'ASC')
+        .addOrderBy('match.id', 'ASC')
         .getMany();
 
     const today = new Date();
