@@ -6,11 +6,11 @@
             class="match__team"
             :class="[
                 i % 2 ? 'match__team--right' : 'match__team--left',
-                team ? 'match__team--clickable' : '',
+                hasJudgingDone ? 'match__team--clickable' : '',
             ]"
-            :data-toggle="team ? 'modal' : ''"
-            :data-target="team ? '#detailModal' : ''"
-            @click="team ? $emit('update:select-match') : ''"
+            :data-toggle="hasJudgingDone ? 'modal' : ''"
+            :data-target="hasJudgingDone ? '#detailModal' : ''"
+            @click="hasJudgingDone ? $emit('update:select-match') : ''"
         >
             <div class="match__team-flag country-flag" :style="`background-image: url(https://osu.ppy.sh/images/flags/${team && team.code || 'A1'}.png)`" />
             <div class="match__team-info">
@@ -20,7 +20,7 @@
                     </div>
 
                     <div
-                        v-if="match.eliminationJudging && match.eliminationJudging.length"
+                        v-if="hasJudgingDone"
                         class="match__team-score"
                     >
                         {{ getScore(team.id) }}
@@ -47,6 +47,10 @@ import { Match } from '../../interfaces';
 export default class RoundMatch extends Vue {
 
     match!: Match;
+
+    get hasJudgingDone (): undefined | number {
+        return this.match?.eliminationJudging?.length;
+    }
 
     getScore (id: number): number {
         let score = 0;
