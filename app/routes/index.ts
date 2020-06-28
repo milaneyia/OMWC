@@ -34,6 +34,12 @@ indexRouter.get('/login', (ctx: ParameterizedContext) => {
     return ctx.redirect(osuApi.generateAuthorizeUrl(state));
 });
 
+indexRouter.get('/logout', (ctx: ParameterizedContext) => {
+    ctx.session = null;
+
+    return ctx.redirect('/');
+});
+
 indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
     if (!ctx.query.code || ctx.query.error) {
         return ctx.render('error');

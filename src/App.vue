@@ -115,16 +115,20 @@
                     </li>
                 </ul>
 
-                <form
+                <a
                     v-if="!user && initialized"
-                    action="/login"
-                    method="get"
-                    class="form-inline my-2 my-lg-0 ml-3"
+                    href="/login"
+                    class="my-2 my-lg-0"
                 >
-                    <button class="btn btn-link" type="submit">
-                        Verify your osu! account
-                    </button>
-                </form>
+                    Verify your osu! account
+                </a>
+                <a
+                    v-else
+                    href="/logout"
+                    class="my-2 my-lg-0"
+                >
+                    Log out
+                </a>
             </div>
         </nav>
 
