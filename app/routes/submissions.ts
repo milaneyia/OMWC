@@ -28,34 +28,37 @@ submissionsRouter.use(async (ctx, next) => {
     }
 });
 
-async function getBanningRound (userCountryId: number): Promise<Round | undefined> {
+async function getBanningRound (userCountryId: number): Promise<{ nextRound: Round; currentMatch: Match } | undefined> {
     const today = new Date();
-    const previousRound = await Round.findOne({
-        where: {
-            resultsAt: LessThanOrEqual(today),
-        },
-        order: {
-            resultsAt: 'DESC',
-        },
-    });
-    const nextRound = await Round
-        .createQueryBuilder('round')
-        .innerJoin('round.genres', 'genre')
-        .leftJoin('genre.bans', 'ban', 'ban.teamId = :teamId', { teamId: userCountryId })
-        .leftJoin('ban.genre', 'banGenre')
-        .where('round.submissionsStartedAt >= :today', { today })
-        .select([
-            'round',
-            'genre.id',
-            'genre.name',
-            'banGenre.id',
-            'banGenre.name',
-            'ban',
-        ])
-        .orderBy('round.submissionsStartedAt', 'ASC')
-        .getOne();
+    const [previousRound, nextRound] = await Promise.all([
+        Round.findOne({
+            where: {
+                resultsAt: LessThanOrEqual(today),
+            },
+            order: {
+                resultsAt: 'DESC',
+            },
+        }),
+        Round
+            .createQueryBuilder('round')
+            .innerJoin('round.genres', 'genre')
+            .leftJoin('genre.bans', 'ban', 'ban.teamId = :teamId', { teamId: userCountryId })
+            .leftJoin('ban.genre', 'banGenre')
+            .where('round.submissionsStartedAt >= :today', { today })
+            .select([
+                'round',
+                'genre.id',
+                'genre.name',
+                'banGenre.id',
+                'banGenre.name',
+                'ban',
+            ])
+            .orderBy('round.submissionsStartedAt', 'ASC')
+            .getOne(),
+    ]);
 
-    if (!previousRound || !nextRound) {
+    // TODO need a better way to do it...
+    if (!previousRound || !nextRound || (previousRound.id + 1) !== nextRound.id) {
         return undefined;
     }
 
@@ -65,7 +68,7 @@ async function getBanningRound (userCountryId: number): Promise<Round | undefine
         return undefined;
     }
 
-    return nextRound;
+    return { nextRound, currentMatch };
 }
 
 async function getQualifierPositions (match: Match): Promise<{ highSeedTeamId: number; lowSeedTeamId: number }> {
@@ -128,29 +131,27 @@ submissionsRouter.get('/', async (ctx) => {
                 };
             }
 
-            remainingGenres = remainingGenres.filter(g => g.id !== highSeedTeamBans[0].genreId);
-            let lowSeedTeamBan = lowSeedTeamBans[0];
+            remainingGenres = remainingGenres.filter(g => g.id !== lowSeedTeamBans[0].genreId);
+            let highSeedTeamBan = highSeedTeamBans[0];
 
             if (highSeedTeamBans[0].genreId === lowSeedTeamBans[0].genreId) {
-                lowSeedTeamBan = lowSeedTeamBans[1];
+                highSeedTeamBan = highSeedTeamBans[1];
             }
 
-            remainingGenres = remainingGenres.filter(g => g.id !== lowSeedTeamBan.genreId);
+            remainingGenres = remainingGenres.filter(g => g.id !== highSeedTeamBan.genreId);
             genreToMap = remainingGenres[0];
             isHighSeed = highSeedTeamId === teamId;
 
             // TODO check if all matches have defined a genre, else wait for admin to press the button .. so all have the same time??
         }
     } else {
-        nextRound = await getBanningRound(teamId);
+        const result = await getBanningRound(teamId);
 
-        if (nextRound) {
-            currentMatch = await Match.findRelatedCountryMatch(nextRound, teamId);
-
-            if (currentMatch) {
-                const { highSeedTeamId } = await getQualifierPositions(currentMatch);
-                isHighSeed = highSeedTeamId === teamId;
-            }
+        if (result) {
+            nextRound = result.nextRound;
+            currentMatch = result.currentMatch;
+            const { highSeedTeamId } = await getQualifierPositions(result.currentMatch);
+            isHighSeed = highSeedTeamId === teamId;
         }
     }
 
@@ -244,15 +245,15 @@ submissionsRouter.get('/:id/download', findSubmission, async (ctx, next) => {
 
 submissionsRouter.post('/saveBans', async (ctx) => {
     const teamId = ctx.state.user.country.id;
-    const currentBanRound = await getBanningRound(teamId);
+    const result = await getBanningRound(teamId);
 
-    if (!currentBanRound || !currentBanRound.genres.length) {
+    if (!result || !result.nextRound.genres.length) {
         return ctx.body = {
             error: 'Not in time',
         };
     }
 
-    const alreadyBanned = currentBanRound.genres.some(g =>
+    const alreadyBanned = result.nextRound.genres.some(g =>
         g.bans.some(b => b.teamId === teamId)
     );
 
@@ -262,27 +263,19 @@ submissionsRouter.post('/saveBans', async (ctx) => {
         };
     }
 
-    const currentMatch = await Match.findRelatedCountryMatch(currentBanRound, teamId);
-
-    if (!currentMatch) {
-        return ctx.body = {
-            error: 'Something went wrong!',
-        };
-    }
-
-    const { highSeedTeamId, lowSeedTeamId } = await getQualifierPositions(currentMatch);
+    const { highSeedTeamId, lowSeedTeamId } = await getQualifierPositions(result.currentMatch);
     const bansInput = convertToArray<number>(ctx.request.body.bans);
     const bans = await Genre.find({
         where: {
             id: In(bansInput),
-            roundId: currentBanRound.id,
+            roundId: result.nextRound.id,
         },
     });
 
     if (
         bans.length !== bansInput.length ||
-        (highSeedTeamId === teamId && bans.length !== 1) ||
-        (lowSeedTeamId === teamId && bans.length !== 2)
+        (highSeedTeamId === teamId && bans.length !== 2) ||
+        (lowSeedTeamId === teamId && bans.length !== 1)
     ) {
         return ctx.body = {
             error: 'Wrong number of bans',

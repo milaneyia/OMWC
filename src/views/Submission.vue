@@ -110,9 +110,9 @@
                             <template v-else>
                                 <p class="card-subtitle">
                                     You have from till <b><time-string :timestamp="nextRound.submissionsStartedAt" /></b> to set your ban.
-                                    <span v-if="!isHighSeed">You'll have to select <b>2</b> genres in order of preference.</span>
+                                    <span v-if="isHighSeed">You'll have to select <b>2</b> genres in order of preference.</span>
                                 </p>
-                                <p v-if="!isHighSeed">
+                                <p v-if="isHighSeed">
                                     <span v-if="!bans.length">Select your first ban</span>
                                     <span v-else-if="bans.length !== 2">Select your second ban (it'll be used if the other team chooses your first choice)</span>
                                 </p>
@@ -126,9 +126,9 @@
                                         :id="genre.id"
                                         v-model="bans"
                                         :value="genre.id"
-                                        :type="isHighSeed ? 'radio' : 'checkbox'"
+                                        :type="isHighSeed ? 'checkbox' : 'radio'"
                                         class="form-check-input"
-                                        :disabled="getInputStatus(genre.id)"
+                                        :disabled="setDisabled(genre.id)"
                                     >
                                     <label :for="genre.id" class="form-check-label">{{ genre.name }}</label>
                                 </div>
@@ -201,7 +201,7 @@ export default class Submission extends Vue {
     get bannedGenres (): string {
         if (!this.nextRound) return '';
         const bannedGenres = this.nextRound.genres.filter(g => g.bans.some(b => b.teamId === this.user.country.id));
-        if (this.isHighSeed) return bannedGenres.map(g => g.name).join(', ');
+        if (!this.isHighSeed) return bannedGenres.map(g => g.name).join(', ');
 
         let display = '';
 
@@ -272,9 +272,9 @@ export default class Submission extends Vue {
         }
     }
 
-    getInputStatus (genreId: number): boolean {
+    setDisabled (genreId: number): boolean {
         if (this.alreadyBanned || !this.nextRound) return true;
-        if (!this.bans.length || this.isHighSeed) return false;
+        if (!this.bans.length || !this.isHighSeed) return false;
 
         return this.bans.length === 2 && !this.bans.some(g => g === genreId);
     }

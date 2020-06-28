@@ -199,8 +199,8 @@ roundsAdminRouter.post('/:id/genres/:genreId/remove', async (ctx) => {
 });
 
 async function randomizeBans (team: Country, highSeedTeamId: number, genres: Genre[]): Promise<void> {
-    let length = 2;
-    if (team.id === highSeedTeamId) length = 1;
+    let length = 1;
+    if (team.id === highSeedTeamId) length = 2;
 
     let randomGenre = genres[Math.floor(Math.random() * genres.length)];
 
