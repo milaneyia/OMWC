@@ -12,7 +12,7 @@ export function convertToIntOrThrow(input: string): number {
     return parsedInput;
 }
 
-export function convertToArray<T>(input: T): T[] {
+export function convertToArray<T>(input: any): T[] {
     if (Array.isArray(input)) {
         return input;
     }

@@ -46,6 +46,23 @@
                                 <router-link :to="`/admin/rounds/${round.id}/matches`" class="btn btn-sm btn-primary mb-2">
                                     Edit Matches
                                 </router-link>
+
+                                <template v-if="!round.isQualifier">
+                                    <router-link
+                                        :to="`/admin/rounds/${round.id}/genres`"
+                                        class="btn btn-sm btn-primary mb-2"
+                                    >
+                                        Edit Genres
+                                    </router-link>
+
+                                    <a
+                                        href="#"
+                                        class="btn btn-sm btn-danger mb-2"
+                                        @click.prevent="randomizeBans(round.id, $event)"
+                                    >
+                                        Randomize Missing Bans
+                                    </a>
+                                </template>
                             </td>
                         </tr>
                     </data-table>
@@ -75,6 +92,12 @@ export default class RoundListing extends Vue {
         await this.initialRequest<{ rounds: [] }>('/api/admin/rounds', (data) => {
             this.rounds = data.rounds;
         });
+    }
+
+    async randomizeBans (id: number, e: Event): Promise<void> {
+        if (confirm('Cannot undo this action, Are you sure?')) {
+            await this.postRequest(`/api/admin/rounds/${id}/randomizeBans`, {}, e);
+        }
     }
 
 }

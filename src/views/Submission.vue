@@ -41,19 +41,20 @@
             </div>
         </div>
 
-        <template v-if="currentRound">
+        <template v-if="currentRound && currentMatch">
             <div class="row">
                 <div class="col-sm">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>
-                                {{ currentRound.title }}
-                            </h5>
-                        </div>
+                        <h5 class="card-header">
+                            {{ currentRound.title }}
+                        </h5>
 
                         <div class="card-body">
                             <p class="card-title">
                                 {{ currentMatch.information }}
+                            </p>
+                            <p v-if="genreToMap">
+                                The chosen genre was: <b>{{ genreToMap.name }}</b>, download it <a :href="genreToMap.downloadLink" target="_blank">here</a>
                             </p>
                             <p class="card-subtitle">
                                 You have from <b><time-string :timestamp="currentRound.submissionsStartedAt" /></b> to
@@ -92,6 +93,59 @@
                 </div>
             </div>
         </template>
+
+        <template v-if="nextRound && currentMatch">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card">
+                        <h5 class="card-header">
+                            {{ nextRound.title }}
+                        </h5>
+
+                        <div class="card-body">
+                            <p v-if="alreadyBanned" class="card-subtitle">
+                                You banned <b>{{ bannedGenres }}</b>
+                                Comeback on <b><time-string :timestamp="nextRound.submissionsStartedAt" /></b> to see the chosen song to map!
+                            </p>
+                            <template v-else>
+                                <p class="card-subtitle">
+                                    You have from till <b><time-string :timestamp="nextRound.submissionsStartedAt" /></b> to set your ban.
+                                    <span v-if="!isHighSeed">You'll have to select <b>2</b> genres in order of preference.</span>
+                                </p>
+                                <p v-if="!isHighSeed">
+                                    <span v-if="!bans.length">Select your first ban</span>
+                                    <span v-else-if="bans.length !== 2">Select your second ban (it'll be used if the other team chooses your first choice)</span>
+                                </p>
+
+                                <div
+                                    v-for="genre in nextRound.genres"
+                                    :key="genre.id"
+                                    class="form-check"
+                                >
+                                    <input
+                                        :id="genre.id"
+                                        v-model="bans"
+                                        :value="genre.id"
+                                        :type="isHighSeed ? 'radio' : 'checkbox'"
+                                        class="form-check-input"
+                                        :disabled="getInputStatus(genre.id)"
+                                    >
+                                    <label :for="genre.id" class="form-check-label">{{ genre.name }}</label>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="!alreadyBanned" class="row">
+                <div class="col-sm">
+                    <button class="btn btn-primary btn-block" @click="saveBans($event)">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -108,6 +162,9 @@ interface ApiResponse {
     submissions: ISubmission[];
     currentRound: Round | null;
     currentMatch: Match | null;
+    nextRound: Round | null;
+    genreToMap: {} | null;
+    isHighSeed: boolean;
 }
 
 @Component({
@@ -126,8 +183,35 @@ export default class Submission extends Vue {
     oszFile: File | null = null;
     isSaving = false;
 
+    nextRound: Round | null = null
+    genreToMap: {} | null = null;
+    bans: number[] = [];
+    isHighSeed = false;
+
     async created (): Promise<void> {
         await this.getData();
+    }
+
+    get alreadyBanned (): boolean {
+        if (!this.nextRound) return true;
+
+        return this.nextRound.genres.some(g => g.bans.some(b => b.teamId === this.user.country.id));
+    }
+
+    get bannedGenres (): string {
+        if (!this.nextRound) return '';
+        const bannedGenres = this.nextRound.genres.filter(g => g.bans.some(b => b.teamId === this.user.country.id));
+        if (this.isHighSeed) return bannedGenres.map(g => g.name).join(', ');
+
+        let display = '';
+
+        for (const genre of bannedGenres) {
+            for (const ban of genre.bans) {
+                display += `${ban.genre.name} (${ban.place === 1 ? '1st choice' : '2nd choice'}), `;
+            }
+        }
+
+        return display;
     }
 
     async getData (): Promise<void> {
@@ -135,6 +219,12 @@ export default class Submission extends Vue {
             this.submissions = data.submissions,
             this.currentRound = data.currentRound,
             this.currentMatch = data.currentMatch;
+            this.nextRound = data.nextRound;
+            this.genreToMap = data.genreToMap;
+            this.isHighSeed = data.isHighSeed;
+
+            const genresBanned = data.nextRound?.genres.filter(g => g.bans.some(b => b.teamId === this.user.country.id));
+            if (genresBanned) this.bans = genresBanned.map(g => g.id);
         });
     }
 
@@ -170,6 +260,23 @@ export default class Submission extends Vue {
 
         this.isSaving = false;
         (e?.target as HTMLInputElement).disabled = false;
+    }
+
+    async saveBans (e: Event): Promise<void> {
+        if (confirm('This action cannot be undo, are you sure?')) {
+            await this.postRequest('/api/submissions/saveBans', {
+                bans: this.bans,
+            }, e);
+
+            await this.getData();
+        }
+    }
+
+    getInputStatus (genreId: number): boolean {
+        if (this.alreadyBanned || !this.nextRound) return true;
+        if (!this.bans.length || this.isHighSeed) return false;
+
+        return this.bans.length === 2 && !this.bans.some(g => g === genreId);
     }
 
 }

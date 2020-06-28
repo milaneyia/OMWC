@@ -14,10 +14,6 @@ const resultsRouter = new Router();
 resultsRouter.prefix('/api/results');
 
 resultsRouter.get('/qualifiers', async (ctx: ParameterizedContext) => {
-    const query = Round
-        .createQueryBuilder('round')
-        .innerJoinAndSelect('round.matches', 'matches');
-
     let user;
 
     if (ctx.session.osuId) {
@@ -29,22 +25,10 @@ resultsRouter.get('/qualifiers', async (ctx: ParameterizedContext) => {
         });
     }
 
-    if (user) {
-        query.leftJoinAndSelect('matches.submissions', 'submissions');
-    } else {
-        query.leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() });
-    }
-
-    const qualifier = await query
-        .leftJoinAndSelect('submissions.country', 'country')
-        .leftJoinAndSelect('submissions.qualifierJudging', 'qualifierJudging')
-        .leftJoinAndSelect('qualifierJudging.judge', 'judge')
-        .leftJoinAndSelect('qualifierJudging.qualifierJudgingToCriterias', 'qualifierJudgingToCriterias')
-        .leftJoinAndSelect('qualifierJudgingToCriterias.criteria', 'criteria')
-        .where('round.isQualifier = true')
-        .getOne();
-
-    const criterias = await Criteria.find({});
+    const [qualifier, criterias] = await Promise.all([
+        Round.findQualifierWithJudgingData(user === undefined),
+        Criteria.find({}),
+    ]);
     const judges = qualifier?.matches?.[0]?.submissions?.[0]?.qualifierJudging?.map(j => j.judge);
     const { teamsScores, judgesCorrel } = await calculateQualifierScores(qualifier);
 

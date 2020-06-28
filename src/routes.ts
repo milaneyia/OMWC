@@ -17,6 +17,7 @@ const TeamChoice = () => import(/* webpackChunkName: "admin" */ './views/admin/T
 const ManageRound = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageRound.vue');
 const RoundListing = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/RoundListing.vue');
 const ManageMatch = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageMatch.vue');
+const ManageGenres = () => import(/* webpackChunkName: "admin" */ './views/admin/rounds/ManageGenres.vue');
 const RequestAccess = () => import(/* webpackChunkName: "admin" */ './views/admin/RequestAccess.vue');
 const ManageUser = () => import(/* webpackChunkName: "admin" */ './views/admin/ManageUser.vue');
 const LogListing = () => import(/* webpackChunkName: "admin" */ './views/admin/LogListing.vue');
@@ -49,6 +50,7 @@ const routes: RouteConfig[] = [
     { path: '/admin/rounds/create', component: ManageRound, meta: { title: 'Manage Rounds - osu!BWC' } },
     { path: '/admin/rounds/:id(\\d+)', component: ManageRound, meta: { title: 'Manage Rounds - osu!BWC' } },
     { path: '/admin/rounds/:id(\\d+)/matches', component: ManageMatch, meta: { title: 'Manage Rounds - osu!BWC' } },
+    { path: '/admin/rounds/:id(\\d+)/genres', component: ManageGenres, meta: { title: 'Manage Genres - osu!BWC' } },
     { path: '/admin/submissions', component: SubmissionListing, meta: { title: 'Manage Submissions - osu!BWC' } },
     { path: '/admin/judging', component: JudgingListing, meta: { title: 'Judging - osu!BWC' } },
 

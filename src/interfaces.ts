@@ -48,6 +48,7 @@ export interface Country {
 export interface Round {
     id: number;
     matches: Match[];
+    genres: Genre[];
 }
 
 export interface Match {
@@ -60,6 +61,22 @@ export interface Match {
 
     submissions?: Submission[];
     eliminationJudging?: EliminationJudging[];
+}
+
+export interface Genre {
+    id: number;
+    name: string;
+    downloadLink: string;
+    bans: Ban[];
+}
+
+export interface Ban {
+    id: number;
+    place: number;
+    team: Country;
+    teamId: number;
+    genre: Genre;
+    genreId: number;
 }
 
 export interface Submission {

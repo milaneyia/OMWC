@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, LessThanOrEqual, MoreThanOrEqual, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Match } from './Match';
+import { Genre } from './Genre';
 
 @Entity()
 export class Round extends BaseEntity {
@@ -43,6 +44,37 @@ export class Round extends BaseEntity {
         });
     }
 
+    static findQualifierWithJudgingData(restricted = false): Promise<Round | undefined> {
+        if (restricted) {
+            return this
+                .createQueryBuilder('round')
+                .innerJoinAndSelect('round.matches', 'matches')
+                .leftJoinAndSelect('matches.submissions', 'submissions', 'round.resultsAt <= :today', { today: new Date() })
+                .leftJoinAndSelect('submissions.country', 'country')
+                .leftJoinAndSelect('submissions.qualifierJudging', 'qualifierJudging')
+                .leftJoinAndSelect('qualifierJudging.judge', 'judge')
+                .leftJoinAndSelect('qualifierJudging.qualifierJudgingToCriterias', 'qualifierJudgingToCriterias')
+                .leftJoinAndSelect('qualifierJudgingToCriterias.criteria', 'criteria')
+                .where('round.isQualifier = true')
+                .getOne();
+        }
+
+        return this.findOne({
+            where: {
+                isQualifier: true,
+            },
+            relations: [
+                'matches',
+                'matches.submissions',
+                'matches.submissions.country',
+                'matches.submissions.qualifierJudging',
+                'matches.submissions.qualifierJudging.judge',
+                'matches.submissions.qualifierJudging.qualifierJudgingToCriterias',
+                'matches.submissions.qualifierJudging.qualifierJudgingToCriterias.criteria',
+            ],
+        });
+    }
+
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -66,6 +98,9 @@ export class Round extends BaseEntity {
 
     @OneToMany(() => Match, (match) => match.round)
     matches!: Match[];
+
+    @OneToMany(() => Genre, (genre) => genre.round)
+    genres!: Genre[];
 
     @Column({ default: false })
     isQualifier!: boolean
