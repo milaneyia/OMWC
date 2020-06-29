@@ -228,6 +228,8 @@ export default class ManageMatch extends Vue {
             highSeedTeamBan = highSeedTeamBans[1];
         }
 
+        if (!highSeedTeamBan) return  'mmm..';
+
         remainingGenres = remainingGenres.filter(g => g.id !== highSeedTeamBan.genreId);
 
         return remainingGenres[0].name;
