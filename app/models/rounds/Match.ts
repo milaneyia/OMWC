@@ -10,7 +10,17 @@ export class Match extends BaseEntity {
     static findByRoundWithSubmissions(roundId: number): Promise<Match[]> {
         return Match.find({
             where: { roundId },
-            relations: ['submissions'],
+            relations: [
+                'round',
+                'round.genres',
+                'submissions',
+                'teamA',
+                'teamA.bans',
+                'teamA.bans.genre',
+                'teamB',
+                'teamB.bans',
+                'teamB.bans.genre',
+            ],
         });
     }
 

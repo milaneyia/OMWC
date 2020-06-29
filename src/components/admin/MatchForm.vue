@@ -5,7 +5,7 @@
             type="text"
             class="form-control w-100 mb-2"
             maxlength="3000"
-            placeholder="Information (for bans and such)"
+            placeholder="Information for whatever"
             :disabled="editing"
         >
 

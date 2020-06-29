@@ -43,6 +43,7 @@ export interface Country {
     id: number;
     users: User[];
     wasConfirmed: boolean;
+    bans: Ban[];
 }
 
 export interface Round {
@@ -54,6 +55,7 @@ export interface Round {
 export interface Match {
     id?: number;
     roundId: number;
+    round?: Round;
     teamAId?: number;
     teamBId?: number;
     teamA?: Country;
