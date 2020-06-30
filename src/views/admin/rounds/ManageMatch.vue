@@ -46,7 +46,7 @@
                         :editing="editing !== match.id"
                     />
 
-                    <div v-if="!match.round.isQualifier" class="form-inline">
+                    <div v-if="!match.round.isQualifier && match.teamA && match.teamB" class="form-inline">
                         <div>
                             <b>{{ match.teamA.name }}:</b>
 

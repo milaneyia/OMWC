@@ -297,11 +297,13 @@ roundsAdminRouter.post('/:id/randomizeBans', async (ctx) => {
 });
 
 roundsAdminRouter.get('/:id/matches', async (ctx) => {
-    const [matches, competingTeams, { teamsScores }] = await Promise.all([
+    const [matches, competingTeams, qualifer] = await Promise.all([
         Match.findByRoundWithSubmissions(ctx.params.id),
         Country.find({ wasConfirmed: true }),
-        calculateQualifierScores(),
+        Round.findQualifierWithJudgingData(),
     ]);
+
+    const { teamsScores } = await calculateQualifierScores(qualifer);
 
     ctx.body = {
         matches,
