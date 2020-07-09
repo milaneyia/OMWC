@@ -122,6 +122,8 @@ export interface EliminationJudging {
     id: number;
     judgeId: number;
     judge: User;
-
+    matchId: number;
+    comment: string;
+    submissionChosenId: number;
     submissionChosen: Submission;
 }

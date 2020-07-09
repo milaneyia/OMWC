@@ -9,7 +9,7 @@ export class EliminationJudging extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ type: 'text' })
     comment!: string;
 
     @Column()

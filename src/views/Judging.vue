@@ -10,6 +10,7 @@
             <elimination
                 v-else
                 :round="currentRound"
+                :judging-done.sync="judgingDone"
             />
         </template>
 

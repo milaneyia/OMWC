@@ -10,6 +10,7 @@ import { QualifierJudgingToCriteria } from '../models/judging/QualifierJudgingTo
 import { Match } from '../models/rounds/Match';
 import { ParameterizedContext, Next } from 'koa';
 import path from 'path';
+import { EliminationJudging } from '../models/judging/EliminationJudging';
 
 const judgingRouter = new Router();
 
@@ -70,11 +71,16 @@ judgingRouter.get('/', async (ctx) => {
             criterias,
             judgingDone,
         };
-
     } else {
-        return ctx.body = { error: 'soon tm' };
-    }
+        const judgingDone = await EliminationJudging.find({
+            judgeId: ctx.state.user.id,
+        });
 
+        return ctx.body = {
+            currentRound,
+            judgingDone,
+        };
+    }
 });
 
 judgingRouter.post('/save', async (ctx) => {
@@ -145,7 +151,52 @@ judgingRouter.post('/save', async (ctx) => {
         };
 
     } else {
-        return ctx.body = { error: 'nope' };
+        const matchId = convertToIntOrThrow(ctx.request.body.matchId);
+        const submissionChosen = convertToIntOrThrow(ctx.request.body.submissionChosen);
+        const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
+        const currentRound: Round = ctx.state.currentRound;
+
+        if (!comment) {
+            return ctx.body = { error: 'Missing data' };
+        }
+
+        const [match, submission] = await Promise.all([
+            Match.findOneOrFail({
+                where: { id: matchId },
+            }),
+            Submission.findOneOrFail({
+                where: { id: submissionChosen },
+                relations: ['match'],
+            }),
+        ]);
+
+        if (submission.match.roundId !== currentRound.id || submission.match.id !== match.id) {
+            return ctx.body = { error: 'woah' };
+        }
+
+        let judging = await EliminationJudging.findOne({
+            judgeId: ctx.state.user.id,
+            matchId: match.id,
+        });
+
+        if (!judging) {
+            judging = new EliminationJudging();
+            judging.judgeId = ctx.state.user.id;
+            judging.matchId = match.id;
+        }
+
+        judging.submissionChosenId = submission.id;
+        judging.comment = comment;
+        await judging.save();
+
+        const judgingDone = await EliminationJudging.find({
+            judgeId: ctx.state.user.id,
+        });
+
+        return ctx.body = {
+            judgingDone,
+            success: 'Saved!',
+        };
     }
 });
 
