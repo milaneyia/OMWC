@@ -4,36 +4,24 @@
             title="Judging List"
             subtitle=" "
         >
-            You have till <b><time-string :timestamp="round.judgingEndedAt" /></b> to finish
+            <h4>{{ round.title }}</h4>
+            <p>You have till <b><time-string :timestamp="round.judgingEndedAt" /></b> to finish</p>
+            <a
+                :href="`/api/judging/round/${round.id}/downloadZip`"
+                target="_blank"
+            >
+                Download all entries
+            </a>
         </page-header>
 
-        <div class="row mb-2">
-            <div class="col-sm">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            {{ round.title }}
-                        </h4>
-                        <a
-                            :href="`/api/judging/round/${round.id}/downloadZip`"
-                            target="_blank"
-                        >
-                            Download all entries
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <match-judging
-                            v-for="match in round.matches"
-                            :key="match.id"
-                            :match="match"
-                            :related-judging="findRelatedJudging(match.id) || null"
-                            :editing-match.sync="editingMatch"
-                            @update:judging-done="$emit('update:judging-done', $event)"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
+        <match-judging
+            v-for="match in round.matches"
+            :key="match.id"
+            :match="match"
+            :related-judging="findRelatedJudging(match.id) || null"
+            :editing-match.sync="editingMatch"
+            @update:judging-done="$emit('update:judging-done', $event)"
+        />
     </div>
 </template>
 

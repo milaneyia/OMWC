@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Axios from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function executeRequest<T>(request: () => any, onEnd: () => void, onSuccess?: (data: T) => void): Promise<T | undefined> {
     try {
         const res = await request();

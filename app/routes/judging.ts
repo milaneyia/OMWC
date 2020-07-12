@@ -40,8 +40,17 @@ judgingRouter.get('/', async (ctx) => {
             'submissions.anonymisedPath',
         ])
         .where('round.id = :roundId', { roundId: currentRound.id })
-        .orderBy('RAND()')
         .getMany();
+
+    matches.sort((a, b) => {
+        const anomA = a.submissions?.[0]?.anonymisedAs?.toUpperCase();
+        const anomB = b.submissions?.[0]?.anonymisedAs?.toUpperCase();
+
+        if (anomA < anomB) return -1;
+        if (anomA > anomB) return 1;
+
+        return 0;
+    });
 
     for (const match of matches) {
         match.submissions.sort((a, b) => {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParameterizedContext } from 'koa';
 import { Schedule } from '../models/Schedule';
 
