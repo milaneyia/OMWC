@@ -12,7 +12,7 @@
                             <div
                                 v-for="submission in match.submissions"
                                 :key="submission.id"
-                                class="form-check"
+                                class="custom-control custom-radio"
                             >
                                 <input
                                     :id="`submission${submission.id}`"
@@ -20,9 +20,9 @@
                                     :value="submission.id"
                                     type="radio"
                                     :disabled="editingMatch != match.id"
-                                    class="form-check-input"
+                                    class="custom-control-input"
                                 >
-                                <label :for="`submission${submission.id}`" class="form-check-label">
+                                <label :for="`submission${submission.id}`" class="custom-control-label">
                                     <a
                                         class="mr-1"
                                         :href="`api/judging/submission/${submission.id}/download`"

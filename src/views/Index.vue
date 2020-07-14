@@ -87,7 +87,7 @@
                                     </a>
                                     <a
                                         class="d-flex align-items-center mb-3 mb-sm-0"
-                                        href="https://pickem.hwchr.com/tournaments/30"
+                                        href="https://pickem.hwc.hr/tournaments/30"
                                         target="__blank"
                                     >
                                         <span class="country-flag" style="background-image: url('/img/pickem.png'); height: 50px; width: 50px;" />
@@ -309,16 +309,16 @@ export default class Index extends Vue {
         {
             from: new Date('09/15/2020 UTC'),
             to: new Date('09/30/2020 UTC'),
-            text: 'Finals - Mapping phase',
+            text: '3rd place/Final - Mapping phase',
         },
         {
             from: new Date('10/01/2020 UTC'),
             to: new Date('10/09/2020 UTC'),
-            text: `Finals - Judging phase`,
+            text: `3rd place/Final - Judging phase`,
         },
         {
             from: new Date('10/17/2020 UTC'),
-            text: `Finals livestream`,
+            text: `3rd place/Final livestream`,
         },
     ];
 
