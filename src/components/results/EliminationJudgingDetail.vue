@@ -8,7 +8,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        {{ match.teamA.name }} vs {{ match.teamB.name }}
+                        {{ matchDisplay }}
                     </h5>
                     <button
                         type="button"
@@ -73,6 +73,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { Match } from '../../interfaces';
 
 @Component({
     props: {
@@ -85,6 +86,14 @@ import Component from 'vue-class-component';
 export default class EliminationJudgingDetail extends Vue {
 
     commentsExpanded: number[] = [];
+    match!: Match;
+
+    get matchDisplay (): string {
+        const nameA = this.match.submissions?.find(s => s.country.id === this.match.teamAId)?.anonymisedAs || 'x';
+        const nameB = this.match.submissions?.find(s => s.country.id === this.match.teamBId)?.anonymisedAs || 'x';
+
+        return `${this.match.teamA?.name} vs ${this.match.teamB?.name} (${nameA} vs ${nameB})`;
+    }
 
     showComment (id: number): void {
         const i = this.commentsExpanded.findIndex(j => j === id);

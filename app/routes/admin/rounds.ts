@@ -3,7 +3,7 @@ import { ParameterizedContext, Next } from 'koa';
 import JSZip from 'jszip';
 import path from 'path';
 import fs from 'fs';
-import { checkFileExistence, convertToIntOrThrow, calculateQualifierScores } from '../../helpers';
+import { checkFileExistence, convertToIntOrThrow, calculateQualifierScores, TeamScore } from '../../helpers';
 import { download } from '../../middlewares/downloadSubmission';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
@@ -12,6 +12,7 @@ import { Country } from '../../models/Country';
 import { Genre } from '../../models/rounds/Genre';
 import { Ban } from '../../models/rounds/Ban';
 import { Log, LOG_TYPE } from '../../models/Log';
+import { Roll } from '../../models/rounds/Roll';
 
 const roundsAdminRouter = new Router();
 
@@ -198,32 +199,52 @@ roundsAdminRouter.post('/:id/genres/:genreId/remove', async (ctx) => {
     };
 });
 
-async function randomizeBans (team: Country, highSeedTeamId: number, genres: Genre[]): Promise<void> {
+async function randomizeBans (team: Country, genres: Genre[], highSeedTeamId?: number): Promise<void> {
     let length = 1;
-    if (team.id === highSeedTeamId) length = 2;
-
-    let randomGenre = genres[Math.floor(Math.random() * genres.length)];
+    if (!highSeedTeamId || team.id === highSeedTeamId) length = 2;
 
     for (let i = 0; i < length; i++) {
+        let isNewRandom = false;
+        let randomGenre: Genre | null = null;
+
+        while (!isNewRandom) {
+            const newRandom = genres[Math.floor(Math.random() * genres.length)];
+
+            if (newRandom.id !== randomGenre?.id) {
+                isNewRandom = true;
+                randomGenre = newRandom;
+            }
+        }
+
         const newBan = new Ban();
         newBan.place = i + 1;
-        newBan.genreId = randomGenre.id;
+        newBan.genreId = randomGenre!.id;
         newBan.teamId = team.id;
         await newBan.save();
+    }
+}
 
-        if ((i + 1) < length) {
-            let isNewRandom = false;
+async function randomizeRoll (matchId: number, teamId: number, otherTeamRoll: Roll | undefined): Promise<Roll> {
+    let isNewRandom = false;
+    let rollValue = Math.floor(Math.random() * 100);
 
-            while (!isNewRandom) {
-                const newRandom = genres[Math.floor(Math.random() * genres.length)];
+    if (otherTeamRoll && otherTeamRoll.value === rollValue) {
+        while (!isNewRandom) {
+            rollValue = Math.floor(Math.random() * 100);
 
-                if (newRandom.id !== randomGenre.id) {
-                    isNewRandom = true;
-                    randomGenre = newRandom;
-                }
+            if (otherTeamRoll.value !== rollValue) {
+                isNewRandom = true;
             }
         }
     }
+
+    const roll = new Roll();
+    roll.matchId = matchId;
+    roll.teamId = teamId;
+    roll.value = rollValue;
+    await roll.save();
+
+    return roll;
 }
 
 roundsAdminRouter.post('/:id/randomizeBans', async (ctx) => {
@@ -239,9 +260,11 @@ roundsAdminRouter.post('/:id/randomizeBans', async (ctx) => {
                 'matches.teamA',
                 'matches.teamA.bans',
                 'matches.teamA.bans.genre',
+                'matches.teamA.rolls',
                 'matches.teamB',
                 'matches.teamB.bans',
                 'matches.teamB.bans.genre',
+                'matches.teamB.rolls',
             ],
         }),
         Round.findQualifierWithJudgingData(),
@@ -259,11 +282,18 @@ roundsAdminRouter.post('/:id/randomizeBans', async (ctx) => {
         };
     }
 
-    const { teamsScores } = await calculateQualifierScores(qualifier);
-    const randomizedCountries = [];
+    let teamsScores: TeamScore[] = [];
+
+    if (round.id === 2) {
+        const results = await calculateQualifierScores(qualifier);
+        teamsScores = results.teamsScores;
+    }
+
+    const randomizedBans = [];
+    const randomizedRolls = [];
 
     for (const match of round.matches) {
-        let highSeedTeamId = 0;
+        let highSeedTeamId: number | undefined;
 
         if (!match.teamA || !match.teamB) continue;
 
@@ -272,27 +302,43 @@ roundsAdminRouter.post('/:id/randomizeBans', async (ctx) => {
         const teamABans = teamA.bans.filter(b => b.genre.roundId === round.id);
         const teamBBans = teamB.bans.filter(b => b.genre.roundId === round.id);
 
-        const teamAQualifierPosition = teamsScores.findIndex(s => s.country.id === teamA.id);
-        const teamBQualifierPosition = teamsScores.findIndex(s => s.country.id === teamB.id);
-        highSeedTeamId = teamAQualifierPosition < teamBQualifierPosition ? teamA.id : teamB.id;
+        if (round.id === 2) {
+            const teamAQualifierPosition = teamsScores.findIndex(s => s.country.id === teamA.id);
+            const teamBQualifierPosition = teamsScores.findIndex(s => s.country.id === teamB.id);
+            highSeedTeamId = teamAQualifierPosition < teamBQualifierPosition ? teamA.id : teamB.id;
+        } else {
+            let teamARoll = teamA.rolls.find(r => r.matchId === match.id);
+            const teamBRoll = teamB.rolls.find(r => r.matchId === match.id);
+
+            if (!teamARoll) {
+                teamARoll = await randomizeRoll(match.id, teamA.id, teamBRoll);
+                randomizedRolls.push(match.teamA.name);
+            }
+
+            if (!teamBRoll) {
+                await randomizeRoll(match.id, teamB.id, teamARoll);
+                randomizedRolls.push(match.teamB.name);
+            }
+        }
 
         if (!teamABans.length) {
-            await randomizeBans(match.teamA, highSeedTeamId, round.genres);
-            randomizedCountries.push(match.teamA.name);
+            await randomizeBans(match.teamA, round.genres, highSeedTeamId);
+            randomizedBans.push(match.teamA.name);
         }
 
         if (!teamBBans.length) {
-            await randomizeBans(match.teamB, highSeedTeamId, round.genres);
-            randomizedCountries.push(match.teamB.name);
+            await randomizeBans(match.teamB, round.genres, highSeedTeamId);
+            randomizedBans.push(match.teamB.name);
         }
     }
 
     ctx.body = {
-        success: `Randomized bans for: ${randomizedCountries.join(', ')}`,
+        success: `Randomized bans for: ${randomizedBans.join(', ')} & rolls for: ${randomizedRolls.join(', ')}`,
     };
 
-    if (randomizedCountries.length) {
-        await Log.createAndSave(`${ctx.state.user.username} randomized bans for: ${randomizedCountries.join(', ')}`, LOG_TYPE.Admin);
+    if (randomizedBans.length) {
+        await Log.createAndSave(`${ctx.state.user.username} randomized rolls for: ${randomizedRolls.join(', ')}`, LOG_TYPE.Admin);
+        await Log.createAndSave(`${ctx.state.user.username} randomized bans for: ${randomizedBans.join(', ')}`, LOG_TYPE.Admin);
     }
 });
 

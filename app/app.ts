@@ -26,6 +26,7 @@ import teamsRouter from './routes/teams';
 import usersAdminRouter from './routes/admin/users';
 import usersRouter from './routes/users';
 import logsRouter from './routes/admin/logs';
+import logger from './logger';
 
 const app = new Koa();
 app.keys = config.keys;
@@ -59,7 +60,7 @@ app.use(async (ctx, next) => {
     } catch (err) {
         ctx.status = err.status || 500;
 
-        if (ctx.request.type === 'application/json') {
+        if (ctx.accepts('application/json') === 'application/json') {
             ctx.body = { error: 'Something went wrong!' };
         } else {
             await ctx.render('error');
@@ -118,9 +119,9 @@ app.use(judgingAdminRouter.allowedMethods());
 app.use(logsRouter.routes());
 app.use(logsRouter.allowedMethods());
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.on('error', (err, ctx) => {
-    console.log(err);
+    logger.log('info', { osuId: ctx.session.osuId, username: ctx.session.username });
+    logger.error('error', err);
 });
 
 app.listen(3000);

@@ -53,10 +53,21 @@
                             <p class="card-title">
                                 {{ currentMatch.information }}
                             </p>
+                            <p v-if="rolls.length">
+                                The rolls were:
+                                <span v-for="roll in rolls" :key="roll.id">
+                                    {{ roll.team.name }} <b>{{ roll.value }}</b>
+                                </span>
+                            </p>
+                            <p v-if="teamsBans.length">
+                                The bans were:
+                                {{ currentMatch.teamA.name }} <b>{{ teamABans }}</b>,
+                                {{ currentMatch.teamB.name }} <b>{{ teamBBans }}</b>
+                            </p>
                             <p v-if="genreToMap">
                                 The chosen genre was: <b>{{ genreToMap.name }}</b>, download it <a :href="genreToMap.downloadLink" target="_blank">here</a>
                             </p>
-                            <p class="card-subtitle">
+                            <p>
                                 You have from <b><time-string :timestamp="currentRound.submissionsStartedAt" /></b> to
                                 <b><time-string :timestamp="currentRound.submissionsEndedAt" /></b> to submit your entry
                             </p>
@@ -105,6 +116,9 @@
                         <div class="card-body">
                             <p v-if="alreadyBanned" class="card-subtitle">
                                 You banned <b>{{ bannedGenres }}</b>
+                                <span v-if="rollValue !== undefined">
+                                    and rolled <b>{{ rollValue }}</b>
+                                </span>
                                 Comeback on <b><time-string :timestamp="nextRound.submissionsStartedAt" /></b> to see the chosen song to map!
                             </p>
                             <template v-else>
@@ -154,7 +168,7 @@ import Vue from 'vue';
 import Axios from 'axios';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import { User, Submission as ISubmission, Match, Round } from '../interfaces';
+import { User, Submission as ISubmission, Match, Round, Ban } from '../interfaces';
 import PageHeader from '../components/PageHeader.vue';
 import TimeString from '../components/TimeString.vue';
 
@@ -165,6 +179,9 @@ interface ApiResponse {
     nextRound: Round | null;
     genreToMap: {} | null;
     isHighSeed: boolean;
+    teamsBans: Ban[];
+    rolls: [];
+    rollValue: number | null;
 }
 
 @Component({
@@ -187,6 +204,9 @@ export default class Submission extends Vue {
     genreToMap: {} | null = null;
     bans: number[] = [];
     isHighSeed = false;
+    teamsBans: Ban[] = [];
+    rolls = [];
+    rollValue: number | null = null;
 
     async created (): Promise<void> {
         await this.getData();
@@ -214,6 +234,20 @@ export default class Submission extends Vue {
         return display;
     }
 
+    get teamABans (): string {
+        if (!this.teamsBans.length || !this.currentMatch) return '';
+        const teamABans = this.teamsBans.filter(b => b.teamId === this.currentMatch?.teamAId);
+
+        return teamABans.map(b => b.genre.name).join(', ');
+    }
+
+    get teamBBans (): string {
+        if (!this.teamsBans.length || !this.currentMatch) return '';
+        const teamBBans = this.teamsBans.filter(b => b.teamId === this.currentMatch?.teamBId);
+
+        return teamBBans.map(b => b.genre.name).join(', ');
+    }
+
     async getData (): Promise<void> {
         await this.initialRequest<ApiResponse>('/api/submissions', (data) => {
             this.submissions = data.submissions,
@@ -222,6 +256,9 @@ export default class Submission extends Vue {
             this.nextRound = data.nextRound;
             this.genreToMap = data.genreToMap;
             this.isHighSeed = data.isHighSeed;
+            this.teamsBans = data.teamsBans;
+            this.rolls = data.rolls;
+            this.rollValue = data.rollValue;
 
             const genresBanned = data.nextRound?.genres.filter(g => g.bans.some(b => b.teamId === this.user.country.id));
             if (genresBanned) this.bans = genresBanned.map(g => g.id);

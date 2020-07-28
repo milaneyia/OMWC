@@ -46,19 +46,17 @@
                         :editing="editing !== match.id"
                     />
 
-                    <div v-if="!match.round.isQualifier && match.teamA && match.teamB" class="form-inline">
-                        <div>
-                            <b>{{ match.teamA.name }}:</b>
+                    <div v-if="!match.round.isQualifier && match.teamA && match.teamB" class="text-left">
+                        <div v-for="team in ['teamA', 'teamB']" :key="team">
+                            <b>
+                                {{ match[team].name }}
+                                <span v-if="getTeamRoll(match[team].rolls, match.id)">
+                                    ({{ getTeamRoll(match[team].rolls, match.id) }})
+                                </span>
+                                :
+                            </b>
 
-                            <span v-for="ban in match.teamA.bans" :key="ban.id">
-                                {{ ban.genre.name }} ({{ ban.place }})
-                            </span>
-                        </div>
-
-                        <div class="mx-3">
-                            <b>{{ match.teamB.name }}:</b>
-
-                            <span v-for="ban in match.teamB.bans" :key="ban.id">
+                            <span v-for="ban in getTeamBans(match[team].bans, match.roundId)" :key="ban.id">
                                 {{ ban.genre.name }} ({{ ban.place }})
                             </span>
                         </div>
@@ -114,7 +112,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Match, Country, Ban } from '../../../interfaces';
+import { Match, Country, Ban, Roll } from '../../../interfaces';
 import PageHeader from '../../../components/PageHeader.vue';
 import DataTable from '../../../components/admin/DataTable.vue';
 import MatchForm from '../../../components/admin/MatchForm.vue';
@@ -200,21 +198,32 @@ export default class ManageMatch extends Vue {
         let lowSeedTeamBans: Ban[] = [];
 
         if (match.teamAId && match.teamBId) {
-            const teamAQualifierPosition = this.teamsScores.findIndex(s => s.country.id === match.teamAId);
-            const teamBQualifierPosition = this.teamsScores.findIndex(s => s.country.id === match.teamBId);
-            highSeedTeamId = teamAQualifierPosition < teamBQualifierPosition ? match.teamAId : match.teamBId;
+            // For RO16
+            if (this.$route.params.id === '2') {
+                const teamAQualifierPosition = this.teamsScores.findIndex(s => s.country.id === match.teamAId);
+                const teamBQualifierPosition = this.teamsScores.findIndex(s => s.country.id === match.teamBId);
+                highSeedTeamId = teamAQualifierPosition < teamBQualifierPosition ? match.teamAId : match.teamBId;
+            } else {
+                const teamARoll = match.teamA?.rolls.find(r => r.matchId === match.id);
+                const teamBRoll = match.teamB?.rolls.find(r => r.matchId === match.id);
+                if (!teamARoll || !teamBRoll) return `A team didn't ban`;
+                highSeedTeamId = teamARoll.value > teamBRoll.value ? match.teamAId : match.teamBId;
+            }
         }
 
-        if (!match.teamA?.bans.length || !match.teamB?.bans.length) {
+        const teamABans = match.teamA?.bans.filter(b => b.genre.roundId === match.roundId);
+        const teamBBans = match.teamB?.bans.filter(b => b.genre.roundId === match.roundId);
+
+        if (!teamABans?.length || !teamBBans?.length) {
             return `A team didn't ban`;
         }
 
         if (highSeedTeamId === match.teamAId) {
-            highSeedTeamBans = match.teamA?.bans;
-            lowSeedTeamBans = match.teamB?.bans;
+            highSeedTeamBans = teamABans;
+            lowSeedTeamBans = teamBBans;
         } else {
-            lowSeedTeamBans = match.teamA?.bans;
-            highSeedTeamBans = match.teamB?.bans;
+            lowSeedTeamBans = teamABans;
+            highSeedTeamBans = teamBBans;
         }
 
         let remainingGenres = match.round?.genres;
@@ -233,6 +242,14 @@ export default class ManageMatch extends Vue {
         remainingGenres = remainingGenres.filter(g => g.id !== highSeedTeamBan.genreId);
 
         return remainingGenres[0].name;
+    }
+
+    getTeamBans (bans: Ban[], roundId: number): Ban[] {
+        return bans.filter(b => b.genre.roundId === roundId);
+    }
+
+    getTeamRoll (rolls: Roll[], matchId: number): number | undefined {
+        return rolls.find(r => r.matchId === matchId)?.value;
     }
 
 }

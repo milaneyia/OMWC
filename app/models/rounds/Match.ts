@@ -3,6 +3,7 @@ import { Submission } from './Submission';
 import { Round } from './Round';
 import { EliminationJudging } from '../judging/EliminationJudging';
 import { Country } from '../Country';
+import { Roll } from './Roll';
 
 @Entity()
 export class Match extends BaseEntity {
@@ -17,9 +18,11 @@ export class Match extends BaseEntity {
                 'teamA',
                 'teamA.bans',
                 'teamA.bans.genre',
+                'teamA.rolls',
                 'teamB',
                 'teamB.bans',
                 'teamB.bans.genre',
+                'teamB.rolls',
             ],
         });
     }
@@ -30,6 +33,8 @@ export class Match extends BaseEntity {
         } else {
             return Match
                 .createQueryBuilder('match')
+                .innerJoinAndSelect('match.teamA', 'teamA')
+                .innerJoinAndSelect('match.teamB', 'teamB')
                 .where('match.roundId = :roundId', { roundId: round.id })
                 .andWhere(new Brackets(qb => {
                     qb.where('match.teamAId = :teamAId', { teamAId: countryId })
@@ -68,6 +73,9 @@ export class Match extends BaseEntity {
 
     @ManyToOne(() => Country, (country) => country.matchesB)
     teamB?: Country;
+
+    @OneToMany(() => Roll, (roll) => roll.match)
+    rolls!: Roll[];
 
     @CreateDateColumn()
     createdAt!: Date;

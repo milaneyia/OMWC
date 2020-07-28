@@ -15,7 +15,6 @@ async function executeRequest<T>(request: () => any, onEnd: () => void, onSucces
 
         return res.data;
     } catch (error) {
-        console.log('Catch', error);
         alert('Something went wrong!');
 
         return;

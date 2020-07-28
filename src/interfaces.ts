@@ -41,9 +41,11 @@ export interface Schedule {
 
 export interface Country {
     id: number;
+    name: string;
     users: User[];
     wasConfirmed: boolean;
     bans: Ban[];
+    rolls: Roll[];
 }
 
 export interface Round {
@@ -70,6 +72,7 @@ export interface Genre {
     name: string;
     downloadLink: string;
     bans: Ban[];
+    roundId: number;
 }
 
 export interface Ban {
@@ -79,6 +82,13 @@ export interface Ban {
     teamId: number;
     genre: Genre;
     genreId: number;
+}
+
+export interface Roll {
+    id: number;
+    value: number;
+    matchId: number;
+    teamId: number;
 }
 
 export interface Submission {

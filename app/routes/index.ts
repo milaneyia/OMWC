@@ -96,7 +96,7 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
 
         if  (user) {
             const redirectUrl = ctx.session?.redirectTo || '/';
-            ctx.session.redirectUrl = null;
+            ctx.session.redirectTo = null;
 
             return ctx.redirect(redirectUrl);
         }

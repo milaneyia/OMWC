@@ -11,6 +11,7 @@ import { findSubmission, download } from '../middlewares/downloadSubmission';
 import { Log, LOG_TYPE } from '../models/Log';
 import { Ban } from '../models/rounds/Ban';
 import { Genre } from '../models/rounds/Genre';
+import { Roll } from '../models/rounds/Roll';
 
 const baseDir = path.join(__dirname, '../../osz/originals/');
 const submissionsRouter = new Router();
@@ -54,6 +55,7 @@ async function getBanningRound (userCountryId: number): Promise<{ nextRound: Rou
                 'ban',
             ])
             .orderBy('round.submissionsStartedAt', 'ASC')
+            .addOrderBy('ban.place', 'ASC')
             .getOne(),
     ]);
 
@@ -87,6 +89,59 @@ async function getQualifierPositions (match: Match): Promise<{ highSeedTeamId: n
     return { highSeedTeamId, lowSeedTeamId };
 }
 
+interface RemainingGenreResponse {
+    genreToMap: Genre;
+    isHighSeed: boolean;
+    teamsBans: Ban[];
+}
+
+interface ErrorResponse {
+    error: string;
+}
+
+async function getRemainingGenre (currentRound: Round, teamId: number, highSeedTeamId: number, lowSeedTeamId: number): Promise<RemainingGenreResponse | ErrorResponse> {
+    let remainingGenres = await Genre.find({
+        round: currentRound,
+    });
+
+    const teamsBans = await Ban
+        .createQueryBuilder('ban')
+        .innerJoinAndSelect('ban.genre', 'genre')
+        .innerJoinAndSelect('ban.team', 'team')
+        .where('genre.roundId = :id', { id: currentRound.id })
+        .andWhere(new Brackets(qb => {
+            qb.where('ban.teamId = :teamAId', { teamAId: highSeedTeamId })
+                .orWhere('ban.teamId = :teamBId', { teamBId: lowSeedTeamId });
+        }))
+        .orderBy('ban.teamId', 'ASC')
+        .addOrderBy('ban.place', 'ASC')
+        .getMany();
+
+    const highSeedTeamBans = teamsBans.filter(b => b.teamId === highSeedTeamId);
+    const lowSeedTeamBans = teamsBans.filter(b => b.teamId === lowSeedTeamId);
+
+    if (!highSeedTeamBans.length || !lowSeedTeamBans.length) {
+        return {
+            error: 'Ask an admin to press THE button please, then refresh this page',
+        };
+    }
+
+    remainingGenres = remainingGenres.filter(g => g.id !== lowSeedTeamBans[0].genreId);
+    let highSeedTeamBan = highSeedTeamBans[0];
+
+    if (highSeedTeamBans[0].genreId === lowSeedTeamBans[0].genreId) {
+        highSeedTeamBan = highSeedTeamBans[1];
+    }
+
+    remainingGenres = remainingGenres.filter(g => g.id !== highSeedTeamBan.genreId);
+
+    return {
+        genreToMap: remainingGenres[0],
+        isHighSeed: highSeedTeamId === teamId,
+        teamsBans,
+    };
+}
+
 submissionsRouter.get('/', async (ctx) => {
     const [submissions, currentRound] = await Promise.all([
         Submission.find({
@@ -100,47 +155,62 @@ submissionsRouter.get('/', async (ctx) => {
     let nextRound: Round | undefined;
     let genreToMap: Genre | undefined;
     let isHighSeed = false;
+    let teamsBans: Ban[] = [];
+    let rolls: Roll[] = [];
+    let rollValue: number | undefined;
 
     if (currentRound) {
         currentMatch = await Match.findRelatedCountryMatch(currentRound, teamId);
 
         if (!currentRound.isQualifier && currentMatch) {
-            let remainingGenres = await Genre.find({
-                round: currentRound,
+            let highSeedTeamId: number;
+            let lowSeedTeamId: number;
+
+            // Used for ro16, but it's whatever now
+            if (currentRound.id === 2) {
+                const positions = await getQualifierPositions(currentMatch);
+                highSeedTeamId = positions.highSeedTeamId;
+                lowSeedTeamId = positions.lowSeedTeamId;
+            } else {
+                if (!currentMatch.teamAId || !currentMatch.teamBId) {
+                    throw new Error('Missing match teams');
+                }
+
+                const [rollTeamA, rollTeamB] = await Promise.all([
+                    Roll.findOne({
+                        matchId: currentMatch.id,
+                        teamId: currentMatch.teamAId,
+                    }),
+                    Roll.findOne({
+                        matchId: currentMatch.id,
+                        teamId: currentMatch.teamBId,
+                    }),
+                ]);
+
+                if (!rollTeamA || !rollTeamB) {
+                    return ctx.body = {
+                        error: 'Ask an admin to press THE button please, then refresh this page',
+                    };
+                }
+
+                highSeedTeamId = rollTeamA.value > rollTeamB.value ? currentMatch.teamAId : currentMatch.teamBId;
+                lowSeedTeamId = rollTeamA.value < rollTeamB.value ? currentMatch.teamAId : currentMatch.teamBId;
+            }
+
+            const bansResult = await getRemainingGenre(currentRound, teamId, highSeedTeamId, lowSeedTeamId);
+            if ('error' in bansResult) return ctx.body = bansResult;
+
+            genreToMap = bansResult.genreToMap;
+            isHighSeed = bansResult.isHighSeed;
+            teamsBans = bansResult.teamsBans;
+            rolls = await Roll.find({
+                where: {
+                    matchId: currentMatch.id,
+                },
+                relations: [
+                    'team',
+                ],
             });
-            const { highSeedTeamId, lowSeedTeamId } = await getQualifierPositions(currentMatch);
-
-            const teamBans = await Ban
-                .createQueryBuilder('ban')
-                .innerJoinAndSelect('ban.genre', 'genre')
-                .where('genre.roundId = :id', { id: currentRound.id })
-                .andWhere(new Brackets(qb => {
-                    qb.where('ban.teamId = :teamAId', { teamAId: highSeedTeamId })
-                        .orWhere('ban.teamId = :teamBId', { teamBId: lowSeedTeamId });
-                }))
-                .orderBy('ban.teamId', 'ASC')
-                .addOrderBy('ban.place', 'ASC')
-                .getMany();
-
-            const highSeedTeamBans = teamBans.filter(b => b.teamId === highSeedTeamId);
-            const lowSeedTeamBans = teamBans.filter(b => b.teamId === lowSeedTeamId);
-
-            if (!highSeedTeamBans.length || !lowSeedTeamBans.length) {
-                return ctx.body = {
-                    error: 'Ask an admin to press THE button please, then refresh this page',
-                };
-            }
-
-            remainingGenres = remainingGenres.filter(g => g.id !== lowSeedTeamBans[0].genreId);
-            let highSeedTeamBan = highSeedTeamBans[0];
-
-            if (highSeedTeamBans[0].genreId === lowSeedTeamBans[0].genreId) {
-                highSeedTeamBan = highSeedTeamBans[1];
-            }
-
-            remainingGenres = remainingGenres.filter(g => g.id !== highSeedTeamBan.genreId);
-            genreToMap = remainingGenres[0];
-            isHighSeed = highSeedTeamId === teamId;
 
             // TODO check if all matches have defined a genre, else wait for admin to press the button .. so all have the same time??
         }
@@ -150,8 +220,20 @@ submissionsRouter.get('/', async (ctx) => {
         if (result) {
             nextRound = result.nextRound;
             currentMatch = result.currentMatch;
-            const { highSeedTeamId } = await getQualifierPositions(result.currentMatch);
-            isHighSeed = highSeedTeamId === teamId;
+
+            // used on RO16
+            if (nextRound.id === 2) {
+                const { highSeedTeamId } = await getQualifierPositions(result.currentMatch);
+                isHighSeed = highSeedTeamId === teamId;
+            } else {
+                const roll = await Roll.findOne({
+                    matchId: currentMatch.id,
+                    teamId,
+                });
+
+                rollValue = roll?.value;
+                isHighSeed = true; // All teams ban 2 genres in others rounds, it's quick fix
+            }
         }
     }
 
@@ -162,6 +244,9 @@ submissionsRouter.get('/', async (ctx) => {
         nextRound,
         genreToMap,
         isHighSeed,
+        teamsBans,
+        rolls,
+        rollValue,
     };
 });
 
@@ -263,7 +348,6 @@ submissionsRouter.post('/saveBans', async (ctx) => {
         };
     }
 
-    const { highSeedTeamId, lowSeedTeamId } = await getQualifierPositions(result.currentMatch);
     const bansInput = convertToArray<number>(ctx.request.body.bans);
     const bans = await Genre.find({
         where: {
@@ -272,14 +356,55 @@ submissionsRouter.post('/saveBans', async (ctx) => {
         },
     });
 
-    if (
-        bans.length !== bansInput.length ||
-        (highSeedTeamId === teamId && bans.length !== 2) ||
-        (lowSeedTeamId === teamId && bans.length !== 1)
-    ) {
-        return ctx.body = {
-            error: 'Wrong number of bans',
-        };
+    // used on RO16, useless now i guess ?
+    if (result.nextRound.id === 2) {
+        const { highSeedTeamId, lowSeedTeamId } = await getQualifierPositions(result.currentMatch);
+
+        if (
+            bans.length !== bansInput.length ||
+            (highSeedTeamId === teamId && bans.length !== 2) ||
+            (lowSeedTeamId === teamId && bans.length !== 1)
+        ) {
+            return ctx.body = {
+                error: 'Wrong number of bans',
+            };
+        }
+    } else {
+        if (bans.length !== bansInput.length || bans.length !== 2) {
+            return ctx.body = {
+                error: 'Wrong number of bans',
+            };
+        }
+
+        const currentMatch = await Match.findRelatedCountryMatch(result.nextRound, teamId);
+
+        if (!currentMatch) {
+            throw new Error('Not participating');
+        }
+
+        const otherTeamId = currentMatch.teamAId === teamId ? currentMatch.teamAId : currentMatch.teamBId;
+        const otherTeamRoll = await Roll.findOne({
+            teamId: otherTeamId,
+            matchId: currentMatch.id,
+        });
+        let isNewRandom = false;
+        let rollValue = Math.floor(Math.random() * 100);
+
+        if (otherTeamRoll && otherTeamRoll.value === rollValue) {
+            while (!isNewRandom) {
+                rollValue = Math.floor(Math.random() * 100);
+
+                if (otherTeamRoll.value !== rollValue) {
+                    isNewRandom = true;
+                }
+            }
+        }
+
+        const roll = new Roll();
+        roll.matchId = currentMatch.id;
+        roll.teamId = teamId;
+        roll.value = rollValue;
+        await roll.save();
     }
 
     for (let i = 0; i < bansInput.length; i++) {

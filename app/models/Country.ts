@@ -4,6 +4,7 @@ import { User } from './User';
 import { Submission } from './rounds/Submission';
 import { Match } from './rounds/Match';
 import { Ban } from './rounds/Ban';
+import { Roll } from './rounds/Roll';
 
 @Entity()
 export class Country extends BaseEntity {
@@ -44,6 +45,9 @@ export class Country extends BaseEntity {
 
     @OneToMany(() => Ban, (ban) => ban.team)
     bans!: Ban[];
+
+    @OneToMany(() => Roll, (roll) => roll.team)
+    rolls!: Roll[];
 
     @OneToMany(() => Submission, (submissions) => submissions.country)
     submissions!: Submission[];
