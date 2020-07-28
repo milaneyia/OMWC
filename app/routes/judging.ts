@@ -19,17 +19,23 @@ judgingRouter.use(authenticate);
 judgingRouter.use(isJudge);
 judgingRouter.use(async (ctx: ParameterizedContext, next: Next) => {
     const currentRound = await Round.findCurrentJudgingRound();
+    let lastRound: Round | undefined;
 
     if (!currentRound) {
-        return ctx.body = { error: 'There is currently no round to judge' };
+        lastRound = await Round.findLastJudgingRound();
+
+        if (!lastRound) {
+            return ctx.body = { error: 'There is currently no round to judge' };
+        }
     }
 
     ctx.state.currentRound = currentRound;
+    ctx.state.lastRound = lastRound;
     await next();
 });
 
 judgingRouter.get('/', async (ctx) => {
-    const currentRound = ctx.state.currentRound;
+    const currentRound = ctx.state.currentRound || ctx.state.lastRound;
     const matches = await Match.createQueryBuilder('match')
         .leftJoin('match.round', 'round')
         .leftJoin('match.submissions', 'submissions')
@@ -93,8 +99,10 @@ judgingRouter.get('/', async (ctx) => {
 });
 
 judgingRouter.post('/save', async (ctx) => {
+    const currentRound: Round | undefined = ctx.state.currentRound;
+    if (!currentRound) return ctx.body = { error: 'Too late' };
 
-    if (ctx.state.currentRound.isQualifier) {
+    if (currentRound.isQualifier) {
         const submissionId = convertToIntOrThrow(ctx.request.body.submissionId);
         const criteriaId = convertToIntOrThrow(ctx.request.body.criteriaId);
         const score = convertToIntOrThrow(ctx.request.body.score);
@@ -112,7 +120,7 @@ judgingRouter.post('/save', async (ctx) => {
             return ctx.body = { error: 'Missing data' };
         }
 
-        if (submission.match.roundId !== ctx.state.currentRound.id) {
+        if (submission.match.roundId !== currentRound.id) {
             return ctx.body = { error: 'woah' };
         }
 
@@ -163,7 +171,6 @@ judgingRouter.post('/save', async (ctx) => {
         const matchId = convertToIntOrThrow(ctx.request.body.matchId);
         const submissionChosen = convertToIntOrThrow(ctx.request.body.submissionChosen);
         const comment = ctx.request.body.comment && ctx.request.body.comment.trim();
-        const currentRound: Round = ctx.state.currentRound;
 
         if (!comment) {
             return ctx.body = { error: 'Missing data' };

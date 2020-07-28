@@ -5,6 +5,19 @@ import { Genre } from './Genre';
 @Entity()
 export class Round extends BaseEntity {
 
+    static findLastJudgingRound(): Promise<Round | undefined> {
+        const today = new Date();
+
+        return this.findOne({
+            where: {
+                judgingEndedAt: LessThanOrEqual(today),
+            },
+            order: {
+                judgingEndedAt: 'DESC',
+            },
+        });
+    }
+
     static findCurrentSubmissionRound(): Promise<Round | undefined> {
         const today = new Date();
 
