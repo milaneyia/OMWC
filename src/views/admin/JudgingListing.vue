@@ -29,7 +29,7 @@
 
                 <data-table
                     v-if="match.submissions && match.submissions.length"
-                    :headers="['Country', 'Count', 'Judges']"
+                    :headers="['Country', getMatchJudgesCountDisplay(selectedRound.isQualifier, match.submissions), 'Judges']"
                 >
                     <tr
                         v-for="submission in match.submissions"
@@ -46,9 +46,16 @@
                             </div>
                         </td>
                         <td
+                            v-if="selectedRound.isQualifier"
                             :class="getJudgesInvolvedCount(submission, selectedRound.isQualifier) >= judgeCount ? 'text-success' : 'text-danger'"
                         >
                             {{ getJudgesInvolvedCount(submission, selectedRound.isQualifier) }} done of {{ judgeCount }}
+                        </td>
+                        <td
+                            v-else
+                            :class="getEliminationJudgeCountClass(match.submissions, submission, selectedRound.isQualifier)"
+                        >
+                            {{ getJudgesInvolvedCount(submission, selectedRound.isQualifier) }} of {{ judgeCount }}
                         </td>
                         <td>{{ getJudgesInvolved(submission, selectedRound.isQualifier) }}</td>
                     </tr>
@@ -102,7 +109,7 @@ export default class JudgingListing extends Vue {
     selected: Submission | Match | null = null;
     selectedType = '';
     selectedRoundId = 1;
-    judgeCount = 5;
+    judgeCount = 7;
 
     async created (): Promise<void> {
         await Promise.all([
@@ -142,6 +149,29 @@ export default class JudgingListing extends Vue {
         }
 
         return judges.join(', ');
+    }
+
+    getMatchJudgesCountDisplay (isQualifier: boolean, submissions: Submission[]): string {
+        if (isQualifier) return 'Count';
+
+        return `Count (${this.getMatchJudgesCount(submissions)} of ${this.judgeCount} done)`;
+    }
+
+    getMatchJudgesCount (submissions: Submission[]): number {
+        let judges = 0;
+
+        for (const submission of submissions) {
+            judges += submission.eliminationJudging.length;
+        }
+
+        return judges;
+    }
+
+    getEliminationJudgeCountClass (submissions: Submission[], submission: Submission, isQualifier: boolean): string {
+        if (this.getMatchJudgesCount(submissions) < this.judgeCount) return '';
+        if (this.getJudgesInvolvedCount(submission, isQualifier) > (this.judgeCount / 2)) return 'text-success';
+
+        return 'text-danger';
     }
 
     select (isQualifier: boolean, submission: Submission, match: Match): void {
