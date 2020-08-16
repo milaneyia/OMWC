@@ -55,17 +55,21 @@ module.exports = {
             template: path.join(__dirname, 'public/template.html'),
             filename: path.join(__dirname, 'dist/public/index.html'),
         }),
-        new CopyPlugin([
-            {
-                from: path.join(__dirname, 'public'),
-                to: path.join(__dirname, 'dist/public'),
-                toType: 'dir',
-                ignore: [
-                    'index.html',
-                    'template.html',
-                ],
-            },
-        ]),
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: path.join(__dirname, 'public'),
+                    to: path.join(__dirname, 'dist/public'),
+                    toType: 'dir',
+                    globOptions: {
+                        ignore: [
+                            '**/index.html',
+                            '**/template.html',
+                        ],
+                    },
+                },
+            ],
+        }),
         new PrerenderSPAPlugin({
             staticDir: path.join(__dirname, 'dist/public/'),
             routes: [ '/', '/info', '/teams', '/results/qualifiers', '/results/elimination', '/staff' ],
