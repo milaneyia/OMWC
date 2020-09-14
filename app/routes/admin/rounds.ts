@@ -3,7 +3,7 @@ import { ParameterizedContext, Next } from 'koa';
 import JSZip from 'jszip';
 import path from 'path';
 import fs from 'fs';
-import { checkFileExistence, convertToIntOrThrow, calculateQualifierScores, TeamScore } from '../../helpers';
+import { checkFileExistence, convertToIntOrThrow, calculateQualifierScores, TeamScore, getRandomInt } from '../../helpers';
 import { download } from '../../middlewares/downloadSubmission';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
@@ -226,11 +226,11 @@ async function randomizeBans (team: Country, genres: Genre[], highSeedTeamId?: n
 
 async function randomizeRoll (matchId: number, teamId: number, otherTeamRoll: Roll | undefined): Promise<Roll> {
     let isNewRandom = false;
-    let rollValue = Math.floor(Math.random() * 100);
+    let rollValue = getRandomInt();
 
     if (otherTeamRoll && otherTeamRoll.value === rollValue) {
         while (!isNewRandom) {
-            rollValue = Math.floor(Math.random() * 100);
+            rollValue = getRandomInt();
 
             if (otherTeamRoll.value !== rollValue) {
                 isNewRandom = true;

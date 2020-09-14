@@ -44,6 +44,10 @@ export async function checkFileExistence(path: string): Promise<void> {
     await fs.promises.access(path, fs.constants.F_OK | fs.constants.R_OK);
 }
 
+export function getRandomInt(): number {
+    return Math.floor(Math.random() * 100) + 1;
+}
+
 export async function saveFile(inputPath: string, outputDir: string, outputPath: string): Promise<void> {
     try {
         await fs.promises.mkdir(outputDir, { recursive: true });

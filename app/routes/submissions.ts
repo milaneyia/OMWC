@@ -2,7 +2,7 @@ import Router from '@koa/router';
 import koaBody from 'koa-body';
 import path from 'path';
 import { LessThanOrEqual, Brackets, In } from 'typeorm';
-import { checkFileExistence, saveFile, convertToArray, calculateQualifierScores } from '../helpers';
+import { checkFileExistence, saveFile, convertToArray, calculateQualifierScores, getRandomInt } from '../helpers';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { Round } from '../models/rounds/Round';
 import { Submission } from '../models/rounds/Submission';
@@ -382,17 +382,17 @@ submissionsRouter.post('/saveBans', async (ctx) => {
             throw new Error('Not participating');
         }
 
-        const otherTeamId = currentMatch.teamAId === teamId ? currentMatch.teamAId : currentMatch.teamBId;
+        const otherTeamId = currentMatch.teamAId === teamId ? currentMatch.teamBId : currentMatch.teamAId;
         const otherTeamRoll = await Roll.findOne({
             teamId: otherTeamId,
             matchId: currentMatch.id,
         });
         let isNewRandom = false;
-        let rollValue = Math.floor(Math.random() * 100);
+        let rollValue = getRandomInt();
 
         if (otherTeamRoll && otherTeamRoll.value === rollValue) {
             while (!isNewRandom) {
-                rollValue = Math.floor(Math.random() * 100);
+                rollValue = getRandomInt();
 
                 if (otherTeamRoll.value !== rollValue) {
                     isNewRandom = true;
