@@ -46,7 +46,7 @@
                         :editing="editing !== match.id"
                     />
 
-                    <div v-if="!match.round.isQualifier && match.teamA && match.teamB" class="text-left">
+                    <div v-if="!match.round.isQualifier && match.round.id !== 5 && match.teamA && match.teamB" class="text-left">
                         <div v-for="team in ['teamA', 'teamB']" :key="team">
                             <b>
                                 {{ match[team].name }}

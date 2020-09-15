@@ -60,7 +60,7 @@ async function getBanningRound (userCountryId: number): Promise<{ nextRound: Rou
     ]);
 
     // TODO need a better way to do it...
-    if (!previousRound || !nextRound || (previousRound.id + 1) !== nextRound.id) {
+    if (!previousRound || !nextRound || (previousRound.id + 1) !== nextRound.id || nextRound.id === 5) {
         return undefined;
     }
 
@@ -162,7 +162,8 @@ submissionsRouter.get('/', async (ctx) => {
     if (currentRound) {
         currentMatch = await Match.findRelatedCountryMatch(currentRound, teamId);
 
-        if (!currentRound.isQualifier && currentMatch) {
+        // Qualifers and finals don't do bans
+        if (!currentRound.isQualifier && currentRound.id !== 5 && currentMatch) {
             let highSeedTeamId: number;
             let lowSeedTeamId: number;
 
