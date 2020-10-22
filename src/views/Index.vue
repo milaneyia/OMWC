@@ -101,6 +101,12 @@
                     </div>
                 </div>
 
+                <img
+                    src="/img/results.png"
+                    alt=""
+                    class="img-fluid mb-2"
+                >
+
                 <div class="row mb-2">
                     <div class="col-sm">
                         <div class="card">
