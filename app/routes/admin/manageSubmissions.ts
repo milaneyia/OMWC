@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import koaBody from 'koa-body';
 import path from 'path';
+import { File } from 'formidable';
 import { convertToIntOrThrow, checkFileExistence, saveFile } from '../../helpers';
 import { authenticate, isStaff } from '../../middlewares/authentication';
 import { Round } from '../../models/rounds/Round';
@@ -43,9 +44,9 @@ submissionsAdminRouter.post('/:id/save', koaBody({
         };
     }
 
-    const oszFile = ctx.request.files?.oszFile;
+    const oszFile = ctx.request.files?.oszFile as File | undefined;
 
-    if (!oszFile || !oszFile.name.endsWith('.osz')) {
+    if (!oszFile || !oszFile.name?.endsWith('.osz')) {
         return ctx.body = {
             error: 'Select an .osz file',
         };

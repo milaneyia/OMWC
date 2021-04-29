@@ -120,7 +120,7 @@ app.use(logsRouter.routes());
 app.use(logsRouter.allowedMethods());
 
 app.on('error', (err, ctx) => {
-    logger.log('info', { osuId: ctx.session.osuId, username: ctx.session.username });
+    logger.log('info', { osuId: ctx.session!.osuId, username: ctx.session!.username });
     logger.error('error', err);
 });
 

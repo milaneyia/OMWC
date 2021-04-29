@@ -14,7 +14,7 @@ logsRouter.get('/', async (ctx) => {
         where: {
             type: Not(LOG_TYPE.Error),
         },
-        skip: ctx.query.s || 0,
+        skip: parseInt(ctx.query.s.toString()) || 0,
         take: 50,
         order: {
             createdAt: 'DESC',

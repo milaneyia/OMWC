@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import koaBody from 'koa-body';
 import path from 'path';
 import { LessThanOrEqual, Brackets, In } from 'typeorm';
+import { File } from 'formidable';
 import { checkFileExistence, saveFile, convertToArray, calculateQualifierScores, getRandomInt } from '../helpers';
 import { authenticate, isCaptain } from '../middlewares/authentication';
 import { Round } from '../models/rounds/Round';
@@ -265,9 +266,9 @@ submissionsRouter.post('/save', koaBody({
         };
     }
 
-    const oszFile = ctx.request.files?.oszFile;
+    const oszFile = ctx.request.files?.oszFile as File | undefined;
 
-    if (!oszFile || !oszFile.name.endsWith('.osz')) {
+    if (!oszFile || !oszFile.name?.endsWith('.osz')) {
         return ctx.body = {
             error: 'Select an .osz file',
         };

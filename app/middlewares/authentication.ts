@@ -5,17 +5,17 @@ import { refreshToken, isRequestError } from './osuApi';
 export async function authenticate(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     const user = await User.findOne({
         cache: true,
-        where: { osuId: ctx.session.osuId },
+        where: { osuId: ctx.session!.osuId },
     });
 
     if (user && !user.isRestricted) {
         ctx.state.user = user;
 
-        const expireDate = new Date(ctx.session.expiresAt);
+        const expireDate = new Date(ctx.session!.expiresAt);
         expireDate.setHours(expireDate.getHours() - 5);
 
         if (new Date() > expireDate) {
-            const response = await refreshToken(ctx.session.refreshToken);
+            const response = await refreshToken(ctx.session!.refreshToken);
 
             if (isRequestError(response)) {
                 ctx.session = null;
@@ -23,10 +23,10 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
                 return ctx.body = { error: 'Re-login..' };
             }
 
-            ctx.session.maxAge = 172800000;
-            ctx.session.expireAt = new Date(Date.now() + (response.expires_in * 1000));
-            ctx.session.accessToken = response.access_token;
-            ctx.session.refreshToken = response.refresh_token;
+            ctx.session!.maxAge = 172800000;
+            ctx.session!.expireAt = new Date(Date.now() + (response.expires_in * 1000));
+            ctx.session!.accessToken = response.access_token;
+            ctx.session!.refreshToken = response.refresh_token;
         }
 
         return await next();

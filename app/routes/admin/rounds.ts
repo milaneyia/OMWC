@@ -127,7 +127,7 @@ roundsAdminRouter.post('/:id/save', async (ctx) => {
 
 roundsAdminRouter.get('/:id/genres', async (ctx) => {
     const genres = await Genre.find({
-        roundId: ctx.params.id,
+        roundId: parseInt(ctx.params.id),
     });
 
     ctx.body = {
@@ -151,14 +151,15 @@ async function validateGenreInput (ctx: ParameterizedContext, next: Next): Promi
 }
 
 roundsAdminRouter.post('/:id/genres/store', validateGenreInput, async (ctx) => {
+    const roundId = parseInt(ctx.params.id);
     const genre = new Genre();
     genre.name = ctx.state.name;
     genre.downloadLink = ctx.state.downloadLink;
-    genre.roundId = ctx.params.id;
+    genre.roundId = roundId;
     await genre.save();
 
     const genres = await Genre.find({
-        roundId: ctx.params.id,
+        roundId,
     });
 
     ctx.body = {
@@ -168,13 +169,13 @@ roundsAdminRouter.post('/:id/genres/store', validateGenreInput, async (ctx) => {
 });
 
 roundsAdminRouter.post('/:id/genres/:genreId/save', validateGenreInput, async (ctx) => {
-    const genre = await Genre.findOneOrFail({ id: ctx.params.genreId });
+    const genre = await Genre.findOneOrFail({ id: parseInt(ctx.params.genreId) });
     genre.name = ctx.state.name;
     genre.downloadLink = ctx.state.downloadLink;
     await genre.save();
 
     const genres = await Genre.find({
-        roundId: ctx.params.id,
+        roundId: parseInt(ctx.params.id),
     });
 
     ctx.body = {
@@ -185,12 +186,12 @@ roundsAdminRouter.post('/:id/genres/:genreId/save', validateGenreInput, async (c
 
 roundsAdminRouter.post('/:id/genres/:genreId/remove', async (ctx) => {
     const genre = await Genre.findOneOrFail({
-        id: ctx.params.genreId,
+        id: parseInt(ctx.params.genreId),
     });
     await genre.remove();
 
     const genres = await Genre.find({
-        roundId: ctx.params.id,
+        roundId: parseInt(ctx.params.id),
     });
 
     ctx.body = {
@@ -344,7 +345,7 @@ roundsAdminRouter.post('/:id/randomizeBans', async (ctx) => {
 
 roundsAdminRouter.get('/:id/matches', async (ctx) => {
     const [matches, competingTeams, qualifer] = await Promise.all([
-        Match.findByRoundWithSubmissions(ctx.params.id),
+        Match.findByRoundWithSubmissions(parseInt(ctx.params.id)),
         Country.find({ wasConfirmed: true }),
         Round.findQualifierWithJudgingData(),
     ]);

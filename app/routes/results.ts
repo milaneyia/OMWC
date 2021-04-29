@@ -16,10 +16,10 @@ resultsRouter.prefix('/api/results');
 resultsRouter.get('/qualifiers', async (ctx: ParameterizedContext) => {
     let user;
 
-    if (ctx.session.osuId) {
+    if (ctx.session!.osuId) {
         user = await User.findOne({
             where: {
-                osuId: ctx.session.osuId,
+                osuId: ctx.session!.osuId,
                 roleId: ROLE.Staff,
             },
         });
@@ -50,10 +50,10 @@ resultsRouter.get('/elimination', async (ctx: ParameterizedContext) => {
 
     let user;
 
-    if (ctx.session.osuId) {
+    if (ctx.session!.osuId) {
         user = await User.findOne({
             where: {
-                osuId: ctx.session.osuId,
+                osuId: ctx.session!.osuId,
                 roleId: ROLE.Staff,
             },
         });
@@ -94,10 +94,10 @@ resultsRouter.get('/download/:id', findSubmission, async (ctx: ParameterizedCont
 
     let user;
 
-    if (ctx.session.osuId) {
+    if (ctx.session!.osuId) {
         user = await User.findOne({
             where: {
-                osuId: ctx.session.osuId,
+                osuId: ctx.session!.osuId,
                 roleId: ROLE.Staff,
             },
         });

@@ -12,7 +12,7 @@ const indexRouter = new Router();
 indexRouter.get('/api/', async (ctx: ParameterizedContext) => {
     const schedule = await Schedule.findOne({});
     const judgingRound = await Round.findCurrentJudgingRound();
-    const osuId = ctx.session.osuId;
+    const osuId = ctx.session!.osuId;
     let user;
 
     if (osuId) {
@@ -29,7 +29,7 @@ indexRouter.get('/api/', async (ctx: ParameterizedContext) => {
 indexRouter.get('/login', (ctx: ParameterizedContext) => {
     const state = osuApi.generateState();
     ctx.cookies.set('_state', state);
-    ctx.session.redirectTo = ctx.request.header.referer;
+    ctx.session!.redirectTo = ctx.request.header.referer;
 
     return ctx.redirect(osuApi.generateAuthorizeUrl(state));
 });
@@ -45,7 +45,7 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
         return ctx.render('error');
     }
 
-    const decodedState = osuApi.decodeState(ctx.query.state);
+    const decodedState = osuApi.decodeState(ctx.query.state.toString());
     const savedState = ctx.cookies.get('_state');
     ctx.cookies.set('_state', undefined);
 
@@ -53,7 +53,7 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
         return ctx.render('error');
     }
 
-    const response = await osuApi.getToken(ctx.query.code);
+    const response = await osuApi.getToken(ctx.query.code.toString());
 
     if (osuApi.isRequestError(response)) {
         return ctx.render('error');
@@ -66,12 +66,12 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
             return ctx.render('error');
         }
 
-        ctx.session.maxAge = 172800000;
-        ctx.session.expiresAt = new Date(Date.now() + (response.expires_in * 1000));
-        ctx.session.accessToken = response.access_token;
-        ctx.session.refreshToken = response.refresh_token;
-        ctx.session.osuId = userResponse.id;
-        ctx.session.username = userResponse.username;
+        ctx.session!.maxAge = 172800000;
+        ctx.session!.expiresAt = new Date(Date.now() + (response.expires_in * 1000));
+        ctx.session!.accessToken = response.access_token;
+        ctx.session!.refreshToken = response.refresh_token;
+        ctx.session!.osuId = userResponse.id;
+        ctx.session!.username = userResponse.username;
 
         let country = await Country.findOne({ where: { name: userResponse.country.name } });
 
@@ -96,7 +96,7 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
 
         if  (user) {
             const redirectUrl = ctx.session?.redirectTo || '/';
-            ctx.session.redirectTo = null;
+            ctx.session!.redirectTo = null;
 
             return ctx.redirect(redirectUrl);
         }

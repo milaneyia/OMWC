@@ -74,7 +74,7 @@ usersAdminRouter.get('/query', async (ctx) => {
 
 usersAdminRouter.post('/:id/createMapperApplication', async (ctx) => {
     const user = await User.findOneOrFail({
-        id: ctx.params.id,
+        id: parseInt(ctx.params.id),
     });
 
     if (user.mapperApplicationId) {
@@ -103,7 +103,7 @@ usersAdminRouter.post('/:id/updateRole', async (ctx) => {
 
     const [user, role] = await Promise.all([
         User.findOneOrFail({
-            id: ctx.params.id,
+            id: parseInt(ctx.params.id),
             roleId: Not(ROLE.Staff),
         }),
         Role.findOneOrFail({
