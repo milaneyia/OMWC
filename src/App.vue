@@ -114,21 +114,6 @@
                         </div>
                     </li>
                 </ul>
-
-                <a
-                    v-if="!user && initialized"
-                    href="/api/login"
-                    class="my-2 my-lg-0"
-                >
-                    Verify your osu! account
-                </a>
-                <a
-                    v-else
-                    href="/api/logout"
-                    class="my-2 my-lg-0"
-                >
-                    Log out
-                </a>
             </div>
         </nav>
 

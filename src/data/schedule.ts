@@ -1,0 +1,1 @@
+export default { 'id': 1,'applicationsStartedAt': '2020-05-02','applicationsEndedAt': '2020-05-16','captainVotingStartedAt': '2020-05-16','captainVotingEndedAt': '2020-05-23','mappersChoiceStartedAt': '2020-05-23','mappersChoiceEndedAt': '2020-05-30','createdAt': '2020-04-30T12:43:28.577Z','updatedAt': '2020-05-22T00:03:19.000Z' };

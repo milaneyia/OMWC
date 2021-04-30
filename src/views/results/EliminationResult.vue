@@ -17,13 +17,6 @@
                 >
                     <div class="round__details">
                         {{ round.title }}
-                        <a
-                            v-if="new Date() >= new Date(round.resultsAt)"
-                            :href="`/api/results/downloadZip/${round.id}`"
-                            target="_blank"
-                        >
-                            | Download all entries
-                        </a>
                         <div class="round__date">
                             <time-string :timestamp="round.submissionsStartedAt" /> -
                             <time-string :timestamp="round.resultsAt" />
@@ -87,6 +80,7 @@ import RoundMatch from '../../components/results/RoundMatch.vue';
 import EliminationJudgingDetail from '../../components/results/EliminationJudgingDetail.vue';
 import TimeString from '../../components/TimeString.vue';
 import { State, Getter } from 'vuex-class';
+import elimination from '../../data/elimination';
 
 @Component({
     components: {
@@ -104,10 +98,11 @@ export default class EliminationResult extends Vue {
     @Getter finals!: Round | null;
     selectedMatch = null;
 
-    async created (): Promise<void> {
+    created (): void {
         if (!this.eliminationRounds.length || !this.currentRound) {
-            await this.initialRequest('/api/results/elimination', (data) => {
-                this.$store.commit('updateEliminations', data);
+            this.$store.commit('updateEliminations', {
+                rounds: elimination,
+                currentRound: null,
             });
         }
     }

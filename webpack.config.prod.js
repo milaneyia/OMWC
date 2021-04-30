@@ -5,8 +5,6 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const PrerenderSPAPlugin = require('prerender-spa-plugin');
-const Renderer = PrerenderSPAPlugin.PuppeteerRenderer;
 
 module.exports = {
     entry,
@@ -70,18 +68,6 @@ module.exports = {
                     },
                 },
             ],
-        }),
-        new PrerenderSPAPlugin({
-            staticDir: path.join(__dirname, 'dist/public/'),
-            routes: [ '/', '/info', '/teams', '/results/qualifiers', '/results/elimination', '/staff' ],
-            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-            postProcess (renderedRoute) {
-                renderedRoute.route = renderedRoute.originalRoute;
-                const s = renderedRoute.route.split('/');
-                renderedRoute.outputPath = path.join(__dirname, 'dist/public', `${s[s.length - 1] || 'index'}.html`);
-
-                return renderedRoute;
-            },
         }),
     ],
     optimization: {

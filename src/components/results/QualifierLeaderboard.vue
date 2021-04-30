@@ -25,16 +25,6 @@
                 >
                     Std detail
                 </a>
-                <template v-if="qualifier && new Date() >= new Date(qualifier.resultsAt)">
-                    |
-                    <a
-
-                        :href="`/api/results/downloadZip/${qualifier.id}`"
-                        target="_blank"
-                    >
-                        Download all entries
-                    </a>
-                </template>
             </div>
         </div>
         <div class="row">

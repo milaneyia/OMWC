@@ -46,6 +46,11 @@ import QualifierLeaderboard from '../../components/results/QualifierLeaderboard.
 import TimeString from '../../components/TimeString.vue';
 import { Round } from '../../interfaces';
 import { State } from 'vuex-class';
+import criterias from '../../data/criterias';
+import judges from '../../data/judges';
+import qualifier from '../../data/qualifier';
+import teamsScores from '../../data/teamsScores';
+import judgesCorrel from '../../data/judgesCorrel';
 
 @Component({
     components: {
@@ -59,10 +64,14 @@ export default class QualifierResult extends Vue {
 
     @State qualifier!: Round | null;
 
-    async created (): Promise<void> {
+    created (): void {
         if (!this.qualifier) {
-            await this.initialRequest('/api/results/qualifiers', (data) => {
-                this.$store.commit('updateQualifier', data);
+            this.$store.commit('updateQualifier', {
+                criterias,
+                judges,
+                qualifier,
+                teamsScores,
+                judgesCorrel,
             });
         }
     }

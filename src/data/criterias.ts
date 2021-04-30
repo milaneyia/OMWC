@@ -1,0 +1,1 @@
+export default [{ 'id': 1,'name': 'Expertise','maxScore': 30 },{ 'id': 2,'name': 'Cohesion','maxScore': 30 },{ 'id': 3,'name': 'Creativity','maxScore': 30 },{ 'id': 4,'name': 'Judge Impression','maxScore': 10 }];

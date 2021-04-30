@@ -1,7 +1,8 @@
 import { StoreOptions } from 'vuex';
 import { User, Country, Criteria, Round } from './interfaces';
 import { TeamScore, JudgeCorrel } from '../app/helpers';
-import Axios from 'axios';
+import schedule from './data/schedule';
+import teams from './data/teams';
 
 export interface MainState {
     initialized: boolean;
@@ -21,9 +22,9 @@ export interface MainState {
 const store: StoreOptions<MainState> = {
     state: {
         // Initial
-        initialized: false,
+        initialized: true,
         user: null,
-        schedule: null,
+        schedule,
         isLoading: false,
 
         teams: [],
@@ -141,9 +142,8 @@ const store: StoreOptions<MainState> = {
         },
     },
     actions: {
-        async getTeams ({ commit }): Promise<void> {
-            const res = await Axios.get('/api/teams');
-            commit('updateTeams', res.data.teams);
+        getTeams ({ commit }): void {
+            commit('updateTeams', teams);
         },
     },
 };

@@ -47,11 +47,6 @@
 
         <div class="d-flex" style="background-color: rgb(23, 26, 28)">
             <div class="container text-center" style="margin-top: -30px">
-                <home-nav
-                    :schedule="schedule"
-                    :user="user"
-                />
-
                 <div class="row mb-2">
                     <div class="col-sm">
                         <div class="card">
@@ -232,13 +227,11 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
-import HomeNav from '../components/index/HomeNav.vue';
 import ScheduleDate from '../components/index/ScheduleDate.vue';
 import { User } from '../interfaces';
 
 @Component({
     components: {
-        HomeNav,
         ScheduleDate,
     },
 })
