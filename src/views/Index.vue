@@ -234,6 +234,7 @@ import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import HomeNav from '../components/index/HomeNav.vue';
 import ScheduleDate from '../components/index/ScheduleDate.vue';
+import { User } from '../interfaces';
 
 @Component({
     components: {
@@ -243,7 +244,7 @@ import ScheduleDate from '../components/index/ScheduleDate.vue';
 })
 export default class Index extends Vue {
 
-    @State user!: object;
+    @State user!: User;
     @State schedule!: object;
 
     preparationCollapse = false;
