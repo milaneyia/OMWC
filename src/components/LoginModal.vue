@@ -18,7 +18,7 @@
                         <hr>
 
                         <form
-                            action="/login"
+                            action="/api/login"
                             method="get"
                             class="form-inline my-2 my-lg-0 ml-3"
                         >

@@ -30,71 +30,47 @@ export async function authenticate(ctx: ParameterizedContext, next: () => Promis
         }
 
         return await next();
-    } else {
-        if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unauthorized' };
-        } else {
-            return ctx.render('error');
-        }
     }
+
+    return ctx.body = { error: 'Unauthorized' };
 }
 
 export async function isStaff(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     if (ctx.state.user.isStaff) {
         return await next();
-    } else {
-        if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unauthorized' };
-        } else {
-            return ctx.render('error');
-        }
     }
+
+    return ctx.body = { error: 'Unauthorized' };
 }
 
 export async function isCaptain(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     if (ctx.state.user.isCaptain) {
         return await next();
-    } else {
-        if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unauthorized' };
-        } else {
-            return ctx.render('error');
-        }
     }
+
+    return ctx.body = { error: 'Unauthorized' };
 }
 
 export async function isJudge(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     if (ctx.state.user.isJudge) {
         return await next();
-    } else {
-        if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unauthorized' };
-        } else {
-            return ctx.render('error');
-        }
     }
+
+    return ctx.body = { error: 'Unauthorized' };
 }
 
 export async function isElevatedUser(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     if (ctx.state.user.isElevatedUser) {
         return await next();
-    } else {
-        if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unauthorized' };
-        } else {
-            return ctx.render('error');
-        }
     }
+
+    return ctx.body = { error: 'Unauthorized' };
 }
 
 export async function isBasicUser(ctx: ParameterizedContext, next: () => Promise<any>): Promise<any> {
     if (ctx.state.user.isBasicUser) {
         return await next();
-    } else {
-        if (ctx.request.type === 'application/json') {
-            return ctx.body = { error: 'Unauthorized' };
-        } else {
-            return ctx.render('error');
-        }
     }
+
+    return ctx.body = { error: 'Unauthorized' };
 }

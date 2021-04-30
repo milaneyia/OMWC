@@ -117,14 +117,14 @@
 
                 <a
                     v-if="!user && initialized"
-                    href="/login"
+                    href="/api/login"
                     class="my-2 my-lg-0"
                 >
                     Verify your osu! account
                 </a>
                 <a
                     v-else
-                    href="/logout"
+                    href="/api/logout"
                     class="my-2 my-lg-0"
                 >
                     Log out
@@ -145,7 +145,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State } from 'vuex-class';
 import LoadingPage from './components/LoadingPage.vue';
-import { Schedule } from './interfaces';
+import { Schedule, User } from './interfaces';
 
 @Component({
     components: {
@@ -154,8 +154,8 @@ import { Schedule } from './interfaces';
 })
 export default class App extends Vue {
 
-    @State initialized!: object;
-    @State user!: object;
+    @State initialized!: boolean;
+    @State user!: User;
     @State schedule!: Schedule;
 
     get hasMappersChoiceEnded (): boolean {

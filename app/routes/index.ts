@@ -9,7 +9,9 @@ import { User } from '../models/User';
 
 const indexRouter = new Router();
 
-indexRouter.get('/api/', async (ctx: ParameterizedContext) => {
+indexRouter.prefix('/api');
+
+indexRouter.get('/', async (ctx: ParameterizedContext) => {
     const schedule = await Schedule.findOne({});
     const judgingRound = await Round.findCurrentJudgingRound();
     const osuId = ctx.session!.osuId;
@@ -42,7 +44,7 @@ indexRouter.get('/logout', (ctx: ParameterizedContext) => {
 
 indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
     if (!ctx.query.code || ctx.query.error) {
-        return ctx.render('error');
+        return ctx.redirect('/error');
     }
 
     const decodedState = osuApi.decodeState(ctx.query.state.toString());
@@ -50,20 +52,20 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
     ctx.cookies.set('_state', undefined);
 
     if (decodedState !== savedState) {
-        return ctx.render('error');
+        return ctx.redirect('/error');
     }
 
     const response = await osuApi.getToken(ctx.query.code.toString());
 
     if (osuApi.isRequestError(response)) {
-        return ctx.render('error');
+        return ctx.redirect('/error');
     } else {
         const userResponse = await osuApi.getUserInfo(response.access_token);
 
         if (osuApi.isRequestError(userResponse)) {
             ctx.session = null;
 
-            return ctx.render('error');
+            return ctx.redirect('/error');
         }
 
         ctx.session!.maxAge = 172800000;
@@ -103,7 +105,7 @@ indexRouter.get('/callback', async (ctx: ParameterizedContext) => {
 
         ctx.session = null;
 
-        return ctx.render('error');
+        return ctx.redirect('/error');
     }
 });
 

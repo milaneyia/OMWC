@@ -6,14 +6,15 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PrerenderSPAPlugin = require('prerender-spa-plugin');
+const Renderer = PrerenderSPAPlugin.PuppeteerRenderer;
 
 module.exports = {
     entry,
     output: {
-        path: path.resolve(__dirname, 'dist/public/js/'),
+        path: path.resolve(__dirname, 'dist/public/'),
         filename: '[name].js',
         chunkFilename: '[name].js',
-        publicPath: '/js/',
+        publicPath: '/',
     },
     mode: 'production',
     module: {
@@ -49,7 +50,7 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
-            filename: '../css/[name].css',
+            filename: '[name].css',
         }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public/template.html'),

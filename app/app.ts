@@ -2,9 +2,6 @@ import Koa from 'koa';
 import bodyparser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
 import session from 'koa-session';
-import serve from 'koa-static';
-import views from 'koa-views';
-import path from 'path';
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import config from '../config.json';
@@ -41,31 +38,15 @@ createConnection().then(() => {
 // Middlewares
 app.use(helmet());
 app.use(session({ key: 'omwc:sess' }, app));
-app.use(serve(path.join(__dirname, '../public')));
 app.use(bodyparser());
-app.use(views(path.join(__dirname, '../public')));
 
 // Error handler
 app.use(async (ctx, next) => {
     try {
-        if (ctx.originalUrl !== '/favicon.ico') {
-            console.log('\x1b[33m%s\x1b[0m', ctx.originalUrl);
-        }
-
         await next();
-
-        if (ctx.status === 404) {
-            await ctx.render('index');
-        }
     } catch (err) {
         ctx.status = err.status || 500;
-
-        if (ctx.accepts('application/json') === 'application/json') {
-            ctx.body = { error: 'Something went wrong!' };
-        } else {
-            await ctx.render('error');
-        }
-
+        ctx.body = { error: 'Something went wrong!' };
         ctx.app.emit('error', err, ctx);
     }
 });

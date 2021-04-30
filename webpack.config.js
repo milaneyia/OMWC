@@ -6,18 +6,19 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = {
     entry,
     output: {
-        path: path.resolve(__dirname, './public/js/'),
+        path: path.resolve(__dirname, './public/'),
         filename: '[name].js',
-        publicPath: '/js/',
+        publicPath: '/',
     },
     mode: 'development',
-    devtool: 'eval-cheap-source-map',
+    devtool: 'eval',
     devServer: {
-        contentBase: './dist',
+        contentBase: './public',
+        index: 'index.html',
         hot: true,
         stats: 'minimal',
         proxy: {
-            '/': 'http://localhost:3000',
+            '/api/': 'http://localhost:3000',
         },
     },
     module: {
